@@ -1,0 +1,241 @@
+body{
+    /* position: relative; */
+}
+
+nav {
+    position: sticky;
+    top: 0;
+    padding: 8px 0;
+    background-color: whitesmoke;
+    z-index: 9;
+    
+}
+
+
+
+nav .menu {
+    width: 35%;
+    justify-content: flex-start;
+    padding: 0 0 0 25px;
+}
+
+nav .baroque-logo {
+    width: 30%;
+}
+
+nav .baroque-logo h1 {
+    font-size: 35px;
+    font-family: "Cherry Bomb One", system-ui;
+    font-weight: 400;
+    font-style: normal;
+    color: black;
+}
+
+nav .baroque-logo h1 span {
+    color: red;
+    font-weight: 900;
+}
+
+nav .location-account-search-cart {
+    width: 35%;
+    justify-content: end;
+}
+
+nav .location-account-search-cart li {
+    margin: 0 7px 0 7px;
+}
+
+nav .location-account-search-cart li .cart {
+    padding: 0 20px 0 0;
+}
+
+
+nav .material-symbols-outlined {
+    font-size: 33px;
+    font-variation-settings:
+        'FILL' 0,
+        'wght' 500,
+        'GRAD' 50,
+        'opsz' 36;
+    cursor: pointer;
+}
+
+nav .country {
+    font-weight: 700;
+    font-family: sans-serif;
+}
+
+nav .userimg {
+    width: 36px;
+}
+
+.slidemenu {
+    width: 450px;
+    height: 100vh;
+    position: absolute;
+    left: -100%;
+    background-color: whitesmoke;
+    color: white;
+    overflow: auto;
+    transition: left 0.3s ease-in-out;
+    z-index: 35;
+    padding: 20px;
+}
+
+.slidemenu.toggle {
+    left: 0;
+}
+
+.slidemenu .close {
+    margin: 0px 20px 20px 0;
+    background-color: red;
+}
+
+
+.slidemenu ul,
+.slidenavlinks ul {
+    width: 100%;
+    align-items: flex-start;
+    flex-direction: column;
+    /* background-color: red; */
+}
+
+.slidenavlinks ul {
+    /* align-items: center; */
+}
+
+.slidemenu ul li {
+    width: 100%;
+    margin: 20px;
+    list-style: none;
+}
+
+
+.slidemenu li a,
+.slidenavlinks li a {
+    width: 80%;
+    justify-content: space-between;
+}
+
+.slidemenu .material-symbols-outlined {
+    font-size: 33px;
+    font-variation-settings:
+        'FILL' 0,
+        'wght' 200,
+        'GRAD' 50,
+        'opsz' 36;
+    cursor: pointer;
+}
+
+.extnav {
+    background-color: rgb(43, 0, 255);
+    /* z-index: 11; */
+    position: relative;
+}
+
+.extnav a {
+    /* display: flex;
+    align-items: center;
+    justify-content: center; */
+    /* z-index: 1000; */
+
+}
+
+.slidenavlinks {
+    width: 300px;
+    height: 100vh;
+    position: absolute;
+    left: -100%;
+    background-color: whitesmoke;
+    color: white;
+    overflow: auto;
+    transition: left 0.3s ease-in-out;
+    z-index: 35;
+    padding: 20px;
+}
+
+.slidenavlinks.visible {
+    left: 50%;
+}
+
+.slidenavlinks li {
+    width: 100%;
+    background-color: lightgoldenrodyellow;
+    justify-content: center;
+}
+
+.slidenavlinks a {
+    width: 100%;
+    margin: 20px 0;
+    justify-content: center;
+    background-color: lightblue;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.black-screen {
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.443);
+    transition: opacity 0.3s ease;
+    z-index: 30;
+}
+
+.black-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.black-screen.visible {
+    opacity: 1;
+}
+
+.navline {
+    width: 80%;
+    height: 1px;
+    border-top: 1px solid rgb(255, 255, 255);
+    margin-left: 20px;
+}
+
+.no-scroll {
+    position: fixed;
+    overflow-y: scroll;
+    width: 100%;
+    height: 100%;
+}
+
+.no-scroll {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: scroll;
+}

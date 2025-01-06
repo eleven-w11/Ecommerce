@@ -1,0 +1,112 @@
+.sign {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-image: url('../images/dddepth-240.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+form input {
+    width: 320px;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: 1.4px solid lightgray;
+}
+
+.google button,
+form button {
+    margin-top: 10px;
+    margin-bottom: 13px;
+    padding: 13px 40px;
+    font-size: 15px;
+    border-radius: 10px;
+    border: 1.4px solid lightgray;
+}
+
+.input-unhide {
+    position: relative;
+}
+
+.input-unhide span {
+    position: absolute;
+    right: 10%;
+    bottom: 5%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.hr {
+    width: 100%;
+    height: 1px;
+    background-color: white;
+}
+
+.google button {
+    width: 320px;
+    height: 45px;
+    background-color: white;
+}
+
+.errorndsucc {
+    min-height: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
+}
+
+.err,
+.suc {
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 10px;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.err {
+    background-color: lightcoral;
+}
+
+.suc {
+    background-color: lightgreen;
+}
+
+@media (max-width: 600px) {
+    form input {
+        width: 70vw;
+    }
+}
+
+@media (max-width: 500px) {
+    form input {
+        width: 80vw;
+    }
+}
+
+@media (max-width: 500px) {
+    form input {
+        width: 90vw;
+    }
+}
