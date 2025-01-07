@@ -177,10 +177,10 @@ li {
         padding: 0;
     } */
 
-    .button-shop-now a {
+    /* .button-shop-now a {
         font-size: 14px;
         padding: 8px 20px;
-    }
+    } */
 }
 
 @media (max-width: 400px) {
