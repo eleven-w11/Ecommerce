@@ -1,8 +1,19 @@
+.shawls,
+.Readytowear,
+.shantelle {
+    /* padding: 10px; */
+    /* border-radius: 10px; */
+    /* box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px; */
+}
+
 .shawls-img,
 .Readytowear-img,
 .shantelle-img {
     width: 300px;
+    height: fit-content;
     overflow: hidden;
+    border-radius: 10px;
+    /* background-color: red; */
 }
 
 .Readytowear,
@@ -12,12 +23,13 @@
 
 .product-display-beinspired img {
     width: 300px;
-    /* transition: 5s ease-in; */
+    border-radius: 10px;
+    transition: 5s ease-in;
 }
 
 .product-display-beinspired img:hover {
     transform: scale(1.3);
-    /* transition: 6s ease-in-out; */
+    transition: 6s ease-in-out;
     z-index: 1;
 }
 

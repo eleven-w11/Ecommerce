@@ -1,11 +1,11 @@
-
-
 .video-button {
     position: relative;
 }
 
 .product-display-beinspired video {
     width: 25vw;
+    border-radius: 10px;
+
 }
 
 .beinspired-btn {

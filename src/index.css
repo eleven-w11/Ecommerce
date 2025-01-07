@@ -88,6 +88,7 @@ li {
     overflow: hidden;
     z-index: 1;
     font-family: inherit;
+    border-radius: 10px;
 }
 
 .button-shop-now a::before {
