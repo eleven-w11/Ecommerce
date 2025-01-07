@@ -13,7 +13,7 @@
     height: fit-content;
     overflow: hidden;
     border-radius: 10px;
-    background-color: red;
+    /* background-color: red; */
 }
 
 .Readytowear,
@@ -36,7 +36,7 @@
 .product-display-beinspired h3 {
     font-size: 18px;
     font-weight: 500;
-    margin: 5px 0;
+    margin: 12px 0;
 }
 
 @media (max-width: 979px) {
@@ -85,9 +85,9 @@
     }
 
     .product-display-beinspired h3 {
-        font-size: 15px;
+        /* font-size: 15px;
         font-weight: 500;
-        margin: 3px 0;
+        margin: 3px 0; */
     }
 
 }
