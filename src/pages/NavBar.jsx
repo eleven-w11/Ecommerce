@@ -293,9 +293,7 @@ const NavBar = ({ Authentication }) => {
                     <div className="navline"
                         ref={(el) => (linksRef.current[14] = el)}></div>
                     <li>
-                        <Link
-                            to="/test"
-                        >
+                        <Link to="/test">
                             Test
                         </Link>
                     </li>

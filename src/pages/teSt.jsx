@@ -2,7 +2,7 @@ import React from 'react';
 import './styles/teSt.css';
 
 
-const teSt = () => {
+const TeSt = () => {
     return (
         <>
             <h1>Hello 1</h1><br />
@@ -18,4 +18,4 @@ const teSt = () => {
     )
 }
 
-export default teSt
+export default TeSt;

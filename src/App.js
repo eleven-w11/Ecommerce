@@ -12,6 +12,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import UserProfile from './pages/UserProfile';
 import Products from './pages/Products';
+import TeSt from './pages/teSt';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -68,6 +69,7 @@ function App() {
         <Route path="/SignUp" element={<SignUp onSignUp={handleSignUp} />} />
         <Route path="/UserProfile" element={<UserProfile onSignOut={handleSignOut} />} />
         <Route path="/Products" element={<Products />} />
+        <Route path='/test' element={ <TeSt />} />
       </Routes>
     </div>
   );
