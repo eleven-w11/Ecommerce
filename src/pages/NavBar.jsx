@@ -125,16 +125,23 @@ const NavBar = ({ Authentication }) => {
 
 
     const handleToggle = () => {
-        setVisibleDiv(null);
+        const currentScrollPosition = window.scrollY;
+
         setisToggle((prevState) => {
             if (!prevState) {
-                document.body.classList.add("no-scroll");
+                document.body.style.position = "fixed";
+                document.body.style.top = `-${currentScrollPosition}px`;
+                document.body.style.width = "100%";
             } else {
-                document.body.classList.remove("no-scroll");
+                const savedScrollPosition = -parseInt(document.body.style.top, 10);
+                document.body.style.position = "";
+                document.body.style.top = "";
+                window.scrollTo(0, savedScrollPosition);
             }
             return !prevState;
         });
     };
+
 
 
 
@@ -178,7 +185,7 @@ const NavBar = ({ Authentication }) => {
                         </Link>
                     </li>
                     <div className="location-account-search-cart">
-                        <li>
+                        <li className='userlocation-hide'>
                             {country ? (
                                 <Link to="/UserLocation" className='country'>{country}</Link>
                             ) : (
@@ -187,7 +194,7 @@ const NavBar = ({ Authentication }) => {
                                 </Link>
                             )}
                         </li>
-                        <li>
+                        <li className='userprofile-hide'>
                             {Authentication ? (
                                 <Link to="/UserProfile">
                                     {loading ? (
@@ -293,11 +300,56 @@ const NavBar = ({ Authentication }) => {
                     <div className="navline"
                         ref={(el) => (linksRef.current[14] = el)}></div>
                     <li>
-                        <Link to="/test">
+                        <Link
+                            to="/test"
+                            ref={(el) => (linksRef.current[15] = el)}
+                        >
                             Test
                         </Link>
                     </li>
+                    <div className="navline"
+                        ref={(el) => (linksRef.current[16] = el)}></div>
+                    <li className='userprofile-show'>
+                        {Authentication ? (
+                            <Link to="/UserProfile"
+                                ref={(el) => (linksRef.current[17] = el)}
+                            >
+                                {loading ? (
+                                    <span>Loading...</span>
+                                ) : (
+                                    userData ? (
+                                        <img src="./user.png" alt="User" className='userimg' />
+                                    ) : (
+                                        <img src="./favicon.ico" alt="Default" />
+                                    )
+                                )}
+                            </Link>
+                        ) : (
+                            <Link to="/SignIn"
+                                ref={(el) => (linksRef.current[17] = el)}
+                            >
+                                <span className="material-symbols-outlined">account_circle</span>
+                            </Link>
+                        )}
+                    </li>
 
+                    <div className="navline"
+                        ref={(el) => (linksRef.current[18] = el)}></div>
+                    <li className='userlocation-show'>
+                        {country ? (
+                            <Link to="/UserLocation"
+                                ref={(el) => (linksRef.current[18] = el)}
+                                className='country'>{country}</Link>
+                        ) : (
+                            <Link to="/UserLocation"
+                                ref={(el) => (linksRef.current[18] = el)}
+                            >
+                                <span className="material-symbols-outlined">add_location</span>
+                            </Link>
+                        )}
+                    </li>
+                    <div className="navline"
+                        ref={(el) => (linksRef.current[20] = el)}></div>
                 </ul>
             </div>
 

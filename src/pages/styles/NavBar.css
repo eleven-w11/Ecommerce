@@ -1,4 +1,4 @@
-body{
+body {
     /* position: relative; */
 }
 
@@ -8,7 +8,7 @@ nav {
     padding: 8px 0;
     background-color: whitesmoke;
     z-index: 9;
-    
+
 }
 
 
@@ -69,18 +69,33 @@ nav .userimg {
     width: 36px;
 }
 
-.slidemenu {
+/* .slidemenu {
     width: 450px;
     height: 100vh;
     position: absolute;
     left: -100%;
+    top: 0;
     background-color: whitesmoke;
     color: white;
     overflow: auto;
     transition: left 0.3s ease-in-out;
     z-index: 35;
     padding: 20px;
+} */
+
+.slidemenu {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 450px;
+    height: 100vh;
+    background-color: whitesmoke;
+    transition: left 0.3s ease-in-out;
+    z-index: 35;
+    padding: 20px;
+    overflow-y: auto;
 }
+
 
 .slidemenu.toggle {
     left: 0;
@@ -97,11 +112,6 @@ nav .userimg {
     width: 100%;
     align-items: flex-start;
     flex-direction: column;
-    /* background-color: red; */
-}
-
-.slidenavlinks ul {
-    /* align-items: center; */
 }
 
 .slidemenu ul li {
@@ -129,22 +139,14 @@ nav .userimg {
 
 .extnav {
     background-color: rgb(43, 0, 255);
-    /* z-index: 11; */
     position: relative;
-}
-
-.extnav a {
-    /* display: flex;
-    align-items: center;
-    justify-content: center; */
-    /* z-index: 1000; */
-
 }
 
 .slidenavlinks {
     width: 300px;
     height: 100vh;
     position: absolute;
+    top: 0;
     left: -100%;
     background-color: whitesmoke;
     color: white;
@@ -196,8 +198,13 @@ nav .userimg {
 
 
 
+/* .userlocation-show {
+    display: none;
+}
 
-
+.userprofile-show {
+    display: none;
+} */
 
 .black-screen {
     width: 100%;
@@ -220,22 +227,61 @@ nav .userimg {
 .navline {
     width: 80%;
     height: 1px;
-    border-top: 1px solid rgb(255, 255, 255);
+    /* border-top: 1px solid rgb(255, 255, 255); */
+    border-top: 1px solid red;
     margin-left: 20px;
-}
-
-.no-scroll {
-    position: fixed;
-    overflow-y: scroll;
-    width: 100%;
-    height: 100%;
 }
 
 .no-scroll {
     position: fixed;
     top: 0;
     left: 0;
+    width: 100%;
+    overflow-y: scroll;
+}
+
+
+/* .no-scroll {
+    position: fixed;
+    overflow: hidden;
+    width: 100%;
+} */
+
+
+/* .no-scroll {
+    position: fixed;
+    top: 0;
+    left: 0;
     right: 0;
     bottom: 0;
     overflow-y: scroll;
+} */
+/* .no-scroll {
+    overflow: hidden;
+    width: 100%;
+} */
+
+
+
+
+
+
+@media (max-width: 700px) {
+    .userlocation-hide {
+        display: none;
+    }
+
+    .userlocation-show {
+        display: block;
+    }
+}
+
+@media (max-width: 600px) {
+    .userprofile-hide {
+        display: none;
+    }
+
+    .userprofile-show {
+        display: block;
+    }
 }
