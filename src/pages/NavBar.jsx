@@ -41,15 +41,23 @@ const NavBar = ({ Authentication }) => {
 
         if (!isInsideSlideMenu && !isMenuButton && !isInsideExtNav) {
             setisToggle(false);
-            document.body.classList.remove("no-scroll");
-        }
-
-        if (!isInsideExtNav && !isInsideSlideMenu && !isMenuButton) {
             setVisibleDiv(null);
-            document.body.classList.remove("no-scroll");
 
+            // Reset body scroll settings
+            const savedScrollPosition = parseInt(document.body.style.top || "0", 10);
+            document.body.style.position = "";
+            document.body.style.top = "";
+
+            // Restore scroll position only if it was previously set
+            if (savedScrollPosition) {
+                window.scrollTo(0, -savedScrollPosition);
+            }
+
+            document.body.classList.remove("no-scroll");
         }
     };
+
+
     useEffect(() => {
         console.warn("toggle", isToggle);
 
@@ -125,22 +133,42 @@ const NavBar = ({ Authentication }) => {
 
 
     const handleToggle = () => {
-        const currentScrollPosition = window.scrollY;
+        const currentScrollPosition = window.scrollY; // Save current scroll position
 
         setisToggle((prevState) => {
             if (!prevState) {
+                // When menu opens
                 document.body.style.position = "fixed";
                 document.body.style.top = `-${currentScrollPosition}px`;
                 document.body.style.width = "100%";
+
+                // Dynamically position .slidenavlinks
+                const slidenavlinks = document.querySelector('.slidenavlinks');
+                if (slidenavlinks) {
+                    slidenavlinks.style.top = `${currentScrollPosition}px`;
+                }
             } else {
+                // When menu closes
                 const savedScrollPosition = -parseInt(document.body.style.top, 10);
                 document.body.style.position = "";
                 document.body.style.top = "";
                 window.scrollTo(0, savedScrollPosition);
+
+                // Reset .slidenavlinks positioning
+                const slidenavlinks = document.querySelector('.slidenavlinks');
+                if (slidenavlinks) {
+                    slidenavlinks.style.top = "0";
+                }
             }
+
+            // Hide `.slidenavlinks` when menu toggles
+            setVisibleDiv(null);
+
             return !prevState;
         });
     };
+
+
 
 
 
@@ -181,7 +209,7 @@ const NavBar = ({ Authentication }) => {
                     </li>
                     <li className='baroque-logo'>
                         <Link to="/">
-                            <h1>BAR<span>O</span>QUE</h1>
+                            <h1>YOUR<span>W</span>EB</h1>
                         </Link>
                     </li>
                     <div className="location-account-search-cart">

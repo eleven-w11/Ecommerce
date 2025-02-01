@@ -1,23 +1,53 @@
-import React from 'react';
-import './styles/teSt.css';
-
+import React, { useState } from "react";
 
 const TeSt = () => {
+    const [showSecondNavbar, setShowSecondNavbar] = useState(false);
+    const [showThirdNavbar, setShowThirdNavbar] = useState(null);
+
+    const secondNavbarLinks = Array.from({ length: 10 }, (_, i) => `Link ${i + 1}`);
+
+    const generateRandomLinks = () => {
+        const count = Math.floor(Math.random() * 5) + 2; // 2 to 6 random links
+        return Array.from({ length: count }, (_, i) => `Sub-Link ${i + 1}`);
+    };
+
     return (
-        <>
-            <div className="test">
-                <h1>Hello 1</h1><br />
-                <h2>Hello 2</h2><br />
-                <h3>Hello 3</h3><br />
-                <h4>Hello 4</h4><br />
-                <h5>Hello 5</h5><br />
-                <h6>Hello 6</h6><br />
-                <p>Paragraph</p><br />
-                <div className="fourty">Fourty Px</div> <br />
-                <div className="eighteen">Eighteen px</div> <br />
-            </div>
-        </>
-    )
-}
+        <div>
+            {/* First Navbar */}
+            <nav className="first-navbar">
+                <div className="logo">Logo</div>
+                <button onClick={() => setShowSecondNavbar(!showSecondNavbar)}>Menu</button>
+                <div className="icons">
+                    <span>Location</span>
+                    <span>Account</span>
+                    <span>Search</span>
+                    <span>Cart</span>
+                </div>
+            </nav>
+
+            {/* Second Navbar */}
+            {showSecondNavbar && (
+                <div className="second-navbar">
+                    <h3>Second Navbar</h3>
+                    {secondNavbarLinks.map((link, index) => (
+                        <button key={index} onClick={() => setShowThirdNavbar(index)}>
+                            {link}
+                        </button>
+                    ))}
+                </div>
+            )}
+
+            {/* Third Navbar */}
+            {showThirdNavbar !== null && (
+                <div className="third-navbar">
+                    <h3>Third Navbar for {secondNavbarLinks[showThirdNavbar]}</h3>
+                    {generateRandomLinks().map((sublink, index) => (
+                        <button key={index}>{sublink}</button>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
 
 export default TeSt;

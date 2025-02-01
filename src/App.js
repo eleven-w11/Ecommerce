@@ -1,7 +1,6 @@
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import './App.css';
 import BeInspired from './pages/BeInspired';
-import ImageSwapper from './pages/Hero';
 import NavBar from './pages/NavBar';
 import ProductDisplay from './pages/ProductDisplay';
 import ShopTheLook from './pages/ShopTheLook';
@@ -13,6 +12,7 @@ import axios from 'axios';
 import UserProfile from './pages/UserProfile';
 import Products from './pages/Products';
 import TeSt from './pages/teSt';
+import TestHero from './pages/Hero';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -57,11 +57,11 @@ function App() {
       <Routes>
         <Route path="/" element={
           <>
-            <ImageSwapper />
-            <ProductDisplay />
-            <BeInspired />
+            <TestHero />
+            {/* <ProductDisplay /> */}
+            {/* <BeInspired /> */}
             {/* <ShopTheLook /> */}
-            
+
           </>
         } />
         <Route path="/UserLocation" element={<UserLocation />} />
@@ -69,7 +69,7 @@ function App() {
         <Route path="/SignUp" element={<SignUp onSignUp={handleSignUp} />} />
         <Route path="/UserProfile" element={<UserProfile onSignOut={handleSignOut} />} />
         <Route path="/Products" element={<Products />} />
-        <Route path='/test' element={ <TeSt />} />
+        <Route path='/test' element={<TeSt />} />
       </Routes>
     </div>
   );

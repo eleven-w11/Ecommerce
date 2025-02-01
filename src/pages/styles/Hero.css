@@ -1,30 +1,136 @@
+.hero {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
 
-.hero,
-.hero .buttons,
-.button-shop-now{
+.hero-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1s ease-in-out;
+}
+
+.hero-data-style-2 {
+    width: 700px;
+    height: 400px;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    border-radius: 20px;
+    background-color: rgba(0, 0, 0, 0.459);
+    color: white;
 }
 
-.hero{
+.LOOKBEAUTIFUL {
+    font-size: 40px;
+    /* font-family: "Kablammo", serif; */
+    font-family: "Goldman", serif;
+
+}
+
+.THISSEASON {
+    font-size: 70px;
+    margin: -2px 0 -5px 0;
+    font-weight: 400;
+    font-style: normal;
+    /* font-family: "Roboto", serif; */
+    /* font-family: "Kablammo", serif; */
+    font-family: "Monoton", serif;
+}
+
+.THEPERFECTCHOICE {
+    font-size: 40px;
+    margin-bottom: 20px;
+    font-family: "Goldman", serif;
+}
+
+.THISSEASON {
+    width: 550px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+}
+
+.animated-season {
+    position: absolute;
+    /* top: 0px; */
+    left: 200px;
+    /* transform: translate(-50%, -50%); */
+}
+
+
+
+.all_button a {
+    display: inline-block;
+    padding: 10px 30px;
+    font-size: 15px;
+    color: black;
+    cursor: pointer;
+    position: relative;
+    background-color: #c8e5ff;
+    text-decoration: none;
+    overflow: hidden;
+    z-index: 1;
+    font-family: inherit;
+    border-radius: 5px;
+    /* font-family: "Monoton", serif; */
+    /* font-family: "Goldman", serif; */
+    font-family: "Roboto", serif;
+}
+
+.all_button a::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
     width: 100%;
-    height: 100vh;
-    align-items: end;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-
+    height: 100%;
+    background-color: white;
+    transform: translateX(-100%);
+    transition: all .3s;
+    z-index: -1;
 }
 
-.hero .buttons{
-    margin-bottom: 100px;
+.all_button a:hover {
+    color: black;
 }
 
-.hero .button-shop-now{
-    margin: 0 15px;
+.all_button a:hover::before {
+    transform: translateX(0);
 }
 
-/* @media (max-width: 600px) {
+.all_button .gollden {
+    background-color: rgb(240, 218, 179);
+}
 
-} */
+.all_button .gollden::before {
+    background-color: white;
+}
+
+.all_button .gollden:hover {
+    color: black;
+    /* color: #aec5c4; */
+    /* color: #d3c0a7; */
+    /* color: #574d45; */
+}
+
+.hero-button .gollden {
+    margin: 0 0 0 30px;
+}
+
+.animated-season {
+        background: linear-gradient(to left bottom, #d16ba5, #c777b9, #ba83ca, #aa8fd8, #9a9ae1, #90a8e8, #8ab5eb, #8bc1ec, #9cd2ec, #b6e1ed, #d3eef1, #f2fbfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+}
