@@ -53,7 +53,7 @@ function App() {
 
   return (
     <div>
-      <NavBar Authentication={isAuthenticated} />
+      {/* <NavBar Authentication={isAuthenticated} /> */}
       <Routes>
         <Route path="/" element={
           <>
