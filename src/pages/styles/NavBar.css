@@ -284,4 +284,22 @@ nav .userimg {
     .userprofile-show {
         display: block;
     }
+
+    .slidemenu {
+        position: fixed;
+        top: 0;
+        left: -500px;
+        width: 450px;
+        height: 100vh;
+        background-color: whitesmoke;
+        transition: left 0.3s ease-in-out;
+        z-index: 35;
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+
+    .slidemenu.toggle {
+        left: 0;
+    }
 }
