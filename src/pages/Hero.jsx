@@ -10,13 +10,34 @@ import heroImage4 from "./images/hero-ecommerce-1.jpg";
 import heroImage5 from "./images/hero-ecommerce-2.jpg";
 import heroImage6 from "./images/hero-ecommerce-3.webp";
 
+import heroMob1 from "./images/hero-ecommerce-mob-1.webp";
+import heroMob2 from "./images/hero-ecommerce-mob-2.webp";
+import heroMob3 from "./images/hero-ecommerce-mob-3.webp";
+import heroMob4 from "./images/hero-ecommerce-mob-1.webp";
+import heroMob5 from "./images/hero-ecommerce-mob-2.webp";
+import heroMob6 from "./images/hero-ecommerce-mob-3.webp";
+
 const seasons = ["WINTER", "SUMMER", "AUTUMN", "SPRING"];
 
 const TestHero = () => {
-    const images = [heroImage1, heroImage2, heroImage3, heroImage4, heroImage5, heroImage6];
     const [activeIndex, setActiveIndex] = useState(0);
     const [activeSeason, setActiveSeason] = useState(0);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
     const seasonRef = useRef(null);
+
+    const desktopImages = [heroImage1, heroImage2, heroImage3, heroImage4, heroImage5, heroImage6];
+    const mobileImages = [heroMob1, heroMob2, heroMob3, heroMob4, heroMob5, heroMob6];
+
+    const images = isMobile ? mobileImages : desktopImages;
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 600);
+        };
+
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -47,8 +68,6 @@ const TestHero = () => {
         return () => clearInterval(seasonInterval);
     }, []);
 
-
-
     return (
         <div className="hero">
             {images.map((image, index) => (
@@ -67,7 +86,6 @@ const TestHero = () => {
                 <div className="hero-data-2">
                     <p className="LOOKBEAUTIFUL">LOOK BEAUTIFUL</p>
 
-                    {/* Static "THIS", Animated Season */}
                     <p className="THISSEASON">
                         <span className="static-this">THIS</span>
                         <span className="animated-season" ref={seasonRef}>{seasons[activeSeason]}</span>
@@ -85,37 +103,3 @@ const TestHero = () => {
 };
 
 export default TestHero;
-
-// .THISSEASON {
-//     width: 700px;
-    
-//     position: relative;
-//     overflow: hidden;
-//     background-color: #e9defa73;
-//     z-index: 2;
-
-// }
-
-// .THISSEASON .static-this {
-
-//     position: relative;
-//     top: 50%;
-//     left: 20%;
-//     transform: translate(-50%, -50%);
-// }
-
-// .THISSEASON .animated-season {
-//     position: absolute;
-//     top: 10%;
-//     left: 10%;
-//     transform: translate(-50%, -50%);
-//     z-index: 2;
-
-//     left: 110px;
-
-//     color: gold;
-//     width: 200px;
-//     text-align: left;
-//     white-space: nowrap;
-//     background-color: cadetblue;
-// }
