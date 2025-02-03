@@ -163,7 +163,7 @@
     .hero-data-style-2 {
         /* width: 700px; */
         /* height: 400px; */
-        display: flex;
+        /* display: flex;
         align-items: center;
         justify-content: center;
         position: absolute;
@@ -173,43 +173,27 @@
         text-align: center;
         border-radius: 20px;
         background-color: rgba(0, 0, 0, 0.459);
-        color: white;
+        color: white; */
     }
 
     .LOOKBEAUTIFUL {
         font-size: 25px;
-        font-family: "Goldman", serif;
 
     }
 
     .THISSEASON {
         font-size: 30px;
-        width: 420px;
+        width: 250px;
+        background-color: lightcoral;
+        margin: 10px 0;
     }
 
-    /* .THISSEASON {
-        width: 550px;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: start;
-        font-size: 70px;
-        margin: -2px 0 -5px 0;
-        font-weight: 400;
-        font-style: normal;
-        font-family: "Monoton", serif;
-    } */
 
     .THEPERFECTCHOICE {
         font-size: 25px;
-        margin-bottom: 20px;
-        font-family: "Goldman", serif;
     }
-
     .animated-season {
-        /* position: absolute; */
-        /* top: 0px; */
-        /* left: 200px; */
-        /* transform: translate(-50%, -50%); */
+        left: 90px;
+        /* margin: 10px 10px; */
     }
 }
