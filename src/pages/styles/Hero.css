@@ -163,22 +163,52 @@
 
     .LOOKBEAUTIFUL {
         font-size: 25px;
-
     }
 
     .THISSEASON {
         width: 330px;
         font-size: 40px;
-        /* background-color: lightcoral; */
         margin: 3px 0;
     }
 
+    .animated-season {
+        left: 120px;
+    }
 
     .THEPERFECTCHOICE {
         font-size: 25px;
     }
+
+    .all_button a {
+        font-size: 13px;
+        padding: 10px 20px;
+    }
+
+
+}
+
+@media (max-width: 420px) {
+
+    .LOOKBEAUTIFUL {
+        font-size: 22px;
+    }
+
+    .THISSEASON {
+        width: 240px;
+        font-size: 30px;
+        margin: 25px 0;
+    }
+
+    .static-this {
+        position: absolute;
+        left: 2px;
+    }
+
     .animated-season {
-        left: 120px;
-        /* margin: 10px 10px; */
+        left: 90px;
+    }
+
+    .THEPERFECTCHOICE {
+        font-size: 22px;
     }
 }
