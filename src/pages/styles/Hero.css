@@ -43,6 +43,7 @@
     display: flex;
     align-items: center;
     justify-content: start;
+    text-align: center;
     font-size: 70px;
     margin: -2px 0 -5px 0;
     font-weight: 400;
@@ -160,32 +161,16 @@
         height: 55vh;
     }
 
-    .hero-data-style-2 {
-        /* width: 700px; */
-        /* height: 400px; */
-        /* display: flex;
-        align-items: center;
-        justify-content: center;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
-        border-radius: 20px;
-        background-color: rgba(0, 0, 0, 0.459);
-        color: white; */
-    }
-
     .LOOKBEAUTIFUL {
         font-size: 25px;
 
     }
 
     .THISSEASON {
-        font-size: 30px;
-        width: 250px;
+        width: 330px;
+        font-size: 40px;
         /* background-color: lightcoral; */
-        margin: 10px 0;
+        margin: 3px 0;
     }
 
 
@@ -193,7 +178,7 @@
         font-size: 25px;
     }
     .animated-season {
-        left: 90px;
+        left: 120px;
         /* margin: 10px 10px; */
     }
 }
