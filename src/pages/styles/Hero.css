@@ -210,5 +210,6 @@
 
     .THEPERFECTCHOICE {
         font-size: 22px;
+        flex-direction: column;
     }
 }

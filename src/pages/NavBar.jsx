@@ -245,7 +245,7 @@ const NavBar = ({ Authentication }) => {
                             <span className="material-symbols-outlined">search</span>
                         </li>
                         <li>
-                            <span className="material-symbols-outlined cart">shopping_cart</span>
+                            <Link to="/Cart"><span className="material-symbols-outlined cart">shopping_cart</span></Link>
                         </li>
                     </div>
                 </ul>

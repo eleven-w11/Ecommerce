@@ -1,0 +1,24 @@
+backend
+    middleware
+        verifyPath.js
+        verifyToken.js
+    models
+        product.js
+        user.js
+    routes
+        admindataRoutes.js
+        productRoutes.js
+        signinRoutes.js
+        signoutRoutes.js
+        SignUpRoutes.js
+        user.js
+    server.js
+src    
+    pages
+            images
+                    images
+            styles
+                    css files
+            pages files .jsx
+    app.js
+    index.js
