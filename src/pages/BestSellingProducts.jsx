@@ -42,7 +42,7 @@ const BestSellingProducts = () => {
               return (
                 <div key={product._id} className="product-card">
                   <div className="product-img">
-                    <img src={`/images/${product.product_image}`} className="bsp-img" alt={product.product_name} />
+                    <img src={`/images/${product.pi_1}`} className="bsp-img" alt={product.product_name} />
                     <img
                       src={addTocart}
                       className="addTocart"

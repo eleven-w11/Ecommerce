@@ -47,7 +47,7 @@ const TopProduct = () => {
                             return (
                                 <div key={product._id} className="product-card">
                                     <div className="product-img">
-                                        <img src={`/images/${product.product_image}`} className="tp-img" alt={product.product_name} />
+                                        <img src={`/images/${product.pi_1}`} className="tp-img" alt={product.product_name} />
                                         <img
                                             src={addTocart}
                                             className="addTocart"
