@@ -15,21 +15,10 @@ const ProductView = () => {
         axios.get(`http://localhost:5000/api/products/${id}`)
             .then(response => {
                 console.log("Fetched Product Data:", response.data);
-
-                // Ensure response has images
-                if (!response.data.images) {
-                    response.data.images = [
-                        response.data.pi_1,
-                        response.data.pi_2,
-                        response.data.pi_3
-                    ].filter(Boolean);
-                }
-
                 setProduct(response.data);
             })
             .catch(error => console.error("Error fetching product:", error));
     }, [id]);
-
 
     if (!product || !product.images || product.images.length === 0) {
         return <p>Loading...</p>;
@@ -66,7 +55,15 @@ const ProductView = () => {
                         <div className="right-icon-img" onClick={nextImage}>
                             <img src={right} className="right-icon" alt="Next" />
                         </div>
-                        <img src={`/images/${product.images[currentIndex]}`} className="img" alt={product.product_name} />
+
+                        {/* Image rendering with filter */}
+                        <img
+                            src={`/images/${product.images[currentIndex].url}`}
+                            className="img"
+                            alt={product.product_name}
+                            style={{ filter: product.images[currentIndex].filter }}
+                        />
+
                         <div className="pi_dot">
                             {product.images.map((_, index) => (
                                 <span
