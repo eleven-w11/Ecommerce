@@ -13,7 +13,10 @@ const productSchema = new mongoose.Schema({
     pi_3: {
         url: String,
         filter: String
-    }
+    },
+    p_type: String,
+    p_des: String,
+    product_details: [String] // Array of Strings
 }, { collection: "best_selling_product" });
 
 module.exports = mongoose.model("Product", productSchema);

@@ -15,7 +15,31 @@ const ProductView = () => {
         axios.get(`http://localhost:5000/api/products/${id}`)
             .then(response => {
                 console.log("Fetched Product Data:", response.data);
-                setProduct(response.data);
+                const data = response.data;
+
+                // Images ka array banaya jisme filter bhi store ho raha hai
+                const images = [];
+
+                // pi_1 agar available hai, to usko add karein (without filter)
+                if (data.pi_1) images.push({ url: data.pi_1, filter: "none" });
+
+                // pi_2 agar object hai, to uska url aur filter lein
+                if (data.pi_2) {
+                    images.push({
+                        url: typeof data.pi_2 === "object" ? data.pi_2.url : data.pi_2,
+                        filter: typeof data.pi_2 === "object" ? data.pi_2.filter || "none" : "none"
+                    });
+                }
+
+                // pi_3 agar object hai, to uska url aur filter lein
+                if (data.pi_3) {
+                    images.push({
+                        url: typeof data.pi_3 === "object" ? data.pi_3.url : data.pi_3,
+                        filter: typeof data.pi_3 === "object" ? data.pi_3.filter || "none" : "none"
+                    });
+                }
+
+                setProduct({ ...data, images }); // Updated product state with images array
             })
             .catch(error => console.error("Error fetching product:", error));
     }, [id]);
@@ -55,15 +79,12 @@ const ProductView = () => {
                         <div className="right-icon-img" onClick={nextImage}>
                             <img src={right} className="right-icon" alt="Next" />
                         </div>
-
-                        {/* Image rendering with filter */}
                         <img
                             src={`/images/${product.images[currentIndex].url}`}
                             className="img"
                             alt={product.product_name}
-                            style={{ filter: product.images[currentIndex].filter }}
+                            style={{ filter: product.images[currentIndex].filter }} // Yahan filter apply ho raha hai
                         />
-
                         <div className="pi_dot">
                             {product.images.map((_, index) => (
                                 <span
@@ -99,6 +120,16 @@ const ProductView = () => {
                                 <button>Add to Cart</button>
                             </div>
                         </div>
+                        <div className="product-details">
+                            <p>Type: {product.p_type}</p>
+                            <ul>Product Detail:
+                                {product.product_details.map((detail, index) => (
+                                    <li key={index}>{detail}</li>
+                                ))}
+                            </ul>
+                            <p>Product Description: {product.p_des}</p>
+                        </div>
+
                     </div>
 
                 </div>
@@ -108,3 +139,8 @@ const ProductView = () => {
 };
 
 export default ProductView;
+// talhaelevenw11
+// 7naISWdxkFajsrrM
+// npm install mongodb
+// mongodb+srv://talhaelevenw11:7naISWdxkFajsrrM@cluster0.or7qg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+// mongosh "mongodb+srv://cluster0.or7qg.mongodb.net/" --apiVersion 1 --username talhaelevenw11
