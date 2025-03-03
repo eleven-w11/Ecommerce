@@ -15,11 +15,19 @@ const productRoutes = require("./routes/productRoutes");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// ✅ Update CORS Configuration
+const allowedOrigins = ["http://localhost:3000", "https://baroque-five.vercel.app"];
+
 app.use(cors({
-    origin: "http://localhost:3000",
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
     credentials: true,
 }));
-
 
 app.use(cookieParser());
 app.use(express.json());
@@ -28,11 +36,9 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
     .then(() => console.warn("Connected to MongoDB"))
     .catch((err) => console.error("MongoDB connection error: ", err));
 
-
 console.warn("MONGO_URI:", process.env.MONGO_URI);
 
 app.use("/images", express.static("images"));
-
 
 app.use("/api/", signupRoutes);
 app.use("/api/", signinRoutes);
@@ -44,13 +50,8 @@ app.use("/api", dataRoutes);
 app.use("/api/data", dataRoutes);
 app.use("/api/products", productRoutes);
 
-
 app.use((err, req, res, next) => {
-    // console.error("Error:", err.message);
     res.status(500).json({ message: "Server Error" });
 });
 
 app.listen(PORT, () => console.warn(`Server running on port ${PORT}`));
-
-// in cd backend open terminal and run command down
-// npm install dotenv express mongoose cors cookie-parser bcrypt jsonwebtoken express-validator
