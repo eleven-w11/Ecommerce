@@ -145,6 +145,7 @@
     margin: 5px 0 10px 0;
     color: rgb(117, 117, 117);
 }
+.product-view .product-details,
 .product-view .product-data .des{
     /* border: 1px solid black; */
     color: rgb(117, 117, 117);
@@ -161,9 +162,11 @@
 }
 .discount-box {
     /* background-color: red; */
+    margin: 10px 0;
 }
 .product-view .price{
     font-size: 20px;
+
 }
 .product-view .discount-box .price {
     margin-left: 40px;
@@ -179,7 +182,7 @@
     width: 70%;
     margin: auto;
     justify-content: space-evenly;
-    background-color: lightgreen;
+    /* background-color: lightgreen; */
 }
 
 .product-view .quantity {
@@ -214,4 +217,8 @@
     border-radius: 20px;
     border: 0;
     cursor: pointer;
+}
+
+.product-view .product-details {
+    margin: 10px 0;
 }
