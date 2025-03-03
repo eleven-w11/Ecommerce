@@ -158,6 +158,8 @@
 .product-view .product-data .price {}
 
 .price-box{
+    margin: 10px 0;
+
     /* background-color: aqua; */
 }
 .discount-box {
