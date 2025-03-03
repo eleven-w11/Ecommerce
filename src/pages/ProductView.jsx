@@ -99,9 +99,13 @@ const ProductView = () => {
                 <div className="product-data">
                     <div className="data-frame">
                         <h2>{product.product_name}</h2>
+                        <p className="type"><span>Type: </span>{product.p_type}</p>
+                        <p className="des"><span>Product Description: </span>{product.p_des}</p>
 
                         {!product.dis_product_price && (
-                            <p className="price">${product.product_price}</p>
+                            <div className="price-box">
+                                <p className="price">${product.product_price}</p>
+                            </div>
                         )}
 
                         {product.dis_product_price && (
@@ -121,13 +125,12 @@ const ProductView = () => {
                             </div>
                         </div>
                         <div className="product-details">
-                            <p>Type: {product.p_type}</p>
+
                             <ul>Product Detail:
                                 {product.product_details.map((detail, index) => (
                                     <li key={index}>{detail}</li>
                                 ))}
                             </ul>
-                            <p>Product Description: {product.p_des}</p>
                         </div>
 
                     </div>
