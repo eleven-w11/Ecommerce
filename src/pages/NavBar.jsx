@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import Cookies from "js-cookie";
 import axios from 'axios';
 import { gsap } from "gsap";
-import ImageSwapper from './Hero';
+import ImageSwapper from './HeroSection';
 
 
 const NavBar = ({ Authentication }) => {

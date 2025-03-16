@@ -1,23 +1,20 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
-// import BeInspired from './pages/BeInspired';
-import NavBar from './pages/NavBar';
-// import ShopTheLook from './pages/ShopTheLook';
-import UserLocation from './pages/UserLocation';
+import NavBar from './pages/Navbar';
+import UserLocation from './pages/UserLocationInfo';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import UserProfile from './pages/UserProfile';
-import Products from './pages/Products';
+import UserProfile from './pages/UserProfilePage';
 import TeSt from './pages/teSt';
-import TestHero from './pages/Hero';
-import BestSellingProducts from './pages/BestSellingProducts';
-// import AllProducts from './pages/AllProducts';
+import TestHero from './pages/HeroSection';
+import BestSellingProducts from './pages/BestSelling';
 import TopProduct from './pages/TopProducts';
 import ProductView from './pages/ProductView';
-import CaRt from './pages/Cart';
 // import CaRt from './pages/Cart';
+import ScrollToTop from "./pages/ScrollToTop";
+import Footer from './pages/Footer';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -59,24 +56,25 @@ function App() {
   return (
     <div>
       <NavBar Authentication={isAuthenticated} />
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={
           <>
             <TestHero />
             <BestSellingProducts />
             <TopProduct />
-
-            {/* <CaRt /> */}
+            <Footer />
           </>
         } />
         <Route path="/UserLocation" element={<UserLocation />} />
         <Route path="/SignIn" element={<SignIn onSignIn={handleSignIn} />} />
         <Route path="/SignUp" element={<SignUp onSignUp={handleSignUp} />} />
         <Route path="/UserProfile" element={<UserProfile onSignOut={handleSignOut} />} />
-        <Route path="/Products" element={<Products />} />
+        {/* <Route path="/Products" element={<Products />} /> */}
         <Route path='/test' element={<TeSt />} />
         <Route path="/product/:id" element={<ProductView />} />
-        <Route path="/Cart" element={<CaRt />} />
+        {/* <Route path="/Cart" element={<CaRt />} /> */}
+
       </Routes>
     </div>
   );

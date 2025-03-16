@@ -1,10 +1,26 @@
-.test{
+
+
+
+
+
+.product-view-frame {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    /* min-height: 100vh; */
 }
-.fourty{
-    font-size: 40px;
-    font-weight: 700;
+
+.product-images {
+    width: 50%;
+    height: 100vh;
+    background-color: #3498db;
+    color: white;
+    padding: 20px;
+    position: sticky;
+    top: 10%;
+}
+
+.product-data {
+    width: 50%;
+    background-color: #ecf0f1;
+    padding: 20px;
+    overflow: auto;
 }

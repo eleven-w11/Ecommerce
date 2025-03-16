@@ -23,6 +23,7 @@ nav .baroque-logo {
     width: 30%;
 }
 
+.footer-brand h1,
 nav .baroque-logo h1 {
     font-size: 35px;
     font-family: "Cherry Bomb One", system-ui;
@@ -30,7 +31,7 @@ nav .baroque-logo h1 {
     font-style: normal;
     color: black;
 }
-
+.footer-brand h1 span,
 nav .baroque-logo h1 span {
     color: red;
     font-weight: 900;
