@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 5000;
 
 // ✅ Update CORS Configuration
 const allowedOrigins = ["http://localhost:3000",
-    "https://baroque-five.vercel.app",
+    "https://your-web-gamma.vercel.app/",
     "http://192.168.10.8:3000"
 ];
 
