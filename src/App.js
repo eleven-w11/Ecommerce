@@ -81,3 +81,4 @@ function App() {
 }
 
 export default App;
+// nm na apni website github ka through vercel pr deploy ki ha but phla website properly work kr rhi thi but ab jb mn na website ko 
