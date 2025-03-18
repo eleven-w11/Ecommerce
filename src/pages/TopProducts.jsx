@@ -7,29 +7,29 @@ import addTocart from "./images/add-to-cart.png";
 
 
 const TopProduct = () => {
-    const [products, setProducts] = useState([]);
-    const [cart, setCart] = useState([]);
+    // const [products, setProducts] = useState([]);
+    // const [cart, setCart] = useState([]);
 
-    const addToCart = (product) => {
-        const updatedCart = [...cart, product];
-        setCart(updatedCart);
+    // const addToCart = (product) => {
+    //     const updatedCart = [...cart, product];
+    //     setCart(updatedCart);
 
-        localStorage.setItem("cart", JSON.stringify(updatedCart));
+    //     localStorage.setItem("cart", JSON.stringify(updatedCart));
 
-        alert(`${product.product_name} added to cart!`);
-    };
+    //     alert(`${product.product_name} added to cart!`);
+    // };
 
-    useEffect(() => {
-        axios.get("http://localhost:5000/api/products/bestselling")
-            .then(response => {
-                console.log("Fetched Products:", response.data);
-                const filteredProducts = response.data.filter(product =>
-                    product._id && product.id && product.id.startsWith("ap-")
-                );
-                setProducts(filteredProducts);
-            })
-            .catch(error => console.error("Error fetching products:", error));
-    }, []);
+    // useEffect(() => {
+    //     axios.get("http://localhost:5000/api/products/bestselling")
+    //         .then(response => {
+    //             console.log("Fetched Products:", response.data);
+    //             const filteredProducts = response.data.filter(product =>
+    //                 product._id && product.id && product.id.startsWith("ap-")
+    //             );
+    //             setProducts(filteredProducts);
+    //         })
+    //         .catch(error => console.error("Error fetching products:", error));
+    // }, []);
 
 
 
