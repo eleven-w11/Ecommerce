@@ -9,6 +9,8 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import left from "./images/left.png";
 import right from "./images/right.png";
+import addTocart from "./images/add-to-cart.png";
+
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -22,11 +24,20 @@ const ProductView = () => {
     const [shippingDetails, setShippingDetails] = useState(false);
     const [randomProducts, setRandomProducts] = useState([]);
 
-    const buyNowRef = useRef(null);
     const proDetailsRef = useRef(null);
     const detailsRef = useRef(null);
+    const [cart, setCart] = useState([]);
 
-    // const proDetailsRef = useRef(null);
+    // 🛒 Cart me product add karne ka function
+    const addToCart = (product) => {
+        const updatedCart = [...cart, product];
+        setCart(updatedCart);
+
+        // ✅ LocalStorage me bhi cart save karo
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+
+        alert(`${product.product_name} added to cart!`);
+    };
 
     useEffect(() => {
         if (proDetails) {
@@ -76,32 +87,6 @@ const ProductView = () => {
 
 
     useEffect(() => {
-        if (!buyNowRef.current) return;
-
-        const buyNow = buyNowRef.current;
-
-        gsap.fromTo(
-            buyNow,
-            { y: 50, opacity: 0 },
-            { y: 0, opacity: 1, duration: 1, ease: "power2.out" }
-        );
-
-        ScrollTrigger.create({
-            trigger: buyNow,
-            start: "top bottom",
-            end: "top 50%",
-            onEnter: () => gsap.to(buyNow, { y: 0, opacity: 1, duration: 0.5 }),
-            onLeave: () => gsap.to(buyNow, { y: 100, opacity: 0, duration: 0.5 }),
-            onEnterBack: () => gsap.to(buyNow, { y: 0, opacity: 1, duration: 0.5 }),
-            onLeaveBack: () => gsap.to(buyNow, { y: 100, opacity: 0, duration: 0.5 }),
-        });
-
-        return () => ScrollTrigger.refresh();
-    }, [product]);
-
-
-
-    useEffect(() => {
         axios.get(`http://localhost:5000/api/products/${id}`)
             .then(response => {
                 console.log("Fetched Product Data:", response.data);
@@ -124,24 +109,23 @@ const ProductView = () => {
     }, [id]);
 
 
+    const images = [
+        "/images/Best-Selling-Products-image-1.png",
+        "/images/Best-Selling-Products-image-2.png",
+        "/images/Best-Selling-Products-image-3.png"
+    ];
 
 
-    const changeImage = (index) => {
-        setCurrentIndex(index);
-        setSelectedColor(product.colors[index]);
+
+    const prevImage = () => {
+        setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
     };
 
     const nextImage = () => {
-        const newIndex = (currentIndex + 1) % product.images.length;
-        changeImage(newIndex);
+        setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
     };
 
-    const prevImage = () => {
-        const newIndex = (currentIndex - 1 + product.images.length) % product.images.length;
-        changeImage(newIndex);
-    };
-
-    const selectImage = (index) => {
+    const changeImage = (index) => {
         setCurrentIndex(index);
     };
 
@@ -186,14 +170,10 @@ const ProductView = () => {
                                 <div className="right-icon-img" onClick={nextImage}>
                                     <img src={right} className="right-icon" alt="Next" />
                                 </div>
-                                <img
-                                    src={`/images/${product.images[currentIndex].url}`}
-                                    className="img"
-                                    alt={product.product_name}
-                                    style={{ filter: product.images[currentIndex].filter }}
-                                />
+                                <img src={images[currentIndex]} className="img" alt="Best Selling Product" />
+
                                 <div className="pi_dot">
-                                    {product.images.map((_, index) => (
+                                    {images.map((_, index) => (
                                         <span
                                             key={index}
                                             className={`dot ${index === currentIndex ? "active-dot" : ""}`}
@@ -214,9 +194,9 @@ const ProductView = () => {
                                 <div className="hr"></div>
                                 {product.dis_product_price ? (
                                     <div className="discount-box">
-                                        <p className="original-price">${product.product_price}</p>
-                                        <p className="price">${product.dis_product_price}</p>
-                                        <p className="save">Save {Math.round((product.save / product.product_price) * 100)}%</p>
+                                        <p className="original-price">$39</p>
+                                        <p className="price">$29</p>
+                                        <p className="save">Save 20%</p>
                                     </div>
                                 ) : (
                                     <div className="price-box">
@@ -249,6 +229,9 @@ const ProductView = () => {
                                         <button>Add to Cart</button>
                                     </div>
                                 </div>
+                                <div className="buy_this_now">
+                                    <Link className="buy-now">Buy Now</Link>
+                                </div>
                                 <div className="hr"></div>
                                 <div className={`product-details-shipping ${proDetails ? "active-border" : ""}`}
                                     onClick={() => setProDetails(!proDetails)}
@@ -264,9 +247,9 @@ const ProductView = () => {
                                     <div ref={proDetailsRef} className="data-shipping-product"
                                         style={{ display: proDetails ? "block" : "none" }}
                                     >
-                                        {proDetails && product.product_details.map((detail, index) => (
-                                            <li key={index}>{detail}</li>
-                                        ))}
+                                        <li>Express and fast delivery all over Pakistan (Avg. Time 1-3 days).</li>
+                                        <li>Hassle Free exchange if there is any size issue.</li>
+                                        <li>Free Delivery on orders over Rs. 2,990/-</li>
                                     </div>
 
 
@@ -297,45 +280,51 @@ const ProductView = () => {
                         </div>
                     </div>
                 </div>
-                {product && <Link ref={buyNowRef} className="buy-now">Buy Now</Link>}
                 <div className="other-products">
-                    <div className="best-selling-section">
-                        <div className="product-container">
-                            <h2>Related Products</h2>
-                            <div className="products-grid">
-                                {randomProducts.length > 0 ? (
-                                    randomProducts.map((p) => {
-                                        const hasDiscount = p.dis_product_price !== undefined;
+                    <div class="best-selling-section">
+                        <div class="product-container">
+                            <h2>Best Selling</h2>
+                            <div class="products-grid">
+                                <div class="product-card">
+                                    <div class="product-image-wrapper">
+                                        <img src="/images/Best-Selling-Products-image-1.png" class="bsp-img" alt="Product Name" />
+                                        <img src={addTocart} class="add-to-cart-icon" alt="Add to Cart" />
+                                    </div>
+                                    <div class="product-details">
+                                        <h3>Product Name</h3>
+                                        <p class="product-price dual-price">
+                                            <span class="original-price">$50.00</span>
+                                            <span class="discount-price">$40.00</span>
+                                        </p>
+                                        <a href="/product/sample-id">Shop Now</a>
+                                    </div>
+                                </div>
 
-                                        return (
-                                            <div key={p._id} className="product-card">
-                                                <div className="product-image-wrapper">
-                                                    <img src={`/images/${p.product_image}`} className="bsp-img" alt={p.product_name} />
-                                                </div>
-                                                <div className="product-details">
-                                                    <h3>{p.product_name}</h3>
-                                                    {hasDiscount ? (
-                                                        <p className="product-price dual-price">
-                                                            <span className="original-price">${p.product_price}</span>
-                                                            <span className="discount-price">${p.dis_product_price}</span>
-                                                        </p>
-                                                    ) : (
-                                                        <p className="product-price">${p.product_price}</p>
-                                                    )}
-                                                    <Link to={`/product/${p._id}`} className="shop-now">
-                                                        Buy Now
-                                                    </Link>
-                                                </div>
-                                            </div>
-                                        );
-                                    })
-                                ) : (
-                                    <p>Loading random products...</p>
-                                )}
+                                <div class="product-card">
+                                    <div class="product-image-wrapper">
+                                        <img src="/images/Best-Selling-Products-image-2.png" class="bsp-img" alt="Product Name" />
+                                        <img src={addTocart} class="add-to-cart-icon" alt="Add to Cart" />
+                                    </div>
+                                    <div class="product-details">
+                                        <h3>Product Name</h3>
+                                        <p class="product-price">$30.00</p>
+                                        <a href="/product/sample-id">Shop Now</a>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <div class="product-image-wrapper">
+                                        <img src="/images/Best-Selling-Products-image-3.png" class="bsp-img" alt="Product Name" />
+                                        <img src={addTocart} class="add-to-cart-icon" alt="Add to Cart" />
+                                    </div>
+                                    <div class="product-details">
+                                        <h3>Product Name</h3>
+                                        <p class="product-price">$30.00</p>
+                                        <a href="/product/sample-id">Shop Now</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
 
             </div>

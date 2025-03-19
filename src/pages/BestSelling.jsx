@@ -80,3 +80,4 @@ const BestSellingProducts = () => {
 };
 
 export default BestSellingProducts;
+// http://localhost:3000/product/67b039830825e8bd03d89289
