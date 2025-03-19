@@ -38,8 +38,14 @@
     width: 20px;
     height: 20px;
 }
+
 .site-footer .email .material-symbols-outlined {
     font-size: 28px;
+}
+
+.site-footer .phone_call svg {
+    width: 26px;
+    height: 26px;
 }
 
 .site-footer .footer-social-media ul li {
@@ -157,5 +163,33 @@
 
     .site-footer .footer-links.show {
         display: block;
+    }
+
+    .site-footer .tiktok svg,
+    .site-footer .facebook svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .site-footer .instagram svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .site-footer .twitter_X svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .site-footer .email .material-symbols-outlined {
+        font-size: 26px;
+    }
+
+    .site-footer .phone_call svg {
+        width: 24px;
+        height: 24px;
+    }
+    .site-footer .footer-social-media ul li {
+        margin: 0 3px;
     }
 }

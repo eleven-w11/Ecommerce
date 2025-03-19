@@ -18,7 +18,7 @@ const Footer = () => {
     };
 
     useEffect(() => {
-        if (!isMobile) return; // Animation only for mobile view
+        if (!isMobile) return;
 
         const sectionClass = `.${openSection}-links li`;
         if (openSection) {
@@ -40,12 +40,14 @@ const Footer = () => {
             <div className="footer-social-media">
                 <ul>
                     <li className="tiktok">
-                        <Link>
+                        <a href="http://tiktok.com/">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#74767E">
                                 <path d="M10.827 9.644v3.331a6.199 6.199 0 0 0-.478-.09c-1.599-.247-3.06.842-3.299 2.527a2.964 2.964 0 0 0 2.342 3.357c1.612.324 3.21-.855 3.4-2.527.062-.558.037-1.128.037-1.699V1.893h3.173c.34 3.085 2.002 4.77 4.998 5.094v3.24a7.673 7.673 0 0 1-2.594-.427 7.83 7.83 0 0 1-2.354-1.297v.234c0 2.333.013 4.666.013 6.999 0 2.307-.957 4.109-2.833 5.379-1.12.765-2.38 1.076-3.727.972-2.04-.155-3.638-1.114-4.771-2.864-1.75-2.735-1.07-6.455 1.498-8.4 1.31-.985 2.782-1.373 4.381-1.218.063.013.139.026.214.04Z">
                                 </path>
                             </svg>
-                        </Link>
+                        </a>
+
+
                     </li>
                     <li className="instagram">
                         <Link>
@@ -90,11 +92,12 @@ const Footer = () => {
                             </span>
                         </Link>
                     </li>
-                    <li>
-                        <Link>
-                            <span class="material-symbols-outlined">
-                                call
-                            </span>
+                    <li className="phone_call">
+                        <Link >
+                            <svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" fill="#74767E" >
+                                <path d="M10,10c0-1.1,.9-2,2-2s2,.9,2,2-.9,2-2,2-2-.9-2-2Zm14-3v10c0,2.76-2.24,5-5,5H5c-2.76,0-5-2.24-5-5V7C0,4.24,2.24,2,5,2h14c2.76,0,5,2.24,5,5Zm-16,3c0,2.21,1.79,4,4,4s4-1.79,4-4-1.79-4-4-4-4,1.79-4,4Zm8.8,8.4c-1.15-1.52-2.9-2.4-4.8-2.4s-3.65,.88-4.8,2.4c-.33,.44-.24,1.07,.2,1.4,.44,.33,1.07,.24,1.4-.2,.76-1.02,1.93-1.6,3.2-1.6s2.44,.58,3.2,1.6c.2,.26,.5,.4,.8,.4,.21,0,.42-.07,.6-.2,.44-.33,.53-.96,.2-1.4Z" />
+                            </svg>
+
                         </Link>
                     </li>
                 </ul>
