@@ -322,6 +322,43 @@ const ProductView = () => {
                                         <a href="/product/sample-id">Shop Now</a>
                                     </div>
                                 </div>
+                                <div class="product-card">
+                                    <div class="product-image-wrapper">
+                                        <img src="/images/Best-Selling-Products-image-1.png" class="bsp-img" alt="Product Name" />
+                                        <img src={addTocart} class="add-to-cart-icon" alt="Add to Cart" />
+                                    </div>
+                                    <div class="product-details">
+                                        <h3>Product Name</h3>
+                                        <p class="product-price dual-price">
+                                            <span class="original-price">$50.00</span>
+                                            <span class="discount-price">$40.00</span>
+                                        </p>
+                                        <a href="/product/sample-id">Shop Now</a>
+                                    </div>
+                                </div>
+
+                                <div class="product-card">
+                                    <div class="product-image-wrapper">
+                                        <img src="/images/Best-Selling-Products-image-2.png" class="bsp-img" alt="Product Name" />
+                                        <img src={addTocart} class="add-to-cart-icon" alt="Add to Cart" />
+                                    </div>
+                                    <div class="product-details">
+                                        <h3>Product Name</h3>
+                                        <p class="product-price">$30.00</p>
+                                        <a href="/product/sample-id">Shop Now</a>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <div class="product-image-wrapper">
+                                        <img src="/images/Best-Selling-Products-image-3.png" class="bsp-img" alt="Product Name" />
+                                        <img src={addTocart} class="add-to-cart-icon" alt="Add to Cart" />
+                                    </div>
+                                    <div class="product-details">
+                                        <h3>Product Name</h3>
+                                        <p class="product-price">$30.00</p>
+                                        <a href="/product/sample-id">Shop Now</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
