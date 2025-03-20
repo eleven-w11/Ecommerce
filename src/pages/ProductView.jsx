@@ -86,27 +86,27 @@ const ProductView = () => {
 
 
 
-    useEffect(() => {
-        axios.get(`http://localhost:5000/api/products/${id}`)
-            .then(response => {
-                console.log("Fetched Product Data:", response.data);
-                const data = response.data;
+    // useEffect(() => {
+    //     axios.get(`http://localhost:5000/api/products/${id}`)
+    //         .then(response => {
+    //             console.log("Fetched Product Data:", response.data);
+    //             const data = response.data;
 
-                const saveAmount = data.product_price && data.dis_product_price
-                    ? data.product_price - data.dis_product_price
-                    : 0;
+    //             const saveAmount = data.product_price && data.dis_product_price
+    //                 ? data.product_price - data.dis_product_price
+    //                 : 0;
 
-                const images = data.colors.map(color => ({
-                    url: data.product_image,
-                    filter: color.filter || "none",
-                    color: color
-                }));
+    //             const images = data.colors.map(color => ({
+    //                 url: data.product_image,
+    //                 filter: color.filter || "none",
+    //                 color: color
+    //             }));
 
-                setProduct({ ...data, images, save: saveAmount });
-                setSelectedColor(data.colors?.[0] || null);
-            })
-            .catch(error => console.error("Error fetching product:", error));
-    }, [id]);
+    //             setProduct({ ...data, images, save: saveAmount });
+    //             setSelectedColor(data.colors?.[0] || null);
+    //         })
+    //         .catch(error => console.error("Error fetching product:", error));
+    // }, [id]);
 
 
     const images = [
@@ -141,21 +141,21 @@ const ProductView = () => {
         setCurrentIndex(index + 1);
     };
 
-    useEffect(() => {
-        axios.get("http://localhost:5000/api/products/bestselling")
-            .then(response => {
-                const allProducts = response.data;
-                const filteredProducts = allProducts.filter(p => p._id !== id);
-                const shuffled = filteredProducts.sort(() => 0.5 - Math.random());
-                setRandomProducts(shuffled.slice(0, 6));
-            })
-            .catch(error => console.error("Error fetching products:", error));
-    }, [id]);
+    // useEffect(() => {
+    //     axios.get("http://localhost:5000/api/products/bestselling")
+    //         .then(response => {
+    //             const allProducts = response.data;
+    //             const filteredProducts = allProducts.filter(p => p._id !== id);
+    //             const shuffled = filteredProducts.sort(() => 0.5 - Math.random());
+    //             setRandomProducts(shuffled.slice(0, 6));
+    //         })
+    //         .catch(error => console.error("Error fetching products:", error));
+    // }, [id]);
 
 
-    if (!product || !product.images || product.images.length === 0) {
-        return <p>Loading...</p>;
-    }
+    // if (!product || !product.images || product.images.length === 0) {
+    //     return <p>Loading...</p>;
+    // }
 
     return (
         <>
@@ -188,23 +188,17 @@ const ProductView = () => {
                                 local_shipping
                             </span> Free Delivery</p>
                             <div className="data-frame">
-                                <h2>{product.product_name}</h2>
-                                <p className="type"><span>Type </span>{product.p_type}</p>
-                                <p className="des"><span>Product Description </span>{product.p_des}</p>
+                                <h2>Xero_xXx</h2>
+                                <p className="type"><span>Type </span>Lorem, ipsum dolor.</p>
+                                <p className="des"><span>Product Description </span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse error possimus harum!</p>
                                 <div className="hr"></div>
-                                {product.dis_product_price ? (
-                                    <div className="discount-box">
-                                        <p className="original-price">$39</p>
-                                        <p className="price">$29</p>
-                                        <p className="save">Save 20%</p>
-                                    </div>
-                                ) : (
-                                    <div className="price-box">
-                                        <p className="price">${product.product_price}</p>
-                                    </div>
-                                )}
+                                <div className="discount-box">
+                                    <p className="original-price">$39</p>
+                                    <p className="price">$29</p>
+                                    <p className="save">Save 20%</p>
+                                </div>
 
-                                {product.colors && (
+                                {/* {product.colors && (
                                     <div className="color-selection">
                                         <div className="colors">
                                             {product.colors.map((color, index) => (
@@ -217,7 +211,7 @@ const ProductView = () => {
                                             ))}
                                         </div>
                                     </div>
-                                )}
+                                )} */}
 
                                 <div className="quantity-addtocart">
                                     <div className="quantity">
