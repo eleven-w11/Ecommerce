@@ -46,7 +46,7 @@ const BestSellingProducts = () => {
                 <span class="original-price">$50.00</span>
                 <span class="discount-price">$40.00</span>
               </p>
-              <a href="/product/sample-id">Shop Now</a>
+              <a href="/product/67b039830825e8bd03d89289">Shop Now</a>
             </div>
           </div>
 
@@ -58,7 +58,7 @@ const BestSellingProducts = () => {
             <div class="product-details">
               <h3>Product Name</h3>
               <p class="product-price">$30.00</p>
-              <a href="/product/sample-id">Shop Now</a>
+              <a href="/product/67b039830825e8bd03d89289">Shop Now</a>
             </div>
           </div>
           <div class="product-card">
@@ -69,7 +69,7 @@ const BestSellingProducts = () => {
             <div class="product-details">
               <h3>Product Name</h3>
               <p class="product-price">$30.00</p>
-              <a href="/product/sample-id">Shop Now</a>
+              <a href="/product/67b039830825e8bd03d89289">Shop Now</a>
             </div>
           </div>
         </div>
