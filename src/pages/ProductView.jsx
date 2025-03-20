@@ -10,6 +10,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import left from "./images/left.png";
 import right from "./images/right.png";
 import addTocart from "./images/add-to-cart.png";
+import Footer from "./Footer";
 
 
 gsap.registerPlugin(ScrollTrigger);
@@ -359,6 +360,7 @@ const ProductView = () => {
                 </div>
 
             </div>
+            <Footer />
         </>
     );
 };
