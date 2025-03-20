@@ -188,11 +188,7 @@
     width: 170px;
 }
 
-@media (max-width: 600px) {
-    .hero {
-        height: 370px;
-    }
-}
+
 
 @media (max-width: 450px) {
 

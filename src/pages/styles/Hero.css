@@ -151,6 +151,10 @@
 
 
 @media (max-width: 600px) {
+    .hero {
+        height: 370px;
+    }
+
     .hero-image {
         width: 100%;
         height: 100%;
@@ -158,7 +162,7 @@
 
     .hero-data-style-2 {
         width: 85%;
-        height: 55vh;
+        height: 370px;
     }
 
     .LOOKBEAUTIFUL {
