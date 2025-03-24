@@ -3,14 +3,12 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import "./styles/ProductView.css";
 import "./styles/BestSelling.css";
-
 import { Link } from "react-router-dom";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import left from "./images/left.png";
 import right from "./images/right.png";
 import addTocart from "./images/add-to-cart.png";
-import Footer from "./Footer";
 
 
 gsap.registerPlugin(ScrollTrigger);
@@ -24,21 +22,28 @@ const ProductView = () => {
     const [proDetails, setProDetails] = useState(false);
     const [shippingDetails, setShippingDetails] = useState(false);
     const [randomProducts, setRandomProducts] = useState([]);
-
-    const proDetailsRef = useRef(null);
-    const detailsRef = useRef(null);
     const [cart, setCart] = useState([]);
 
-    // 🛒 Cart me product add karne ka function
-    const addToCart = (product) => {
-        const updatedCart = [...cart, product];
-        setCart(updatedCart);
+    // const buyNowRef = useRef(null);
+    const proDetailsRef = useRef(null);
+    const detailsRef = useRef(null);
 
-        // ✅ LocalStorage me bhi cart save karo
+    const addToCart = (product) => {
+        const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+
+        // 🔹 New Cart Item me Date & Time Add Karna
+        const newCartItem = {
+            id: product._id,
+            addedAt: new Date().toISOString() // ✅ ISO format me date-time store hoga
+        };
+
+        const updatedCart = [...storedCart, newCartItem];
         localStorage.setItem("cart", JSON.stringify(updatedCart));
 
-        alert(`${product.product_name} added to cart!`);
+        alert(`Product ID: ${product._id} added to cart at ${new Date().toLocaleString()}!`);
     };
+
+    // const proDetailsRef = useRef(null);
 
     useEffect(() => {
         if (proDetails) {
@@ -87,46 +92,47 @@ const ProductView = () => {
 
 
 
-    // useEffect(() => {
-    //     axios.get(`http://localhost:5000/api/products/${id}`)
-    //         .then(response => {
-    //             console.log("Fetched Product Data:", response.data);
-    //             const data = response.data;
+    useEffect(() => {
+        axios.get(`http://localhost:5000/api/products/${id}`)
+            .then(response => {
+                console.log("Fetched Product Data:", response.data);
+                const data = response.data;
 
-    //             const saveAmount = data.product_price && data.dis_product_price
-    //                 ? data.product_price - data.dis_product_price
-    //                 : 0;
+                const saveAmount = data.product_price && data.dis_product_price
+                    ? data.product_price - data.dis_product_price
+                    : 0;
 
-    //             const images = data.colors.map(color => ({
-    //                 url: data.product_image,
-    //                 filter: color.filter || "none",
-    //                 color: color
-    //             }));
+                const images = data.colors.map(color => ({
+                    url: data.product_image,
+                    filter: color.filter || "none",
+                    color: color
+                }));
 
-    //             setProduct({ ...data, images, save: saveAmount });
-    //             setSelectedColor(data.colors?.[0] || null);
-    //         })
-    //         .catch(error => console.error("Error fetching product:", error));
-    // }, [id]);
-
-
-    const images = [
-        "/images/Best-Selling-Products-image-1.png",
-        "/images/Best-Selling-Products-image-2.png",
-        "/images/Best-Selling-Products-image-3.png"
-    ];
+                setProduct({ ...data, images, save: saveAmount });
+                setSelectedColor(data.colors?.[0] || null);
+            })
+            .catch(error => console.error("Error fetching product:", error));
+    }, [id]);
 
 
 
-    const prevImage = () => {
-        setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+
+    const changeImage = (index) => {
+        setCurrentIndex(index);
+        setSelectedColor(product.colors[index]);
     };
 
     const nextImage = () => {
-        setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+        const newIndex = (currentIndex + 1) % product.images.length;
+        changeImage(newIndex);
     };
 
-    const changeImage = (index) => {
+    const prevImage = () => {
+        const newIndex = (currentIndex - 1 + product.images.length) % product.images.length;
+        changeImage(newIndex);
+    };
+
+    const selectImage = (index) => {
         setCurrentIndex(index);
     };
 
@@ -142,21 +148,22 @@ const ProductView = () => {
         setCurrentIndex(index + 1);
     };
 
-    // useEffect(() => {
-    //     axios.get("http://localhost:5000/api/products/bestselling")
-    //         .then(response => {
-    //             const allProducts = response.data;
-    //             const filteredProducts = allProducts.filter(p => p._id !== id);
-    //             const shuffled = filteredProducts.sort(() => 0.5 - Math.random());
-    //             setRandomProducts(shuffled.slice(0, 6));
-    //         })
-    //         .catch(error => console.error("Error fetching products:", error));
-    // }, [id]);
+    useEffect(() => {
+        axios.get("http://localhost:5000/api/products/bestselling")
+            .then(response => {
+                const allProducts = response.data;
+                const filteredProducts = allProducts.filter(p => p._id !== id);
+                const shuffled = filteredProducts.sort(() => 0.5 - Math.random());
+                setRandomProducts(shuffled.slice(0, 6));
+            })
+            .catch(error => console.error("Error fetching products:", error));
+    }, [id]);
 
 
-    // if (!product || !product.images || product.images.length === 0) {
-    //     return <p>Loading...</p>;
-    // }
+    if (!product || !product.images || product.images.length === 0) {
+        return <p>Loading...</p>;
+    }
+
 
     return (
         <>
@@ -171,10 +178,14 @@ const ProductView = () => {
                                 <div className="right-icon-img" onClick={nextImage}>
                                     <img src={right} className="right-icon" alt="Next" />
                                 </div>
-                                <img src={images[currentIndex]} className="img" alt="Best Selling Product" />
-
+                                <img
+                                    src={`/images/${product.images[currentIndex].url}`}
+                                    className="img"
+                                    alt={product.product_name}
+                                    style={{ filter: product.images[currentIndex].filter }}
+                                />
                                 <div className="pi_dot">
-                                    {images.map((_, index) => (
+                                    {product.images.map((_, index) => (
                                         <span
                                             key={index}
                                             className={`dot ${index === currentIndex ? "active-dot" : ""}`}
@@ -189,17 +200,24 @@ const ProductView = () => {
                                 local_shipping
                             </span> Free Delivery</p>
                             <div className="data-frame">
-                                <h2>Xero_xXx</h2>
-                                <p className="type"><span>Type </span>Lorem, ipsum dolor.</p>
-                                <p className="des"><span>Product Description </span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse error possimus harum!</p>
+                                <h2>{product.product_name}</h2>
+                                <p>{product._id}</p>
+                                <p className="type"><span>Type </span>{product.p_type}</p>
+                                <p className="des"><span>Product Description </span>{product.p_des}</p>
                                 <div className="hr"></div>
-                                <div className="discount-box">
-                                    <p className="original-price">$39</p>
-                                    <p className="price">$29</p>
-                                    <p className="save">Save 20%</p>
-                                </div>
+                                {product.dis_product_price ? (
+                                    <div className="discount-box">
+                                        <p className="original-price">${product.product_price}</p>
+                                        <p className="price">${product.dis_product_price}</p>
+                                        <p className="save">Save {Math.round((product.save / product.product_price) * 100)}%</p>
+                                    </div>
+                                ) : (
+                                    <div className="price-box">
+                                        <p className="price">${product.product_price}</p>
+                                    </div>
+                                )}
 
-                                {/* {product.colors && (
+                                {product.colors && (
                                     <div className="color-selection">
                                         <div className="colors">
                                             {product.colors.map((color, index) => (
@@ -212,7 +230,7 @@ const ProductView = () => {
                                             ))}
                                         </div>
                                     </div>
-                                )} */}
+                                )}
 
                                 <div className="quantity-addtocart">
                                     <div className="quantity">
@@ -221,7 +239,9 @@ const ProductView = () => {
                                         <button className="quantity-btn" onClick={increaseQuantity}>+</button>
                                     </div>
                                     <div className="add-to-cart">
-                                        <button>Add to Cart</button>
+                                        <button
+                                            onClick={() => addToCart(product)}
+                                        >Add to Cart</button>
                                     </div>
                                 </div>
                                 <div className="buy_this_now">
@@ -242,9 +262,9 @@ const ProductView = () => {
                                     <div ref={proDetailsRef} className="data-shipping-product"
                                         style={{ display: proDetails ? "block" : "none" }}
                                     >
-                                        <li>Express and fast delivery all over Pakistan (Avg. Time 1-3 days).</li>
-                                        <li>Hassle Free exchange if there is any size issue.</li>
-                                        <li>Free Delivery on orders over Rs. 2,990/-</li>
+                                        {proDetails && product.product_details.map((detail, index) => (
+                                            <li key={index}>{detail}</li>
+                                        ))}
                                     </div>
 
 
@@ -276,91 +296,53 @@ const ProductView = () => {
                     </div>
                 </div>
                 <div className="other-products">
-                    <div class="best-selling-section">
-                        <div class="product-container">
-                            <h2>Best Selling</h2>
-                            <div class="products-grid">
-                                <div class="product-card">
-                                    <div class="product-image-wrapper">
-                                        <img src="/images/Best-Selling-Products-image-1.png" class="bsp-img" alt="Product Name" />
-                                        <img src={addTocart} class="add-to-cart-icon" alt="Add to Cart" />
-                                    </div>
-                                    <div class="product-details">
-                                        <h3>Product Name</h3>
-                                        <p class="product-price dual-price">
-                                            <span class="original-price">$50.00</span>
-                                            <span class="discount-price">$40.00</span>
-                                        </p>
-                                        <a href="/product/sample-id">Shop Now</a>
-                                    </div>
-                                </div>
+                    <div className="best-selling-section">
+                        <div className="product-container">
+                            <h2>Related Products</h2>
+                            <div className="products-grid">
+                                {randomProducts.length > 0 ? (
+                                    randomProducts.map((p) => {
+                                        const hasDiscount = p.dis_product_price !== undefined;
 
-                                <div class="product-card">
-                                    <div class="product-image-wrapper">
-                                        <img src="/images/Best-Selling-Products-image-2.png" class="bsp-img" alt="Product Name" />
-                                        <img src={addTocart} class="add-to-cart-icon" alt="Add to Cart" />
-                                    </div>
-                                    <div class="product-details">
-                                        <h3>Product Name</h3>
-                                        <p class="product-price">$30.00</p>
-                                        <a href="/product/sample-id">Shop Now</a>
-                                    </div>
-                                </div>
-                                <div class="product-card">
-                                    <div class="product-image-wrapper">
-                                        <img src="/images/Best-Selling-Products-image-3.png" class="bsp-img" alt="Product Name" />
-                                        <img src={addTocart} class="add-to-cart-icon" alt="Add to Cart" />
-                                    </div>
-                                    <div class="product-details">
-                                        <h3>Product Name</h3>
-                                        <p class="product-price">$30.00</p>
-                                        <a href="/product/sample-id">Shop Now</a>
-                                    </div>
-                                </div>
-                                <div class="product-card">
-                                    <div class="product-image-wrapper">
-                                        <img src="/images/Best-Selling-Products-image-1.png" class="bsp-img" alt="Product Name" />
-                                        <img src={addTocart} class="add-to-cart-icon" alt="Add to Cart" />
-                                    </div>
-                                    <div class="product-details">
-                                        <h3>Product Name</h3>
-                                        <p class="product-price dual-price">
-                                            <span class="original-price">$50.00</span>
-                                            <span class="discount-price">$40.00</span>
-                                        </p>
-                                        <a href="/product/sample-id">Shop Now</a>
-                                    </div>
-                                </div>
+                                        return (
+                                            <div key={p._id} className="product-card">
+                                                <div className="product-image-wrapper">
+                                                    <img src={`/images/${p.product_image}`} className="bsp-img" alt={p.product_name} />
+                                                    <img
+                                                        src={addTocart}
+                                                        className="add-to-cart-icon"
+                                                        alt="Add to Cart"
+                                                        onClick={() => addToCart(p)}
+                                                    />
+                                                </div>
+                                                <div className="product-details">
+                                                    <h3>{p.product_name}</h3>
+                                                    {hasDiscount ? (
+                                                        <p className="product-price dual-price">
+                                                            <span className="original-price">${p.product_price}</span>
+                                                            <span className="discount-price">${p.dis_product_price}</span>
+                                                        </p>
+                                                    ) : (
+                                                        <p className="product-price">${p.product_price}</p>
+                                                    )}
+                                                    <Link to={`/product/${p._id}`} className="shop-now">
+                                                        Buy Now
+                                                    </Link>
+                                                    <p>{p._id}</p>
 
-                                <div class="product-card">
-                                    <div class="product-image-wrapper">
-                                        <img src="/images/Best-Selling-Products-image-2.png" class="bsp-img" alt="Product Name" />
-                                        <img src={addTocart} class="add-to-cart-icon" alt="Add to Cart" />
-                                    </div>
-                                    <div class="product-details">
-                                        <h3>Product Name</h3>
-                                        <p class="product-price">$30.00</p>
-                                        <a href="/product/sample-id">Shop Now</a>
-                                    </div>
-                                </div>
-                                <div class="product-card">
-                                    <div class="product-image-wrapper">
-                                        <img src="/images/Best-Selling-Products-image-3.png" class="bsp-img" alt="Product Name" />
-                                        <img src={addTocart} class="add-to-cart-icon" alt="Add to Cart" />
-                                    </div>
-                                    <div class="product-details">
-                                        <h3>Product Name</h3>
-                                        <p class="product-price">$30.00</p>
-                                        <a href="/product/sample-id">Shop Now</a>
-                                    </div>
-                                </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })
+                                ) : (
+                                    <p>Loading random products...</p>
+                                )}
                             </div>
                         </div>
                     </div>
                 </div>
 
             </div>
-            <Footer />
         </>
     );
 };

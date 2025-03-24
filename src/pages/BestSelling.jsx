@@ -8,19 +8,21 @@ const BestSellingProducts = () => {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
 
-  // 🛒 Cart me product add karne ka function
   const addToCart = (product) => {
-    // 🔹 Pehle se stored cart items ko get karo (ya empty array lo agar kuch nahi hai)
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
 
-    // 🔹 Sirf product ki ID store karni hai
-    const updatedCart = [...storedCart, product._id];
+    // 🔹 New Cart Item me Date & Time Add Karna
+    const newCartItem = {
+      id: product._id,
+      addedAt: new Date().toISOString() // ✅ ISO format me date-time store hoga
+    };
 
-    // 🔹 LocalStorage me updated cart save karo
+    const updatedCart = [...storedCart, newCartItem];
     localStorage.setItem("cart", JSON.stringify(updatedCart));
 
-    alert(`Product ID: ${product._id} added to cart!`);
+    alert(`Product ID: ${product._id} added to cart at ${new Date().toLocaleString()}!`);
   };
+
 
 
   useEffect(() => {
