@@ -15,6 +15,7 @@ import ProductView from './pages/ProductView';
 // import CaRt from './pages/Cart';
 import ScrollToTop from "./pages/ScrollToTop";
 import Footer from './pages/Footer';
+import Cart from './pages/Cart';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -70,10 +71,12 @@ function App() {
         <Route path="/SignIn" element={<SignIn onSignIn={handleSignIn} />} />
         <Route path="/SignUp" element={<SignUp onSignUp={handleSignUp} />} />
         <Route path="/UserProfile" element={<UserProfile onSignOut={handleSignOut} />} />
-        {/* <Route path="/Products" element={<Products />} /> */}
         <Route path='/test' element={<TeSt />} />
         <Route path="/product/:id" element={<ProductView />} />
-        {/* <Route path="/Cart" element={<CaRt />} /> */}
+        <Route path="/Best Selling" element={<BestSellingProducts />} />
+        <Route path="/Top Products" element={<TopProduct />} />
+        <Route path="/Cart" element={<Cart />} />
+
 
       </Routes>
     </div>

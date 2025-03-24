@@ -10,14 +10,18 @@ const BestSellingProducts = () => {
 
   // 🛒 Cart me product add karne ka function
   const addToCart = (product) => {
-    const updatedCart = [...cart, product];
-    setCart(updatedCart);
+    // 🔹 Pehle se stored cart items ko get karo (ya empty array lo agar kuch nahi hai)
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
 
-    // ✅ LocalStorage me bhi cart save karo
+    // 🔹 Sirf product ki ID store karni hai
+    const updatedCart = [...storedCart, product._id];
+
+    // 🔹 LocalStorage me updated cart save karo
     localStorage.setItem("cart", JSON.stringify(updatedCart));
 
-    alert(`${product.product_name} added to cart!`);
+    alert(`Product ID: ${product._id} added to cart!`);
   };
+
 
   useEffect(() => {
     axios.get("http://localhost:5000/api/products/bestselling")
@@ -31,53 +35,52 @@ const BestSellingProducts = () => {
   }, []);
 
   return (
-    <div class="best-selling-section">
-      <div class="product-container">
+    <div className="best-selling-section">
+      <div className="product-container">
         <h2>Best Selling</h2>
-        <div class="products-grid">
-          <div class="product-card">
-            <div class="product-image-wrapper">
-              <img src="/images/Best-Selling-Products-image-1.png" class="bsp-img" alt="Product Name" />
-              <img src={addTocart} class="add-to-cart-icon" alt="Add to Cart" />
-            </div>
-            <div class="product-details">
-              <h3>Product Name</h3>
-              <p class="product-price dual-price">
-                <span class="original-price">$50.00</span>
-                <span class="discount-price">$40.00</span>
-              </p>
-              <a href="/product/67b039830825e8bd03d89289">Shop Now</a>
-            </div>
-          </div>
+        <div className="products-grid">
+          {products.length > 0 ? (
+            products.map(product => {
+              const hasDiscount = product.dis_product_price !== undefined;
 
-          <div class="product-card">
-            <div class="product-image-wrapper">
-              <img src="/images/Best-Selling-Products-image-2.png" class="bsp-img" alt="Product Name" />
-              <img src={addTocart} class="add-to-cart-icon" alt="Add to Cart" />
-            </div>
-            <div class="product-details">
-              <h3>Product Name</h3>
-              <p class="product-price">$30.00</p>
-              <a href="/product/67b039830825e8bd03d89289">Shop Now</a>
-            </div>
-          </div>
-          <div class="product-card">
-            <div class="product-image-wrapper">
-              <img src="/images/Best-Selling-Products-image-3.png" class="bsp-img" alt="Product Name" />
-              <img src={addTocart} class="add-to-cart-icon" alt="Add to Cart" />
-            </div>
-            <div class="product-details">
-              <h3>Product Name</h3>
-              <p class="product-price">$30.00</p>
-              <a href="/product/67b039830825e8bd03d89289">Shop Now</a>
-            </div>
-          </div>
+              return (
+                <div key={product._id} className="product-card">
+                  <div className="product-image-wrapper">
+                    <img src={`/images/${product.product_image}`} className="bsp-img" alt={product.product_name} />
+                    <img
+                      src={addTocart}
+                      className="add-to-cart-icon"
+                      alt="Add to Cart"
+                      onClick={() => addToCart(product)}
+                    />
+                  </div>
+                  <div className="product-details">
+                    <h3>{product.product_name}</h3>
+                    {hasDiscount ? (
+                      <p className="product-price dual-price">
+                        <span className="original-price">${product.product_price}</span>
+                        <span className="discount-price">${product.dis_product_price}</span>
+                      </p>
+                    ) : (
+                      <p className="product-price">${product.product_price}</p>
+                    )}
+                    <Link
+                      to={`/product/${product._id}`}
+                      onClick={() => console.log("Redirecting to Product ID:", product._id)}
+                    >
+                      Shop Now
+                    </Link>
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <p>Loading...</p>
+          )}
         </div>
       </div>
     </div>
-
   );
 };
 
 export default BestSellingProducts;
-// http://localhost:3000/product/67b039830825e8bd03d89289

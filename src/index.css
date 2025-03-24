@@ -9,14 +9,7 @@ body {
     position: relative;
 }
 
-nav ul,
-nav ul li,
-nav .menu,
-nav .location-account-search-cart,
-.slidemenu ul,
-.slidenavlinks ul,
-.slidemenu a,
-.slidenavlinks a,
+
 .product-display-beinspired,
 .products-video-data {
     display: flex;

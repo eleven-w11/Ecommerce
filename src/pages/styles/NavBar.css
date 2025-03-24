@@ -2,25 +2,52 @@ body {
     /* position: relative; */
 }
 
+nav,
+nav a,
+nav ul,
+nav ul li,
+nav .location-account-search-cart div,
+nav .location-account-search-cart div a,
+.slidemenu ul,
+.slidenavlinks ul,
+.slidemenu a,
+.slidenavlinks a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 nav {
+    height: 100%;
+    height: 60px;
     position: sticky;
     top: 0;
-    padding: 8px 0;
+    /* padding: 8px 0; */
     background-color: whitesmoke;
     z-index: 9;
 
 }
 
+nav ul {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
 
 
 nav .menu {
     width: 35%;
+    height: 100%;
     justify-content: flex-start;
     padding: 0 0 0 25px;
+    /* background-color: lightblue; */
 }
 
 nav .baroque-logo {
     width: 30%;
+    height: 100%;
+    margin-bottom: 6px;
+    /* background-color: lightgreen; */
 }
 
 .footer-brand h1,
@@ -40,26 +67,32 @@ nav .baroque-logo h1 span {
 
 nav .location-account-search-cart {
     width: 35%;
+    height: 100%;
     justify-content: end;
+    /* background-color: red; */
 }
 
-nav .location-account-search-cart li {
+nav .location-account-search-cart div {
     margin: 0 7px 0 7px;
 }
 
-nav .location-account-search-cart li .cart {
-    padding: 0 20px 0 0;
+nav .location-account-search-cart div .cart {
+    /* padding: 0 20px 0 0; */
+    margin: 0 20px 0 0;
 }
+
+nav a {}
 
 
 nav .material-symbols-outlined {
-    font-size: 33px;
+    font-size: 30px;
     font-variation-settings:
-        'FILL' 0,
-        'wght' 500,
+        'FILL' 1,
+        'wght' 200,
         'GRAD' 50,
-        'opsz' 36;
+        'opsz' 0;
     cursor: pointer;
+    /* background-color: red; */
 }
 
 nav .country {
@@ -70,6 +103,19 @@ nav .country {
 nav .userimg {
     width: 36px;
 }
+
+.userprofile-show {
+    display: none;
+}
+
+.userlocation-show {
+    display: none;
+}
+
+.search-show {
+    display: none;
+}
+
 
 /* .slidemenu {
     width: 450px;
@@ -139,42 +185,6 @@ nav .userimg {
     cursor: pointer;
 }
 
-.extnav {
-    background-color: rgb(43, 0, 255);
-    /* position: relative; */
-}
-
-.slidenavlinks {
-    width: 300px;
-    height: 100vh;
-    position: absolute;
-    top: 0;
-    left: -100%;
-    background-color: whitesmoke;
-    color: white;
-    overflow: auto;
-    transition: left 0.3s ease-in-out;
-    z-index: 35;
-    padding: 20px;
-}
-
-.slidenavlinks.visible {
-    left: 50%;
-}
-
-.slidenavlinks li {
-    width: 100%;
-    background-color: lightgoldenrodyellow;
-    justify-content: center;
-}
-
-.slidenavlinks a {
-    width: 100%;
-    margin: 20px 0;
-    justify-content: center;
-    background-color: lightblue;
-
-}
 
 
 
@@ -229,7 +239,6 @@ nav .userimg {
 .navline {
     width: 80%;
     height: 1px;
-    /* border-top: 1px solid rgb(255, 255, 255); */
     border-top: 1px solid red;
     margin-left: 20px;
 }
@@ -264,12 +273,17 @@ nav .userimg {
 } */
 
 
+/* .userlocation-show {
+    display: block;
+}
 
-
+.userprofile-show {
+    display: block;
+} */
 
 
 @media (max-width: 700px) {
-    .userlocation-hide {
+    nav .location-account-search-cart .userlocation-hide {
         display: none;
     }
 
@@ -285,7 +299,7 @@ nav .userimg {
         font-size: 30px;
     }
 
-    .userprofile-hide {
+    nav .location-account-search-cart .userprofile-hide {
         display: none;
     }
 
@@ -295,5 +309,15 @@ nav .userimg {
 
     .slidemenu {
         left: -500px;
+    }
+}
+
+@media (max-width: 380px) {
+    nav .location-account-search-cart .search-hide {
+        display: none;
+    }
+
+    .search-show {
+        display: block;
     }
 }
