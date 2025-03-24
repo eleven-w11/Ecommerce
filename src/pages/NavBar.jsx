@@ -300,27 +300,29 @@ const NavBar = ({ Authentication }) => {
                         )}
                     </li>
 
-                    <div className="navline userprofile-show"
-                        ref={(el) => (linksRef.current[15] = el)}></div>
-                    <li className='userlocation-show'>
-                        {country ? (
-                            <Link to="/UserLocation"
-                                ref={(el) => (linksRef.current[16] = el)}
-                                className='country'>{country}</Link>
-                        ) : (
-                            <Link to="/UserLocation"
-                                ref={(el) => (linksRef.current[16] = el)}
-                            >
-                                <span className="material-symbols-outlined">add_location</span>
-                            </Link>
-                        )}
-                    </li>
-                    <div className="navline userlocation-show"
-                        ref={(el) => (linksRef.current[17] = el)}></div>
-                    <li className='search-show'>
-                        <span className="material-symbols-outlined">search</span>
-                    </li>
-                    <div className="navline userlocation-show"></div>
+                    <div className="mob_icons">
+                        <div className="navline userprofile-show"
+                            ref={(el) => (linksRef.current[15] = el)}></div>
+                        <li className='userlocation-show'>
+                            {country ? (
+                                <Link to="/UserLocation"
+                                    ref={(el) => (linksRef.current[16] = el)}
+                                    className='country'>{country}</Link>
+                            ) : (
+                                <Link to="/UserLocation"
+                                    ref={(el) => (linksRef.current[16] = el)}
+                                >
+                                    <span className="material-symbols-outlined">add_location</span>
+                                </Link>
+                            )}
+                        </li>
+                        <div className="navline userlocation-show"
+                            ref={(el) => (linksRef.current[17] = el)}></div>
+                        <li className='search-show'>
+                            <span className="material-symbols-outlined">search</span>
+                        </li>
+                        <div className="navline userlocation-show"></div>
+                    </div>
                 </ul>
             </div>
         </>

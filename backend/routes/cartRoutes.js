@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const Product = require("../models/Product");
 
-// ✅ Cart Products Fetch Karne Ka Route
 router.post("/cart-products", async (req, res) => {
     try {
         const { productIds } = req.body;
