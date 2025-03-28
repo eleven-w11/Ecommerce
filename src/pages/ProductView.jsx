@@ -22,7 +22,6 @@ const ProductView = () => {
     const [proDetails, setProDetails] = useState(false);
     const [shippingDetails, setShippingDetails] = useState(false);
     const [randomProducts, setRandomProducts] = useState([]);
-    const [cart, setCart] = useState([]);
 
     // const buyNowRef = useRef(null);
     const proDetailsRef = useRef(null);
@@ -40,7 +39,6 @@ const ProductView = () => {
         const updatedCart = [...storedCart, newCartItem];
         localStorage.setItem("cart", JSON.stringify(updatedCart));
 
-        alert(`Product ID: ${product._id} added to cart at ${new Date().toLocaleString()}!`);
     };
 
     // const proDetailsRef = useRef(null);

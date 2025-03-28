@@ -6,25 +6,32 @@ import addTocart from "./images/add-to-cart.png";
 
 const BestSellingProducts = () => {
   const [products, setProducts] = useState([]);
-  const [cart, setCart] = useState([]);
 
+  // ✅ Add to Cart Function
   const addToCart = (product) => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
 
-    // 🔹 New Cart Item me Date & Time Add Karna
+    // ✅ Check if Product Already Exists
+    const productExists = storedCart.some(item => item.id === product._id);
+    if (productExists) {
+      alert("Product is already in the cart!");
+      return;
+    }
+
+    // ✅ New Cart Item with Timestamp
     const newCartItem = {
       id: product._id,
-      addedAt: new Date().toISOString() // ✅ ISO format me date-time store hoga
+      addedAt: new Date().toISOString()
     };
 
     const updatedCart = [...storedCart, newCartItem];
     localStorage.setItem("cart", JSON.stringify(updatedCart));
 
-    alert(`Product ID: ${product._id} added to cart at ${new Date().toLocaleString()}!`);
+    // ✅ Update Navbar Count & Cart Page
+    window.dispatchEvent(new Event("storage"));
   };
 
-
-
+  // ✅ Fetch Best Selling Products
   useEffect(() => {
     axios.get("http://localhost:5000/api/products/bestselling")
       .then(response => {

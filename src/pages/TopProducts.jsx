@@ -7,21 +7,28 @@ import addTocart from "./images/add-to-cart.png";
 
 const TopProduct = () => {
     const [products, setProducts] = useState([]);
-    const [cart, setCart] = useState([]);
 
     const addToCart = (product) => {
         const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
 
-        // 🔹 New Cart Item me Date & Time Add Karna
+        // ✅ Check if Product Already Exists
+        const productExists = storedCart.some(item => item.id === product._id);
+        if (productExists) {
+            alert("Product is already in the cart!");
+            return;
+        }
+
+        // ✅ New Cart Item with Timestamp
         const newCartItem = {
             id: product._id,
-            addedAt: new Date().toISOString() // ✅ ISO format me date-time store hoga
+            addedAt: new Date().toISOString()
         };
 
         const updatedCart = [...storedCart, newCartItem];
         localStorage.setItem("cart", JSON.stringify(updatedCart));
 
-        alert(`Product ID: ${product._id} added to cart at ${new Date().toLocaleString()}!`);
+        // ✅ Update Navbar Count & Cart Page
+        window.dispatchEvent(new Event("storage"));
     };
 
 
@@ -76,7 +83,7 @@ const TopProduct = () => {
                                         >
                                             Shop Now
                                         </Link>
-
+                                        <p>{product._id}</p>
                                     </div>
                                 </div>
                             );

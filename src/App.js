@@ -16,6 +16,7 @@ import ProductView from './pages/ProductView';
 import ScrollToTop from "./pages/ScrollToTop";
 import Footer from './pages/Footer';
 import Cart from './pages/Cart';
+import TestWeb from './pages/TestWeb';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -57,6 +58,9 @@ function App() {
   return (
     <div>
       <NavBar Authentication={isAuthenticated} />
+      {/* <TestWeb /> */}
+
+
       <ScrollToTop />
       <Routes>
         <Route path="/" element={
@@ -84,4 +88,3 @@ function App() {
 }
 
 export default App;
-// nm na apni website github ka through vercel pr deploy ki ha but phla website properly work kr rhi thi but ab jb mn na website ko 

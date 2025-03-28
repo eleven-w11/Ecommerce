@@ -22,3 +22,11 @@ src
             pages files .jsx
     app.js
     index.js
+
+
+
+
+todo
+update add to cart in productview , also 
+    update images , remove filter , fully seo images
+    
