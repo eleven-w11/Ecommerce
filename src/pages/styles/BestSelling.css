@@ -141,54 +141,56 @@
 
 .best-selling-section .product-card:nth-child(2) .bsp-img {
     width: 190px;
+    /* background-color: red; */
 }
 
 
-.best-selling-section .product-card:nth-child(1) .product-main-image {
+.best-selling-section .product-card:nth-child(1) .tp-img {
     width: 190px;
 }
 
-.best-selling-section .product-card:nth-child(2) .product-main-image {
+.best-selling-section .product-card:nth-child(2) .tp-img {
     width: 205px;
+    /* background-color: red; */
 }
 
-.best-selling-section .product-card:nth-child(3) .product-main-image {
+.best-selling-section .product-card:nth-child(3) .tp-img {
     width: 150px;
 }
 
-.best-selling-section .product-card:nth-child(4) .product-main-image {
+.best-selling-section .product-card:nth-child(4) .tp-img {
     width: 190px;
 }
 
-.best-selling-section .product-card:nth-child(5) .product-main-image {
+.best-selling-section .product-card:nth-child(5) .tp-img {
     width: 150px;
 }
 
-.best-selling-section .product-card:nth-child(6) .product-main-image {
+.best-selling-section .product-card:nth-child(6) .tp-img {
     width: 200px;
 }
 
-.best-selling-section .product-card:nth-child(7) .product-main-image {
+.best-selling-section .product-card:nth-child(7) .tp-img {
     width: 150px;
 }
 
-.best-selling-section .product-card:nth-child(8) .product-main-image {
+.best-selling-section .product-card:nth-child(8) .tp-img {
     width: 200px;
 }
 
-.best-selling-section .product-card:nth-child(9) .product-main-image {
+.best-selling-section .product-card:nth-child(9) .tp-img {
     width: 190px;
 }
 
-.best-selling-section .product-card:nth-child(10) .product-main-image {
+.best-selling-section .product-card:nth-child(10) .tp-img {
     width: 190px;
 }
 
-.best-selling-section .product-card:nth-child(11) .product-main-image {
+.best-selling-section .product-card:nth-child(11) .tp-img {
     width: 130px;
 }
 
-.best-selling-section .product-card:nth-child(12) .product-main-image {
+.best-selling-section .product-card:nth-child(12) .tp-img {
     width: 170px;
 }
 

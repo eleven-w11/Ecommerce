@@ -4,11 +4,18 @@ const Product = require("../models/Product");
 
 router.post("/cart-products", async (req, res) => {
     try {
-        const { productIds } = req.body;
-        const products = await Product.find({ _id: { $in: productIds } });
+        // console.log("Received product IDs:", req.body.productIds); // ✅ Debugging
+        const products = await Product.find({ _id: { $in: req.body.productIds } });
+        // console.warn("cartroutes.js", products);
+        
+        if (!products.length) {
+            return res.status(404).json({ error: "No products found" });
+        }
+
         res.json(products);
     } catch (error) {
-        res.status(500).json({ error: "Error fetching cart products" });
+        console.error("Error fetching cart products:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 

@@ -87,6 +87,7 @@
     font-weight: 600;
     margin-bottom: 5px;
     justify-content: start;
+    display: none;
 }
 
 .site-footer .footer-column h4 span {
@@ -151,6 +152,7 @@
 
     .site-footer .footer-column h4 {
         justify-content: center;
+        display: block;
     }
 
     .site-footer .footer-column h4 span {

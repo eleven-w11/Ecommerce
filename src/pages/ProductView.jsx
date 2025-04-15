@@ -22,26 +22,102 @@ const ProductView = () => {
     const [proDetails, setProDetails] = useState(false);
     const [shippingDetails, setShippingDetails] = useState(false);
     const [randomProducts, setRandomProducts] = useState([]);
+    const [selectedSize, setSelectedSize] = useState(null);
+
 
     // const buyNowRef = useRef(null);
     const proDetailsRef = useRef(null);
     const detailsRef = useRef(null);
 
+    useEffect(() => {
+        // Reset all selection-related states
+        setSelectedColor(null);
+        setSelectedSize(null);
+        setQuantity(1);
+        setCurrentIndex(0);
+    }, [id]);
+
     const addToCart = (product) => {
         const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+        const timeStamp = Date.now(); // ✅ millisecond-based timestamp
+        const uniqueId = `${product._id}-${timeStamp}`; // ✅ create composite id + time
 
-        // 🔹 New Cart Item me Date & Time Add Karna
+        const index = storedCart.findIndex(item => item.id === product._id);
+        if (index !== -1) {
+            storedCart[index].quantity = (storedCart[index].quantity || 1) + 1;
+            storedCart[index].addedAt = new Date().toISOString();
+
+            localStorage.setItem("cart", JSON.stringify(storedCart));
+            window.dispatchEvent(new Event("storage"));
+            alert("Quantity increased!");
+            return;
+        }
+
         const newCartItem = {
-            id: product._id,
-            addedAt: new Date().toISOString() // ✅ ISO format me date-time store hoga
+            uniqueId: uniqueId, // ✅ store combined id
+            id: product._id,     // original MongoDB ID
+            quantity: 1,
+            addedAt: new Date().toISOString()
         };
 
         const updatedCart = [...storedCart, newCartItem];
         localStorage.setItem("cart", JSON.stringify(updatedCart));
-
+        window.dispatchEvent(new Event("storage"));
+        alert("Product added to cart!");
     };
 
+
+
+
     // const proDetailsRef = useRef(null);
+
+    const addToCartWithDetails = (product, selectedColor, selectedSize, quantity, currentIndex) => {
+        const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+
+        // ✅ Get selected image based on currentIndex
+        const selectedImage =
+            product.images?.[currentIndex]?.pi_1 ||
+            product.images?.[currentIndex]?.url ||
+            "default.jpg";
+
+        // ✅ Check if *same variant* exists
+        const existingIndex = storedCart.findIndex(item =>
+            item.id === product._id &&
+            item.color === selectedColor &&
+            item.size === selectedSize
+        );
+
+        if (existingIndex !== -1) {
+            // ✅ If exact variant exists, just increase quantity
+            storedCart[existingIndex].quantity += quantity;
+            storedCart[existingIndex].addedAt = new Date().toISOString();
+
+            localStorage.setItem("cart", JSON.stringify(storedCart));
+            window.dispatchEvent(new Event("storage"));
+            alert("Quantity updated for existing item!");
+            return;
+        }
+
+        // ✅ Otherwise, add new variant entry in cart with uniqueId
+        const newCartItem = {
+            id: product._id,
+            uniqueId: `${product._id}_${Date.now()}`, // ✅ Added line
+            color: selectedColor,
+            size: selectedSize,
+            quantity: quantity,
+            image: selectedImage,
+            addedAt: new Date().toISOString()
+        };
+
+        const updatedCart = [...storedCart, newCartItem];
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+        window.dispatchEvent(new Event("storage"));
+        alert("New item added to cart!");
+    };
+
+
+
+
 
     useEffect(() => {
         if (proDetails) {
@@ -81,7 +157,7 @@ const ProductView = () => {
                 ease: "power2.in",
                 onComplete: () => {
                     if (detailsRef.current) {
-                        detailsRef.current.style.display = "none"; // Hide after animation
+                        detailsRef.current.style.display = "none";
                     }
                 },
             });
@@ -100,35 +176,48 @@ const ProductView = () => {
                     ? data.product_price - data.dis_product_price
                     : 0;
 
-                const images = data.colors.map(color => ({
-                    url: data.product_image,
-                    filter: color.filter || "none",
-                    color: color
-                }));
+                const images = data.images.flatMap(img => [
+                    img.pi_1 && { url: img.pi_1, color_code: img.color_code },
+                    img.pi_2 && { url: img.pi_2, color_code: img.color_code },
+                    img.pi_3 && { url: img.pi_3, color_code: img.color_code }
+                ].filter(Boolean));
 
                 setProduct({ ...data, images, save: saveAmount });
-                setSelectedColor(data.colors?.[0] || null);
+                setSelectedColor(images[0] || null);
             })
             .catch(error => console.error("Error fetching product:", error));
     }, [id]);
 
-
-
-
-    const changeImage = (index) => {
-        setCurrentIndex(index);
-        setSelectedColor(product.colors[index]);
-    };
+    useEffect(() => {
+        if (product?.images?.length > 0) {
+            setSelectedColor(product.images[0].color_code);
+        }
+    }, [product]);
 
     const nextImage = () => {
-        const newIndex = (currentIndex + 1) % product.images.length;
-        changeImage(newIndex);
+        if (product?.images?.length > 0) {
+            const newIndex = (currentIndex + 1) % product.images.length;
+            setCurrentIndex(newIndex);
+            setSelectedColor(product.images[newIndex].color_code);
+        }
     };
 
     const prevImage = () => {
-        const newIndex = (currentIndex - 1 + product.images.length) % product.images.length;
-        changeImage(newIndex);
+        if (product?.images?.length > 0) {
+            const newIndex = (currentIndex - 1 + product.images.length) % product.images.length;
+            setCurrentIndex(newIndex);
+            setSelectedColor(product.images[newIndex].color_code);
+        }
     };
+
+
+    const changeImage = (index) => {
+        if (product?.images?.[index]) {
+            setCurrentIndex(index);
+        }
+    };
+
+
 
     const selectImage = (index) => {
         setCurrentIndex(index);
@@ -141,13 +230,14 @@ const ProductView = () => {
     const decreaseQuantity = () => {
         setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
     };
-    const selectColor = (color, index) => {
-        setSelectedColor(color);
-        setCurrentIndex(index + 1);
+    const selectColor = (image, index) => {
+        setSelectedColor(image.color_code);
+        setCurrentIndex(index);
     };
 
+
     useEffect(() => {
-        axios.get("http://localhost:5000/api/products/bestselling")
+        axios.get("http://localhost:5000/api/products")
             .then(response => {
                 const allProducts = response.data;
                 const filteredProducts = allProducts.filter(p => p._id !== id);
@@ -159,8 +249,24 @@ const ProductView = () => {
 
 
     if (!product || !product.images || product.images.length === 0) {
-        return <p>Loading...</p>;
+        return (
+            <div className="pro_view_loader">
+                <div className="loader-container">
+                    <div className="loader">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        );
     }
+
+
+
+    const handleSizeSelect = (size) => {
+        setSelectedSize(size); // ✅ Selected size update karega
+    };
 
 
     return (
@@ -180,7 +286,6 @@ const ProductView = () => {
                                     src={`/images/${product.images[currentIndex].url}`}
                                     className="img"
                                     alt={product.product_name}
-                                    style={{ filter: product.images[currentIndex].filter }}
                                 />
                                 <div className="pi_dot">
                                     {product.images.map((_, index) => (
@@ -199,9 +304,9 @@ const ProductView = () => {
                             </span> Free Delivery</p>
                             <div className="data-frame">
                                 <h2>{product.product_name}</h2>
-                                <p>{product._id}</p>
-                                <p className="type"><span>Type </span>{product.p_type}</p>
-                                <p className="des"><span>Product Description </span>{product.p_des}</p>
+                                {/* <p>{product._id}</p> */}
+                                <p className="type"><span className="pro_data_heading">Type </span>{product.p_type}</p>
+                                <p className="des"><span className="pro_data_heading">Product Description </span>{product.p_des}</p>
                                 <div className="hr"></div>
                                 {product.dis_product_price ? (
                                     <div className="discount-box">
@@ -215,20 +320,37 @@ const ProductView = () => {
                                     </div>
                                 )}
 
-                                {product.colors && (
+                                {product.images && (
                                     <div className="color-selection">
                                         <div className="colors">
-                                            {product.colors.map((color, index) => (
+                                            {product.images.map((image, index) => (
                                                 <span
                                                     key={index}
-                                                    className={`color-box ${selectedColor === color ? "active" : ""}`}
-                                                    style={{ backgroundColor: color.color_code }}
-                                                    onClick={() => changeImage(index)}
+                                                    className={`color-box ${selectedColor === image.color_code ? "active" : ""}`}
+                                                    style={{ backgroundColor: image.color_code }}
+                                                    onClick={() => selectColor(image, index)}
                                                 ></span>
                                             ))}
                                         </div>
                                     </div>
                                 )}
+
+                                {/* ✅ Sizes Section */}
+                                <div className="sizes">
+                                    <span className="pro_data_heading">Size</span>
+                                    <div className="size-options">
+                                        {Object.entries(product.sizes).map(([size, available]) => (
+                                            <span
+                                                key={size}
+                                                className={`size-box ${available ? "available" : "unavailable"} ${selectedSize === size ? "selected" : ""}`}
+                                                onClick={() => available && handleSizeSelect(size)} // ✅ Sirf available size ko select karega
+                                            >
+                                                {size}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                                {/* <p>{product._id}</p> */}
 
                                 <div className="quantity-addtocart">
                                     <div className="quantity">
@@ -238,8 +360,15 @@ const ProductView = () => {
                                     </div>
                                     <div className="add-to-cart">
                                         <button
-                                            onClick={() => addToCart(product)}
-                                        >Add to Cart</button>
+                                            onClick={() => addToCartWithDetails(
+                                                product,
+                                                selectedColor,
+                                                selectedSize,
+                                                quantity,
+                                                currentIndex
+                                            )}>
+                                            Add to Cart
+                                        </button>
                                     </div>
                                 </div>
                                 <div className="buy_this_now">
@@ -288,7 +417,6 @@ const ProductView = () => {
                                         </div>
                                     )}
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -301,11 +429,12 @@ const ProductView = () => {
                                 {randomProducts.length > 0 ? (
                                     randomProducts.map((p) => {
                                         const hasDiscount = p.dis_product_price !== undefined;
+                                        const firstImage = p.images?.[0]?.pi_1 || "default.jpg";
 
                                         return (
                                             <div key={p._id} className="product-card">
                                                 <div className="product-image-wrapper">
-                                                    <img src={`/images/${p.product_image}`} className="bsp-img" alt={p.product_name} />
+                                                    <img src={`/images/${firstImage}`} className="bsp-img" alt={p.product_name} />
                                                     <img
                                                         src={addTocart}
                                                         className="add-to-cart-icon"
@@ -323,17 +452,24 @@ const ProductView = () => {
                                                     ) : (
                                                         <p className="product-price">${p.product_price}</p>
                                                     )}
+                                                    {/* <p>{product._id}</p> */}
                                                     <Link to={`/product/${p._id}`} className="shop-now">
                                                         Buy Now
                                                     </Link>
-                                                    <p>{p._id}</p>
-
                                                 </div>
                                             </div>
                                         );
                                     })
                                 ) : (
-                                    <p>Loading random products...</p>
+                                    <div className="pro_view_loader">
+                                        <div className="loader-container">
+                                            <div className="loader">
+                                                <span></span>
+                                                <span></span>
+                                                <span></span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 )}
                             </div>
                         </div>

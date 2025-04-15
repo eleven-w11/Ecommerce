@@ -104,7 +104,6 @@ const Footer = () => {
             </div>
             <div className="hr"></div>
             <div className="footer-navigation">
-                {/* Wear the Trend */}
                 <ul className="footer-column">
                     <h4 onClick={() => toggleSection("trend")}>
                         Wear the Trend
@@ -121,7 +120,6 @@ const Footer = () => {
                     </div>
                 </ul>
 
-                {/* Quick Access */}
                 <ul className="footer-column">
                     <h4 onClick={() => toggleSection("quick")}>
                         Quick Access
@@ -137,7 +135,6 @@ const Footer = () => {
                     </div>
                 </ul>
 
-                {/* Get in Touch */}
                 <ul className="footer-column">
                     <h4 onClick={() => toggleSection("contact")}>
                         Get in Touch
