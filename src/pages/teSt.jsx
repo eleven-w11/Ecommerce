@@ -2041,15 +2041,15 @@ const Cart = () => {
                                                 <div className="edit_remove">
                                                     {editProductId === product.uniqueId ? ( 
                                                         <>
-                                                            <div className="update">
+                                                            <div className="update mob_top">
                                                                 <button onClick={() => handleUpdate(product.uniqueId)}>Update</button> {/* ✅ pass uniqueId */}
                                                             </div>
-                                                            <div className="edit">
+                                                            <div className="edit mob_top">
                                                                 <button onClick={() => setEditProductId(null)}>Cancel</button>
                                                             </div>
                                                         </>
                                                     ) : (
-                                                        <div className="edit">
+                                                        <div className="edit mob_top">
                                                             <button onClick={() => setEditProductId(product.uniqueId)}>Edit</button> {/* ✅ set edit ID to uniqueId */}
                                                         </div>
                                                     )}

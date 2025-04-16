@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import "./styles/Cart.css";
 import left from "./images/left.png";
 import right from "./images/right.png";
+import { Link } from 'react-router-dom';
 
 const CartPage = () => {
     const [cartProducts, setCartProducts] = useState([
@@ -288,7 +289,7 @@ const CartPage = () => {
                 </div>
                 <div className="hr"></div>
                 <div className="checkout_button">
-                    <button>Checkout</button>
+                    <Link>Checkout</Link>
                 </div>
             </div>
         </div>
