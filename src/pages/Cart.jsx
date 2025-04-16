@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import "./styles/Cart.css";
 import left from "./images/left.png";
 import right from "./images/right.png";
 
@@ -244,15 +244,15 @@ const CartPage = () => {
                                             <div className="edit_remove">
                                                 {isEditing ? (
                                                     <>
-                                                        <div className="update">
+                                                        <div className="update mob_top">
                                                             <button onClick={() => handleUpdate(product.uniqueId)}>Update</button>
                                                         </div>
-                                                        <div className="edit">
+                                                        <div className="edit mob_top">
                                                             <button onClick={() => setEditProductId(null)}>Cancel</button>
                                                         </div>
                                                     </>
                                                 ) : (
-                                                    <div className="edit">
+                                                    <div className="edit mob_top">
                                                         <button onClick={() => setEditProductId(product.uniqueId)}>Edit</button>
                                                     </div>
                                                 )}

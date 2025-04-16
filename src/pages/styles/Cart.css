@@ -514,10 +514,29 @@
         margin: 3px 0 5px 0;
     }
 
-
-
     .cart-page .total p {
         margin: 3px 0 5px 0;
         font-size: 14px;
     }
+
+    /* .cart-page .edit_remove {
+        position: absolute;
+        bottom: -0px;
+        right: 0;
+        display: flex;
+    } */
+    .cart-page .mob_top {
+        position: absolute;
+        bottom: 35px;
+        /* right: 0; */
+    }
+    .cart-page .update{
+        right: 85px;
+    }
+    .cart-page .edit{
+        right: 0;
+    }
+    /* .cart-page .update{
+        right: 0;
+    } */
 }
