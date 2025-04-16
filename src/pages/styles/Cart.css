@@ -468,7 +468,7 @@
 
 @media (max-width: 610px) {
     .cart-page .price-container_buttons {
-        background-color: lightsteelblue;
+        /* background-color: lightsteelblue; */
         display: flex;
         align-items: start;
         justify-content: end;
@@ -479,7 +479,7 @@
         height: 100%;
         flex-direction: column;
         justify-content: start;
-        background-color: lightyellow;
+        /* background-color: lightyellow; */
     }
 
     .cart-page .discount-box_price {
