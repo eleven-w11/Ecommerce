@@ -106,20 +106,6 @@ li {
     transform: translateX(0);
 }
 
-/* black btn */
-
-/* .button-shop-now a {
-    background-color: black;
-    padding: 12px 35px;
-    color: white;
-    transition: 400ms all ease-in-out;
-    border-radius: 10px;
-}
-
-.button-shop-now:hover a {
-    background-color: white;
-    color: black;
-} */
 
 /* white btn */
 .white-btn a {

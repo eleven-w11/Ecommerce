@@ -275,7 +275,52 @@ const NavBar = ({ Authentication }) => {
                 </div>
             )}
             <div className={`slidemenu ${isToggle ? 'toggle' : ''}`}>
-                <span onClick={handleToggle} className={`material-symbols-outlined close `} >close</span>
+                <div className="mob_top_icons">
+                    <div className="close_menu">
+                        <span onClick={handleToggle} className={`material-symbols-outlined`} >close</span>
+                    </div>
+                    <div className="mob_icons">
+                        <li className='userprofile-show'>
+                            {Authentication ? (
+                                <Link to="/UserProfile"
+                                    ref={(el) => (linksRef.current[13] = el)}
+                                >
+                                    {loading ? (
+                                        <span>Loading...</span>
+                                    ) : (
+                                        userData ? (
+                                            <img src="./user.png" alt="User" className='userimg' />
+                                        ) : (
+                                            <img src="./favicon.ico" alt="Default" />
+                                        )
+                                    )}
+                                </Link>
+                            ) : (
+                                <Link to="/SignIn"
+                                    ref={(el) => (linksRef.current[14] = el)}
+                                >
+                                    <span className="material-symbols-outlined">account_circle</span>
+                                </Link>
+                            )}
+                        </li>
+                        <li className='userlocation-show'>
+                            {country ? (
+                                <Link to="/UserLocation"
+                                    ref={(el) => (linksRef.current[16] = el)}
+                                    className='country'>{country}</Link>
+                            ) : (
+                                <Link to="/UserLocation"
+                                    ref={(el) => (linksRef.current[16] = el)}
+                                >
+                                    <span className="material-symbols-outlined">add_location</span>
+                                </Link>
+                            )}
+                        </li>
+                        <li className='search-show'>
+                            <span className="material-symbols-outlined">search</span>
+                        </li>
+                    </div>
+                </div>
                 <ul>
                     <li>
                         <Link
@@ -328,53 +373,7 @@ const NavBar = ({ Authentication }) => {
                     </li>
                     <div className="navline"
                         ref={(el) => (linksRef.current[12] = el)}></div>
-                    <li className='userprofile-show'>
-                        {Authentication ? (
-                            <Link to="/UserProfile"
-                                ref={(el) => (linksRef.current[13] = el)}
-                            >
-                                {loading ? (
-                                    <span>Loading...</span>
-                                ) : (
-                                    userData ? (
-                                        <img src="./user.png" alt="User" className='userimg' />
-                                    ) : (
-                                        <img src="./favicon.ico" alt="Default" />
-                                    )
-                                )}
-                            </Link>
-                        ) : (
-                            <Link to="/SignIn"
-                                ref={(el) => (linksRef.current[14] = el)}
-                            >
-                                <span className="material-symbols-outlined">account_circle</span>
-                            </Link>
-                        )}
-                    </li>
 
-                    <div className="mob_icons">
-                        <div className="navline userprofile-show"
-                            ref={(el) => (linksRef.current[15] = el)}></div>
-                        <li className='userlocation-show'>
-                            {country ? (
-                                <Link to="/UserLocation"
-                                    ref={(el) => (linksRef.current[16] = el)}
-                                    className='country'>{country}</Link>
-                            ) : (
-                                <Link to="/UserLocation"
-                                    ref={(el) => (linksRef.current[16] = el)}
-                                >
-                                    <span className="material-symbols-outlined">add_location</span>
-                                </Link>
-                            )}
-                        </li>
-                        <div className="navline userlocation-show"
-                            ref={(el) => (linksRef.current[17] = el)}></div>
-                        <li className='search-show'>
-                            <span className="material-symbols-outlined">search</span>
-                        </li>
-                        <div className="navline userlocation-show"></div>
-                    </div>
                 </ul>
             </div>
         </>
