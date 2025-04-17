@@ -9,9 +9,9 @@ nav ul li,
 nav .location-account-search-cart div,
 nav .location-account-search-cart div a,
 .slidemenu ul,
-.slidenavlinks ul,
+/* .slidenavlinks ul, */
 .slidemenu a,
-.slidenavlinks a,
+/* .slidenavlinks a, */
 .search-container {
 
     display: flex;
@@ -180,8 +180,7 @@ nav .userimg {
     justify-content: space-evenly;
 }
 
-.slidemenu ul,
-.slidenavlinks ul {
+.slidemenu ul{
     width: 100%;
     align-items: flex-start;
     flex-direction: column;
@@ -189,7 +188,6 @@ nav .userimg {
 
 .slidemenu ul li {
     width: 100%;
-    margin: 20px 0 20px 10px;
     list-style: none;
     display: flex;
     align-items: center;
@@ -197,23 +195,16 @@ nav .userimg {
     /* background-color: red; */
 }
 
-
-.slidemenu li a,
-.slidenavlinks li a {
-    width: 80%;
+.slidemenu li .man_woman,
+.slidemenu li a{
+    width: 90%;
+    padding: 20px 0 20px 10px;
     justify-content: space-between;
 }
 
-/* .slidemenu .material-symbols-outlined {
-    font-size: 33px;
-    font-variation-settings:
-        'FILL' 0,
-        'wght' 200,
-        'GRAD' 50,
-        'opsz' 36;
+.slidemenu li .man_woman{
     cursor: pointer;
-} */
-
+}
 
 
 

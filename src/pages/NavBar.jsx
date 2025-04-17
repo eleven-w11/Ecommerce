@@ -15,15 +15,14 @@ const NavBar = ({ Authentication }) => {
     const [loading, setLoading] = useState(true);
     const [isToggle, setIsToggle] = useState(false);
     const [scrollPosition, setScrollPosition] = useState(0);
-    const [visibleDiv, setVisibleDiv] = useState(null);
     const [cartCount, setCartCount] = useState(0);
     const [showSearch, setShowSearch] = useState(false);
     const searchContainerRef = useRef(null);
 
     const linksRef = useRef([]);
     const animationPlayed = useRef(false);
-    const extNavRef = useRef(null);
 
+    // cart icon
     useEffect(() => {
         const updateCartCount = () => {
             const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -73,45 +72,6 @@ const NavBar = ({ Authentication }) => {
         }
     }, [isToggle]);
 
-
-
-    useEffect(() => {
-        if (visibleDiv) {
-            gsap.fromTo(
-                extNavRef.current,
-                { x: "-100%", opacity: 0 },
-                { x: "0%", opacity: 1, duration: 0.5, ease: "power3.out" }
-            );
-
-            const visibleLinks = extNavRef.current.querySelectorAll(
-                `.slidenavlinks.visible a`
-            );
-            gsap.fromTo(
-                visibleLinks,
-                { x: -60, opacity: 0 },
-                {
-                    x: 0,
-                    opacity: 1,
-                    stagger: 0.2,
-                    duration: 0.4,
-                    ease: "power2.out",
-                }
-            );
-        } else {
-
-            gsap.to(extNavRef.current, {
-                x: "-100%",
-                opacity: 0,
-                duration: 0.3,
-                ease: "power3.in",
-            });
-        }
-    }, [visibleDiv]);
-
-
-
-
-
     // slidemenu 
 
     useEffect(() => {
@@ -130,14 +90,24 @@ const NavBar = ({ Authentication }) => {
         setIsToggle(!isToggle);
     };
 
+    // const handleOutsideClick = (event) => {
+    //     const isInsideSlideMenu = event.target.closest('.slidenav');
+    //     const isMenuButton = event.target.closest('.menu');
+
+    //     if (!isInsideSlideMenu && !isMenuButton) {
+    //         setIsToggle(false);
+    //     }
+    // };
     const handleOutsideClick = (event) => {
         const isInsideSlideMenu = event.target.closest('.slidenav');
         const isMenuButton = event.target.closest('.menu');
+        const isManWomanClick = event.target.closest('.man-woman_nolink'); // new class check
 
-        if (!isInsideSlideMenu && !isMenuButton) {
+        if (!isInsideSlideMenu && !isMenuButton && !isManWomanClick) {
             setIsToggle(false);
         }
     };
+
 
     useEffect(() => {
         document.addEventListener('click', handleOutsideClick);
@@ -316,13 +286,13 @@ const NavBar = ({ Authentication }) => {
                                 </Link>
                             )}
                         </li>
-                        <li className='search-show'>
+                        <li className='search-show' onClick={() => setShowSearch(!showSearch)}>
                             <span className="material-symbols-outlined">search</span>
                         </li>
                     </div>
                 </div>
                 <div className="navline navline_1st"
-                        ref={(el) => (linksRef.current[2] = el)}></div>
+                    ref={(el) => (linksRef.current[2] = el)}></div>
                 <ul>
                     <li>
                         <Link
@@ -330,14 +300,6 @@ const NavBar = ({ Authentication }) => {
                             On Sale
                         </Link>
                     </li>
-                    {/* <div className="navline"
-                        ref={(el) => (linksRef.current[2] = el)}></div>
-                    <li>
-                        <Link
-                            ref={(el) => (linksRef.current[3] = el)}>
-                            Shop Now
-                        </Link>
-                    </li> */}
                     <div className="navline"
                         ref={(el) => (linksRef.current[4] = el)}></div>
                     <li>
@@ -354,6 +316,25 @@ const NavBar = ({ Authentication }) => {
                             Best Selling
                         </Link>
                     </li>
+                    <div className="navline"
+                        ref={(el) => (linksRef.current[6] = el)}></div>
+                    <li className="man-woman_nolink">
+                        <span  className='man_woman'>Man</span>
+                        <span className="material-symbols-outlined">
+                            arrow_drop_down
+                        </span>
+                    </li>
+                    <div
+                        className="navline"
+                        ref={(el) => (linksRef.current[6] = el)}
+                    ></div>
+                    <li className="man-woman_nolink">
+                        <span className='man_woman'>Woman</span>
+                        <span className="material-symbols-outlined">
+                            arrow_drop_down
+                        </span>
+                    </li>
+
                     <div className="navline"
                         ref={(el) => (linksRef.current[8] = el)}></div>
                     <li>
