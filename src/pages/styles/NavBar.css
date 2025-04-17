@@ -199,7 +199,7 @@ nav .userimg {
 
 .slidemenu ul li {
     width: 100%;
-    margin: 20px;
+    margin: 20px 0;
     list-style: none;
     /* background-color: red; */
 }
