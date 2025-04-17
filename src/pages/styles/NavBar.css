@@ -104,17 +104,7 @@ nav .userimg {
     width: 36px;
 }
 
-.userprofile-show {
-    display: none;
-}
 
-.userlocation-show {
-    display: none;
-}
-
-.search-show {
-    display: none;
-}
 
 
 .cart_count {
@@ -368,7 +358,17 @@ nav .userimg {
 
 
 
+.slidemenu .userprofile-show {
+    display: none;
+}
 
+.slidemenu .userlocation-show {
+    display: none;
+}
+
+.slidemenu .search-show {
+    display: none;
+}
 
 
 @media (max-width: 700px) {
@@ -376,7 +376,7 @@ nav .userimg {
         display: none;
     }
 
-    .userlocation-show {
+    .slidemenu .userlocation-show {
         display: block;
     }
 }
@@ -392,7 +392,7 @@ nav .userimg {
         display: none;
     }
 
-    .userprofile-show {
+    .slidemenu .userprofile-show {
         display: block;
     }
 
@@ -419,7 +419,7 @@ nav .userimg {
         display: none;
     }
 
-    .search-show {
+    .slidemenu .search-show {
         display: block;
     }
 }
