@@ -177,7 +177,11 @@ nav .userimg {
 .slidemenu .close_menu{
     width: 30%;
     justify-content: start;
-    /* background-color: lightgreen; */
+}
+
+.slidemenu .close_menu span{
+    /* background-color: red; */
+    border-radius: 5px;
 }
 .slidemenu .mob_icons{
     width: 70%;

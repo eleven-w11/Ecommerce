@@ -277,7 +277,8 @@ const NavBar = ({ Authentication }) => {
             <div className={`slidemenu ${isToggle ? 'toggle' : ''}`}>
                 <div className="mob_top_icons">
                     <div className="close_menu">
-                        <span onClick={handleToggle} className={`material-symbols-outlined`} >close</span>
+                        {/* <span onClick={handleToggle} className={`material-symbols-outlined`} >close</span> */}
+                        <span onClick={handleToggle} className={`material-symbols-outlined `} >menu</span>
                     </div>
                     <div className="mob_icons">
                         <li className='userprofile-show'>
