@@ -21,6 +21,18 @@ const NavBar = ({ Authentication }) => {
 
     const linksRef = useRef([]);
     const animationPlayed = useRef(false);
+    const [showManDropdown, setShowManDropdown] = useState(false);
+    const [showWomanDropdown, setShowWomanDropdown] = useState(false);
+    const manDropdownRef = useRef(null);
+    const womanDropdownRef = useRef(null);
+
+    const myRef = useRef();
+
+    useEffect(() => {
+        if (myRef.current) {
+            console.log("parent", myRef.current.parentElement); // Parent node
+        }
+    }, []);
 
     // cart icon
     useEffect(() => {
@@ -101,12 +113,16 @@ const NavBar = ({ Authentication }) => {
     const handleOutsideClick = (event) => {
         const isInsideSlideMenu = event.target.closest('.slidenav');
         const isMenuButton = event.target.closest('.menu');
-        const isManWomanClick = event.target.closest('.man-woman_nolink'); // new class check
+        const isManClick = event.target.closest('.man_nolink');
+        const isWomanClick = event.target.closest('.woman_nolink');
 
-        if (!isInsideSlideMenu && !isMenuButton && !isManWomanClick) {
+        if (!isInsideSlideMenu && !isMenuButton && !isManClick && !isWomanClick) {
             setIsToggle(false);
+            setShowManDropdown(false); // hide dropdown also
+            setShowWomanDropdown(false); // hide dropdown also
         }
     };
+
 
 
     useEffect(() => {
@@ -115,6 +131,18 @@ const NavBar = ({ Authentication }) => {
             document.removeEventListener('click', handleOutsideClick);
         };
     }, []);
+
+
+
+
+    const handleManClick = (e) => {
+        e.stopPropagation(); // taake body click listener trigger na ho
+        setShowManDropdown(!showManDropdown);
+    };
+    const handleWomanClick = (e) => {
+        e.stopPropagation(); // taake body click listener trigger na ho
+        setShowWomanDropdown(!showWomanDropdown);
+    };
 
     // search-container 
     // & a little slidemanu code istoggle
@@ -183,6 +211,89 @@ const NavBar = ({ Authentication }) => {
         fetchUserData();
     }, []);
 
+
+
+    // useEffect(() => {
+    //     const updateDropdownWidth = () => {
+    //         const navline = document.querySelector('.navline');
+    //         const navlineDropdown = document.querySelector('.navline_dropdown');
+
+    //         if (window.innerWidth <= 450 && navline && navlineDropdown) {
+    //             const navlineRect = navline.getBoundingClientRect();
+
+    //             navlineDropdown.style.width = `${navline.offsetWidth}px`;
+    //             navlineDropdown.style.marginLeft = `${navlineRect.left}px`;
+    //         } else if (navlineDropdown) {
+    //             navlineDropdown.style.width = '';
+    //             navlineDropdown.style.marginLeft = '';
+    //         }
+    //     };
+
+    //     updateDropdownWidth();
+    //     window.addEventListener('resize', updateDropdownWidth);
+
+    //     return () => {
+    //         window.removeEventListener('resize', updateDropdownWidth);
+    //     };
+    // }, []);
+
+
+
+
+
+    // Animation for dropdown-man
+    useEffect(() => {
+        if (showManDropdown && manDropdownRef.current) {
+            gsap.fromTo(
+                manDropdownRef.current.children,
+                { x: -50, opacity: 0 },
+                {
+                    x: 0,
+                    opacity: 1,
+                    duration: 0.4,
+                    stagger: 0.1,
+                    ease: 'power2.out'
+                }
+            );
+        } else if (!showManDropdown && manDropdownRef.current) {
+            gsap.to(manDropdownRef.current.children, {
+                x: 50,
+                opacity: 0,
+                duration: 0.3,
+                stagger: 0.05,
+                ease: 'power2.in'
+            });
+        }
+    }, [showManDropdown]);
+
+    // Animation for dropdown-woman
+    useEffect(() => {
+        if (showWomanDropdown && womanDropdownRef.current) {
+            gsap.fromTo(
+                womanDropdownRef.current.children,
+                { x: -50, opacity: 0 },
+                {
+                    x: 0,
+                    opacity: 1,
+                    duration: 0.4,
+                    stagger: 0.1,
+                    ease: 'power2.out'
+                }
+            );
+        } else if (!showWomanDropdown && womanDropdownRef.current) {
+            gsap.to(womanDropdownRef.current.children, {
+                x: 50,
+                opacity: 0,
+                duration: 0.3,
+                stagger: 0.05,
+                ease: 'power2.in'
+            });
+        }
+    }, [showWomanDropdown]);
+
+
+
+
     return (
         <>
             <nav>
@@ -245,6 +356,7 @@ const NavBar = ({ Authentication }) => {
                 </div>
             )}
             <div className={`slidemenu ${isToggle ? 'toggle' : ''}`}>
+
                 <div className="mob_top_icons">
                     <div className="close_menu">
                         <span onClick={handleToggle} className={`material-symbols-outlined `} >menu</span>
@@ -294,6 +406,7 @@ const NavBar = ({ Authentication }) => {
                 <div className="navline navline_1st"
                     ref={(el) => (linksRef.current[2] = el)}></div>
                 <ul>
+                    <div className="line_hide_box"></div>
                     <li>
                         <Link
                             ref={(el) => (linksRef.current[0] = el)}>
@@ -318,9 +431,9 @@ const NavBar = ({ Authentication }) => {
                     </li>
                     <div className="navline"
                         ref={(el) => (linksRef.current[6] = el)}></div>
-                    <li className="man-woman_nolink">
-                        <span  className='man_woman'>Man</span>
-                        <span className="material-symbols-outlined">
+                    <li className="man_nolink" onClick={handleManClick}>
+                        <span className='man_woman'>Man</span>
+                        <span className={`material-symbols-outlined arrow-icon ${showManDropdown ? 'rotate' : ''}`}                       >
                             arrow_drop_down
                         </span>
                     </li>
@@ -328,15 +441,39 @@ const NavBar = ({ Authentication }) => {
                         className="navline"
                         ref={(el) => (linksRef.current[6] = el)}
                     ></div>
-                    <li className="man-woman_nolink">
+                    {showManDropdown && (
+                        <div className="dropdown-man" ref={manDropdownRef}>
+                            <li><Link>Top</Link></li>
+                            <div className="navline navline_dropdown"></div>
+                            <li><Link>Bottom</Link></li>
+                            <div className="navline navline_dropdown"></div>
+                            <li><Link>Shoes</Link></li>
+                            <div className="navline navline_dropdown"></div>
+                        </div>
+                    )}
+                    <li className="woman_nolink" onClick={handleWomanClick}>
                         <span className='man_woman'>Woman</span>
-                        <span className="material-symbols-outlined">
+                        <span className={`material-symbols-outlined arrow-icon ${showWomanDropdown ? 'rotate' : ''}`}                       >
                             arrow_drop_down
                         </span>
                     </li>
 
                     <div className="navline"
                         ref={(el) => (linksRef.current[8] = el)}></div>
+                    {showWomanDropdown && (
+                        <div className="dropdown-woman" ref={womanDropdownRef}>
+                            <li><Link>Top</Link></li>
+                            <div className="navline navline_dropdown"></div>
+                            <li><Link>Bottom</Link></li>
+                            <div className="navline navline_dropdown"></div>
+                            <li><Link>Shoes</Link></li>
+                            <div className="navline navline_dropdown"></div>
+                            <li><Link>Bags</Link></li>
+                            <div className="navline navline_dropdown"></div>
+                            <li><Link>Accessories</Link></li>
+                            <div className="navline navline_dropdown"></div>
+                        </div>
+                    )}
                     <li>
                         <Link
                             to="/Products"
