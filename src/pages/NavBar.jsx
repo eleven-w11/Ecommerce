@@ -277,7 +277,6 @@ const NavBar = ({ Authentication }) => {
             <div className={`slidemenu ${isToggle ? 'toggle' : ''}`}>
                 <div className="mob_top_icons">
                     <div className="close_menu">
-                        {/* <span onClick={handleToggle} className={`material-symbols-outlined`} >close</span> */}
                         <span onClick={handleToggle} className={`material-symbols-outlined `} >menu</span>
                     </div>
                     <div className="mob_icons">
@@ -322,6 +321,8 @@ const NavBar = ({ Authentication }) => {
                         </li>
                     </div>
                 </div>
+                <div className="navline navline_1st"
+                        ref={(el) => (linksRef.current[2] = el)}></div>
                 <ul>
                     <li>
                         <Link
@@ -329,14 +330,14 @@ const NavBar = ({ Authentication }) => {
                             On Sale
                         </Link>
                     </li>
-                    <div className="navline"
+                    {/* <div className="navline"
                         ref={(el) => (linksRef.current[2] = el)}></div>
                     <li>
                         <Link
                             ref={(el) => (linksRef.current[3] = el)}>
                             Shop Now
                         </Link>
-                    </li>
+                    </li> */}
                     <div className="navline"
                         ref={(el) => (linksRef.current[4] = el)}></div>
                     <li>
