@@ -26,13 +26,6 @@ const NavBar = ({ Authentication }) => {
     const manDropdownRef = useRef(null);
     const womanDropdownRef = useRef(null);
 
-    const myRef = useRef();
-
-    useEffect(() => {
-        if (myRef.current) {
-            console.log("parent", myRef.current.parentElement); // Parent node
-        }
-    }, []);
 
     // cart icon
     useEffect(() => {
@@ -57,8 +50,6 @@ const NavBar = ({ Authentication }) => {
 
 
     useEffect(() => {
-        console.warn("toggle", isToggle);
-
         if (isToggle && !animationPlayed.current) {
             animationPlayed.current = true;
 
@@ -102,14 +93,6 @@ const NavBar = ({ Authentication }) => {
         setIsToggle(!isToggle);
     };
 
-    // const handleOutsideClick = (event) => {
-    //     const isInsideSlideMenu = event.target.closest('.slidenav');
-    //     const isMenuButton = event.target.closest('.menu');
-
-    //     if (!isInsideSlideMenu && !isMenuButton) {
-    //         setIsToggle(false);
-    //     }
-    // };
     const handleOutsideClick = (event) => {
         const isInsideSlideMenu = event.target.closest('.slidenav');
         const isMenuButton = event.target.closest('.menu');
@@ -135,14 +118,7 @@ const NavBar = ({ Authentication }) => {
 
 
 
-    const handleManClick = (e) => {
-        e.stopPropagation(); // taake body click listener trigger na ho
-        setShowManDropdown(!showManDropdown);
-    };
-    const handleWomanClick = (e) => {
-        e.stopPropagation(); // taake body click listener trigger na ho
-        setShowWomanDropdown(!showWomanDropdown);
-    };
+
 
     // search-container 
     // & a little slidemanu code istoggle
@@ -212,35 +188,6 @@ const NavBar = ({ Authentication }) => {
     }, []);
 
 
-
-    // useEffect(() => {
-    //     const updateDropdownWidth = () => {
-    //         const navline = document.querySelector('.navline');
-    //         const navlineDropdown = document.querySelector('.navline_dropdown');
-
-    //         if (window.innerWidth <= 450 && navline && navlineDropdown) {
-    //             const navlineRect = navline.getBoundingClientRect();
-
-    //             navlineDropdown.style.width = `${navline.offsetWidth}px`;
-    //             navlineDropdown.style.marginLeft = `${navlineRect.left}px`;
-    //         } else if (navlineDropdown) {
-    //             navlineDropdown.style.width = '';
-    //             navlineDropdown.style.marginLeft = '';
-    //         }
-    //     };
-
-    //     updateDropdownWidth();
-    //     window.addEventListener('resize', updateDropdownWidth);
-
-    //     return () => {
-    //         window.removeEventListener('resize', updateDropdownWidth);
-    //     };
-    // }, []);
-
-
-
-
-
     // Animation for dropdown-man
     useEffect(() => {
         if (showManDropdown && manDropdownRef.current) {
@@ -291,7 +238,14 @@ const NavBar = ({ Authentication }) => {
         }
     }, [showWomanDropdown]);
 
-
+    const handleManClick = (e) => {
+        e.stopPropagation();
+        setShowManDropdown(!showManDropdown);
+    };
+    const handleWomanClick = (e) => {
+        e.stopPropagation();
+        setShowWomanDropdown(!showWomanDropdown);
+    };
 
 
     return (
@@ -404,42 +358,44 @@ const NavBar = ({ Authentication }) => {
                     </div>
                 </div>
                 <div className="navline navline_1st"
-                    ref={(el) => (linksRef.current[2] = el)}></div>
+                    ref={(el) => (linksRef.current[1] = el)}></div>
                 <ul>
                     <div className="line_hide_box"></div>
                     <li>
                         <Link
-                            ref={(el) => (linksRef.current[0] = el)}>
+                            ref={(el) => (linksRef.current[2] = el)}>
                             On Sale
                         </Link>
                     </li>
                     <div className="navline"
-                        ref={(el) => (linksRef.current[4] = el)}></div>
+                        ref={(el) => (linksRef.current[3] = el)}></div>
                     <li>
                         <Link to="/Top Products"
-                            ref={(el) => (linksRef.current[5] = el)}>
+                            ref={(el) => (linksRef.current[4] = el)}>
                             Top Products
                         </Link>
                     </li>
                     <div className="navline"
-                        ref={(el) => (linksRef.current[6] = el)}></div>
+                        ref={(el) => (linksRef.current[5] = el)}></div>
                     <li>
                         <Link to="/Best Selling"
-                            ref={(el) => (linksRef.current[7] = el)}>
+                            ref={(el) => (linksRef.current[6] = el)}>
                             Best Selling
                         </Link>
                     </li>
                     <div className="navline"
-                        ref={(el) => (linksRef.current[6] = el)}></div>
+                        ref={(el) => (linksRef.current[7] = el)}></div>
                     <li className="man_nolink" onClick={handleManClick}>
-                        <span className='man_woman'>Man</span>
-                        <span className={`material-symbols-outlined arrow-icon ${showManDropdown ? 'rotate' : ''}`}                       >
+                        <span className='man_woman' ref={(el) => (linksRef.current[8] = el)}>Man</span>
+                        <span className={`material-symbols-outlined arrow-icon ${showManDropdown ? 'rotate' : ''}`}
+                            ref={(el) => (linksRef.current[9] = el)}
+                        >
                             arrow_drop_down
                         </span>
                     </li>
                     <div
                         className="navline"
-                        ref={(el) => (linksRef.current[6] = el)}
+                        ref={(el) => (linksRef.current[10] = el)}
                     ></div>
                     {showManDropdown && (
                         <div className="dropdown-man" ref={manDropdownRef}>
@@ -452,14 +408,16 @@ const NavBar = ({ Authentication }) => {
                         </div>
                     )}
                     <li className="woman_nolink" onClick={handleWomanClick}>
-                        <span className='man_woman'>Woman</span>
-                        <span className={`material-symbols-outlined arrow-icon ${showWomanDropdown ? 'rotate' : ''}`}                       >
+                        <span className='man_woman' ref={(el) => (linksRef.current[11] = el)}>Woman</span>
+                        <span className={`material-symbols-outlined arrow-icon ${showWomanDropdown ? 'rotate' : ''}`}
+                            ref={(el) => (linksRef.current[12] = el)}
+                        >
                             arrow_drop_down
                         </span>
                     </li>
 
                     <div className="navline"
-                        ref={(el) => (linksRef.current[8] = el)}></div>
+                        ref={(el) => (linksRef.current[13] = el)}></div>
                     {showWomanDropdown && (
                         <div className="dropdown-woman" ref={womanDropdownRef}>
                             <li><Link>Top</Link></li>
@@ -477,22 +435,22 @@ const NavBar = ({ Authentication }) => {
                     <li>
                         <Link
                             to="/Products"
-                            ref={(el) => (linksRef.current[9] = el)}
+                            ref={(el) => (linksRef.current[14] = el)}
                         >
                             About Us
                         </Link>
 
                     </li>
                     <div className="navline"
-                        ref={(el) => (linksRef.current[10] = el)}></div>
+                        ref={(el) => (linksRef.current[15] = el)}></div>
                     <li>
                         <Link
-                            ref={(el) => (linksRef.current[11] = el)}>
+                            ref={(el) => (linksRef.current[16] = el)}>
                             Contact Us
                         </Link>
                     </li>
                     <div className="navline"
-                        ref={(el) => (linksRef.current[12] = el)}></div>
+                        ref={(el) => (linksRef.current[17] = el)}></div>
 
                 </ul>
             </div>
