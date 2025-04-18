@@ -319,7 +319,7 @@ const NavBar = ({ Authentication }) => {
                         <li className='userprofile-show'>
                             {Authentication ? (
                                 <Link to="/UserProfile"
-                                    ref={(el) => (linksRef.current[13] = el)}
+                                    ref={(el) => (linksRef.current[19] = el)}
                                 >
                                     {loading ? (
                                         <span>Loading...</span>
@@ -333,7 +333,7 @@ const NavBar = ({ Authentication }) => {
                                 </Link>
                             ) : (
                                 <Link to="/SignIn"
-                                    ref={(el) => (linksRef.current[14] = el)}
+                                    ref={(el) => (linksRef.current[19] = el)}
                                 >
                                     <span className="material-symbols-outlined">account_circle</span>
                                 </Link>
@@ -342,17 +342,20 @@ const NavBar = ({ Authentication }) => {
                         <li className='userlocation-show'>
                             {country ? (
                                 <Link to="/UserLocation"
-                                    ref={(el) => (linksRef.current[16] = el)}
+                                    ref={(el) => (linksRef.current[18] = el)}
                                     className='country'>{country}</Link>
                             ) : (
                                 <Link to="/UserLocation"
-                                    ref={(el) => (linksRef.current[16] = el)}
+                                    ref={(el) => (linksRef.current[18] = el)}
                                 >
                                     <span className="material-symbols-outlined">add_location</span>
                                 </Link>
                             )}
                         </li>
-                        <li className='search-show' onClick={() => setShowSearch(!showSearch)}>
+                        <li className='search-show'
+                            onClick={() => setShowSearch(!showSearch)}
+                            ref={(el) => (linksRef.current[20] = el)}>
+
                             <span className="material-symbols-outlined">search</span>
                         </li>
                     </div>
