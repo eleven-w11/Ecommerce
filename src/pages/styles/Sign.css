@@ -1,6 +1,7 @@
 .sign {
-    height: 100vh;
-    min-height: 550px;
+    /* height: 90vh; */
+    /* height: 572px; */
+    min-height: 523px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -10,7 +11,12 @@
     background-repeat: no-repeat;
     background-size: cover;
     font-family: "Roboto", serif;
-
+    position: relative;
+}
+.height_calculate{
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .sign_google {
@@ -20,7 +26,7 @@
     background-color: rgba(255, 255, 255, 0.235);
     position: relative;
     color: white;
-    margin-bottom: 5vh;
+    /* margin-bottom: 5vh; */
 
 }
 

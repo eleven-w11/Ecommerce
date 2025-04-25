@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import './styles/Sign.css';
@@ -105,8 +105,54 @@ const SignIn = ({ onSignIn }) => {
     });
 
 
+    useEffect(() => {
+        const setSignHeight = () => {
+            const height = window.innerHeight - 60;
+            const signElement = document.querySelector(".sign");
+
+            if (signElement) {
+                signElement.style.height = `${height}px`;
+            }
+        };
+
+        // Set on mount
+        setSignHeight();
+
+        // Update on window resize
+        window.addEventListener("resize", setSignHeight);
+
+        // Cleanup
+        return () => window.removeEventListener("resize", setSignHeight);
+    }, []);
+
+
+    // height calculate 
+    const [dimensions, setDimensions] = useState({
+        width: window.innerWidth,
+        height: window.innerHeight
+    });
+
+    useEffect(() => {
+        const handleResize = () => {
+            setDimensions({
+                width: window.innerWidth,
+                height: window.innerHeight
+            });
+        };
+
+        window.addEventListener("resize", handleResize);
+
+        // Cleanup
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
     return (
         <div className='sign'>
+            <div style={{ padding: "20px", textAlign: "center" }} className='height_calculate'>
+                <h2>📏 Page Dimensions</h2>
+                <p>Width: {dimensions.width}px</p>
+                <p>Height: {dimensions.height}px</p>
+            </div>
             <div className="sign_google">
                 <div className='errorndsucc'>
                     {error && <p className={`err ${error ? 'visible' : 'hidden'}`}>{error}</p>}
