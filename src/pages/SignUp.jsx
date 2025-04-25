@@ -151,6 +151,27 @@ const SignUp = ({ onSignUp }) => {
         onError: handleGoogleFailure,
     });
 
+
+    useEffect(() => {
+        const setSignHeight = () => {
+            const height = window.innerHeight - 60;
+            const signElement = document.querySelector(".sign");
+
+            if (signElement) {
+                signElement.style.height = `${height}px`;
+            }
+        };
+
+        // Set on mount
+        setSignHeight();
+
+        // Update on window resize
+        window.addEventListener("resize", setSignHeight);
+
+        // Cleanup
+        return () => window.removeEventListener("resize", setSignHeight);
+    }, []);
+
     return (
         <div className='sign'>
             <div className="sign_google">
