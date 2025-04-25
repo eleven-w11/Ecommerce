@@ -8,7 +8,7 @@ import ImageSwapper from './HeroSection';
 
 
 const NavBar = ({ Authentication }) => {
-    console.warn("Navbar.jsx", Authentication);
+    // console.warn("Navbar.jsx", Authentication);
 
     const [country, setCountry] = useState("");
     const [userData, setUserData] = useState(null);
@@ -18,7 +18,9 @@ const NavBar = ({ Authentication }) => {
     const [cartCount, setCartCount] = useState(0);
     const [showSearch, setShowSearch] = useState(false);
     const searchContainerRef = useRef(null);
-
+    const [query, setQuery] = useState("");
+    const [results, setResults] = useState([]);
+    const [allProducts, setAllProducts] = useState([]);
     const linksRef = useRef([]);
     const animationPlayed = useRef(false);
     const [showManDropdown, setShowManDropdown] = useState(false);
@@ -185,7 +187,7 @@ const NavBar = ({ Authentication }) => {
         };
 
         fetchUserData();
-    }, []);
+    }, [Authentication]);
 
 
     // Animation for dropdown-man
@@ -248,6 +250,33 @@ const NavBar = ({ Authentication }) => {
     };
 
 
+
+
+
+    // In useEffect:
+    useEffect(() => {
+        const fetchFiltered = async () => {
+            try {
+                const res = await axios.get(`http://localhost:5000/api/products/search?query=${query}`);
+                setResults(res.data); // already filtered results
+            } catch (err) {
+                console.error("❌ Error fetching search results:", err);
+            }
+        };
+
+        if (query) fetchFiltered();
+    }, [query]);
+
+
+    // Function to highlight the search term in the product name
+
+
+
+
+
+
+
+
     return (
         <>
             <nav>
@@ -273,14 +302,10 @@ const NavBar = ({ Authentication }) => {
                         <div className='userprofile-hide'>
                             {Authentication ? (
                                 <Link to="/UserProfile">
-                                    {loading ? (
-                                        <span>Loading...</span>
+                                    {loading || !userData ? (
+                                        <img src="./user.png" alt="Default" />
                                     ) : (
-                                        userData ? (
-                                            <img src="./user.png" alt="User" className='userimg' />
-                                        ) : (
-                                            <img src="./favicon.ico" alt="Default" />
-                                        )
+                                        <img src={userData.image} alt="User" className='userimg' />
                                     )}
                                 </Link>
                             ) : (
@@ -288,6 +313,7 @@ const NavBar = ({ Authentication }) => {
                                     <span className="material-symbols-outlined">account_circle</span>
                                 </Link>
                             )}
+
                         </div>
                         <div className='search-hide' onClick={() => setShowSearch(!showSearch)}>
                             <span className="material-symbols-outlined">search</span>
@@ -303,12 +329,72 @@ const NavBar = ({ Authentication }) => {
             </nav>
             {showSearch && (
                 <div className="search-container" ref={searchContainerRef}>
-                    <div className="search-box">
-                        <input type="text" placeholder="Search..." />
-                        <button onClick={() => setShowSearch(false)}>Close</button>
+                    <div className="search_result">
+                        <div className="search-box">
+                            <input
+                                type="text"
+                                placeholder="Search..."
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                            />
+                            <button onClick={() => setShowSearch(false)}>Close</button>
+                        </div>
+
+                        <div className="products-grid  search-grid">
+                            {results.map((product, index) => {
+                                const queryWords = query.toLowerCase().split(/\s+/).filter(Boolean);
+
+                                const matchingImageObj = product.images.find(img =>
+                                    queryWords.includes(img.color?.toLowerCase())
+                                );
+
+                                const fallbackImageObj = product.images[0];
+                                const imageObjToUse = matchingImageObj || fallbackImageObj;
+                                const hasDiscount = product.dis_product_price !== undefined;
+
+
+                                const imageKey = Object.keys(imageObjToUse).find(key =>
+                                    key.startsWith("pi_")
+                                );
+
+                                const imageToShow = imageObjToUse[imageKey];
+
+                                return (
+                                    <div key={product._id} className="product-card">
+                                        <div className="product-image-wrapper">
+                                            <img
+                                                src={`/images/${imageToShow}`}
+                                                alt={product.product_name}
+                                            />
+                                        </div>
+                                        <div className="product-details">
+                                            <h3>{product.product_name}</h3>
+                                            {hasDiscount ? (
+                                                <p className="product-price dual-price">
+                                                    <span className="original-price">${product.product_price}</span>
+                                                    <span className="discount-price">${product.dis_product_price}</span>
+                                                </p>
+                                            ) : (
+                                                <p className="product-price">${product.product_price}</p>
+                                            )}
+                                            <Link to={`/product/${product._id}`}>
+                                                Shop Now
+                                            </Link>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
+
                 </div>
             )}
+
+
+
+
+
+
             <div className={`slidemenu ${isToggle ? 'toggle' : ''}`}>
 
                 <div className="mob_top_icons">

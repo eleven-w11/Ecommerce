@@ -2102,3 +2102,216 @@ const Cart = () => {
 };
 
 export default Cart;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// server 1st 
+// require("dotenv").config();
+// const express = require("express");
+// const mongoose = require("mongoose");
+// const cors = require("cors");
+// const cookieParser = require("cookie-parser");
+// const signupRoutes = require("./routes/SignUpRoutes");
+// const signinRoutes = require("./routes/signinRoutes");
+// const signOutRoutes = require("./routes/signoutRoutes");
+// const userRoutes = require("./routes/user");
+// const verifyTokenRoutes = require("./middleware/verifyToken");
+// const verifyPathRoutes = require("./middleware/verifyPath");
+// const dataRoutes = require("./routes/admindataRoutes");
+// const productRoutes = require("./routes/productRoutes");
+// const cartRoutes = require("./routes/cartRoutes");
+// // const productRoutes = require("./routes/productRoutes");
+
+
+
+// const app = express();
+// const PORT = process.env.PORT || 5000;
+
+// // ✅ Update CORS Configuration
+// const allowedOrigins = ["http://localhost:3000",
+//     "https://your-web-gamma.vercel.app",
+//     "http://192.168.10.8:3000"
+// ];
+
+// app.use(cors({
+//     origin: function (origin, callback) {
+//         if (!origin || allowedOrigins.includes(origin)) {
+//             callback(null, true);
+//         } else {
+//             callback(new Error("Not allowed by CORS"));
+//         }
+//     },
+//     credentials: true,
+// }));
+
+// app.use((req, res, next) => {
+//     res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+//     next();
+// });
+
+// app.get("/", (req, res) => {
+//     res.send("Server is running!");
+// });
+
+
+// app.use(cookieParser());
+// app.use(express.json());
+
+// mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+//     .then(() => console.warn("Connected to MongoDB"))
+//     .catch((err) => console.error("MongoDB connection error: ", err));
+
+// console.warn("MONGO_URI:", process.env.MONGO_URI);
+
+// app.use("/images", express.static("images"));
+
+// app.use("/api/", signupRoutes);
+// app.use("/api/", signinRoutes);
+// app.use("/api/user", userRoutes);
+// app.use("/api", signOutRoutes);
+// app.use("/api/verifytoken", verifyTokenRoutes);
+// app.use("/api/protected", verifyPathRoutes);
+// app.use("/api", dataRoutes);
+// app.use("/api/data", dataRoutes);
+// app.use("/api/products", productRoutes);
+// app.use("/api", cartRoutes);
+// // app.use("/api/products", productRoutes); // 👈 /api/products/search now works!
+
+// app.use((err, req, res, next) => {
+//     res.status(500).json({ message: "Server Error" });
+// });
+
+// app.listen(PORT, "0.0.0.0", () => console.warn(`Server running on port ${PORT}`));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// server 2nd 
+// require("dotenv").config();
+// const express = require("express");
+// const mongoose = require("mongoose");
+// const cors = require("cors");
+// const cookieParser = require("cookie-parser");
+
+// // Import Routes
+// const signupRoutes = require("./routes/SignUpRoutes");
+// const signinRoutes = require("./routes/signinRoutes");
+// const signOutRoutes = require("./routes/signoutRoutes");
+// const userRoutes = require("./routes/user");
+// const verifyTokenRoutes = require("./middleware/verifyToken");
+// const verifyPathRoutes = require("./middleware/verifyPath");
+// const dataRoutes = require("./routes/admindataRoutes");
+// const productRoutes = require("./routes/productRoutes");
+// const cartRoutes = require("./routes/cartRoutes");
+
+// const app = express();
+// const PORT = process.env.PORT || 5000;
+
+// // ✅ Use middlewares in correct order
+// app.use(cookieParser());
+// app.use(express.json());
+
+// // ✅ Set headers for popup/Google login compatibility
+// app.use((req, res, next) => {
+//     res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+//     res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+//     next();
+// });
+
+// // ✅ Updated CORS configuration
+// const allowedOrigins = [
+//     "http://localhost:3000",
+//     "https://your-web-gamma.vercel.app",
+//     "http://192.168.10.8:3000"
+// ];
+
+// app.use(cors({
+//     origin: function (origin, callback) {
+//         if (!origin || allowedOrigins.includes(origin)) {
+//             callback(null, true);
+//         } else {
+//             callback(new Error("Not allowed by CORS"));
+//         }
+//     },
+//     credentials: true
+// }));
+
+// // ✅ Test route
+// app.get("/", (req, res) => {
+//     res.send("Server is running!");
+// });
+
+// // ✅ Connect to MongoDB
+// mongoose.connect(process.env.MONGO_URI, {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true
+// })
+//     .then(() => console.log("✅ Connected to MongoDB"))
+//     .catch((err) => console.error("❌ MongoDB connection error:", err));
+
+// // ✅ Serve static files
+// app.use("/images", express.static("images"));
+
+// // ✅ Use API routes
+// app.use("/api/", signupRoutes);
+// app.use("/api/", signinRoutes);
+// app.use("/api/user", userRoutes);
+// app.use("/api", signOutRoutes);
+// app.use("/api/verifytoken", verifyTokenRoutes);
+// app.use("/api/protected", verifyPathRoutes);
+// app.use("/api", dataRoutes);
+// app.use("/api/data", dataRoutes);
+// app.use("/api/products", productRoutes);
+// app.use("/api", cartRoutes);
+
+// // ✅ Global error handler
+// app.use((err, req, res, next) => {
+//     console.error("Unhandled Error:", err);
+//     res.status(500).json({ message: "Server Error" });
+// });
+
+// // ✅ Start server
+// app.listen(PORT, "0.0.0.0", () => {
+//     console.log(`🚀 Server running on port ${PORT}`);
+// });

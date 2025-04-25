@@ -16,20 +16,27 @@ const BestSellingProducts = () => {
 
     const addToCart = (product) => {
         const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+        const timeStamp = Date.now(); // ✅ millisecond-based timestamp
+        const uniqueId = `${product._id}-${timeStamp}`; // ✅ create composite id + time
+
         const index = storedCart.findIndex(item => item.id === product._id);
         if (index !== -1) {
             storedCart[index].quantity = (storedCart[index].quantity || 1) + 1;
             storedCart[index].addedAt = new Date().toISOString();
+
             localStorage.setItem("cart", JSON.stringify(storedCart));
             window.dispatchEvent(new Event("storage"));
             alert("Quantity increased!");
             return;
         }
+
         const newCartItem = {
-            id: product._id,
+            uniqueId: uniqueId, // ✅ store combined id
+            id: product._id,     // original MongoDB ID
             quantity: 1,
             addedAt: new Date().toISOString()
         };
+
         const updatedCart = [...storedCart, newCartItem];
         localStorage.setItem("cart", JSON.stringify(updatedCart));
         window.dispatchEvent(new Event("storage"));

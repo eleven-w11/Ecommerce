@@ -192,7 +192,8 @@ nav .userimg {
     position: relative;
     /* background-color: lightcoral; */
 }
-.line_hide_box{
+
+.line_hide_box {
     width: 11px;
     height: 110%;
     background-color: whitesmoke;
@@ -200,6 +201,7 @@ nav .userimg {
     right: 0;
     z-index: 10;
 }
+
 .slidemenu ul li {
     width: 100%;
     list-style: none;
@@ -230,13 +232,13 @@ nav .userimg {
 }
 
 
-.dropdown-man ,
+.dropdown-man,
 .dropdown-woman {
     width: 100%;
     overflow: hidden;
 }
 
-.dropdown-man li a ,
+.dropdown-man li a,
 .dropdown-woman li a {
     padding: 14px 0px 14px 40px;
 }
@@ -313,14 +315,9 @@ nav .userimg {
 
 
 
-
+/* 
 .search-container {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%;
-    height: 90vh;
+    
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
     color: white;
@@ -328,45 +325,154 @@ nav .userimg {
     display: flex;
     align-items: center;
     justify-content: center;
-}
+    background-color: lightsalmon;
+    
+} */
 
-.search-box {
+/* Search container */
+.search-container {
+    width: 100%;
+    height: 100vh;
+    min-height: 600px;
+
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* backdrop-filter: blur(6px);
+    
+    background-color: rgba(0, 0, 0, 0.4); */
+    background-color: whitesmoke;
+    z-index: 10;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid lightgray;
+    /* overflow: auto; */
+    /* display: flex;
+    justify-content: center;
+    align-items: flex-start; */
+    /* padding-top: 80px; */
+}
+.search_result{
     width: 100%;
     height: 100%;
-    background: white;
-    background: lightgray;
-    padding: 15px;
-    border-radius: 8px;
-    text-align: center;
+    /* overflow: auto; */
+    /* background-color: red; */
 }
-
-.search-box input {
+/* Search box */
+.search-box {
     width: 100%;
-    padding: 10px;
-    border: none;
-    border-radius: 4px;
+    height: 20%;
+    /* background: lightblue; */
+    /* border-radius: 16px; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    /* padding: 20px 30px; */
+    /* width: 90%; */
+    /* max-width: 700px; */
+    /* box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); */
+}
+
+/* Input */
+.search-box input[type="text"] {
+    width: 80%;
+    padding: 12px 15px;
+    /* margin-bottom: 20px; */
+    /* font-size: 16px; */
+    /* border: 2px solid #ccc; */
+    /* border-radius: 12px; */
     outline: none;
+    transition: 0.3s ease;
+    border-bottom: 1px solid darkgray;
+    border-left: 0;
+    border-right: 0;
+    border-top: 0;
 }
 
-.search-hide {
-    cursor: pointer;
-    font-size: 24px;
+.search-box input[type="text"]:focus {
+    border-left: 0;
+    border-right: 0;
+    border-top: 0;
+    /* border-color: #0077ff; */
+    /* box-shadow: 0 0 0 3px rgba(0, 119, 255, 0.2); */
 }
 
-
+/* Close button */
 .search-box button {
-    margin-top: 10px;
-    padding: 8px 15px;
+    /* position: absolute;
+    top: 20px;
+    right: 35px; */
+    background: #ff4d4d;
     border: none;
-    background: red;
     color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
     cursor: pointer;
-    border-radius: 4px;
+    font-size: 14px;
+    transition: background 0.3s ease;
+}
+
+.search-box button:hover {
+    background: #e60000;
+}
+
+/* Search result items */
+
+/* .result-box{
+    width: 100%;
+    height: 80%;
+    background-color: lightgreen;
+    overflow: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+.search-item {
+    width: 230px;
+    height: 310px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: blueviolet;
+    transition: transform 0.2s, box-shadow 0.2s;
+} */
+
+/* Image */
+/* .search-item .item-img{
+    width: 100%;
+    height: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: lightcoral;
+}
+.search-item img {
+    width: 140px; */
+/* } */
+.search-container .search-grid{
+    width: 100%;
+    height: 80%;
+    overflow: auto;
+    /* background-color: lightgreen; */
+}
+/* .search-item .item-data{
+    width: 100%;
+    height: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: teal;
 }
 
 
-
-
+ */
 
 
 
@@ -471,6 +577,7 @@ nav .userimg {
     .slidemenu .search-show {
         display: block;
     }
+
     .slidemenu .mob_icons {
         /* width: 70%; */
         /* display: flex; */

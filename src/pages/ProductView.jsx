@@ -319,7 +319,7 @@ const ProductView = () => {
                                         <p className="price">${product.product_price}</p>
                                     </div>
                                 )}
-
+                                <p>${product.id}</p>
                                 {product.images && (
                                     <div className="color-selection">
                                         <div className="colors">

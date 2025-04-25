@@ -19,7 +19,7 @@ router.post("/signup", async (req, res) => {
                     process.env.JWT_SECRET,
                     { expiresIn: "1h" }
                 );
-                
+
                 res.cookie('token', token, {
                     httpOnly: true,
                     secure: false,
@@ -28,7 +28,6 @@ router.post("/signup", async (req, res) => {
                     expires: new Date(Date.now() + 3600000),
                 });
 
-                // console.log("Generated JWT Token:", token);
                 return res.status(200).json({ message: "User already exists. Sign In successful. #1", token });
             }
 
@@ -37,7 +36,7 @@ router.post("/signup", async (req, res) => {
             }
 
             if (!isPasswordMatch) {
-                return res.status(400).json({ message: "Email already exists, Forgrt Password. #3" });
+                return res.status(400).json({ message: "Email already exists, Forgot Password. #3" });
             }
         } else {
             const passwordMatchUser = await User.findOne({ name });
@@ -48,13 +47,13 @@ router.post("/signup", async (req, res) => {
             const saltRounds = 10;
             const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+            // Add the default image to the user object
             const newUser = new User({
                 name,
                 email,
-                password: hashedPassword
+                password: hashedPassword,
+                image: '/user.png'  // Add the default profile image path
             });
-
-            // console.log("Received Name, Email in logRoutes.js:", name, email, password);
 
             const savedUser = await newUser.save();
 
@@ -72,14 +71,90 @@ router.post("/signup", async (req, res) => {
                 expires: new Date(Date.now() + 3600000),
             });
 
-            // console.log("Generated JWT Token:", token);
-            return res.status(200, 201).json({ message: "Sign In successful. #5", token, user: savedUser });
+            return res.status(200).json({ message: "Sign In successful. #5", token, user: savedUser });
         }
     } catch (error) {
         console.error("Signup Error:", error.message);
-        // console.error("Error in logRoutes.js while saving user:", error);
         res.status(500).json({ message: "Error saving user", error });
     }
 });
+
+
+// POST /api/signupGoogle
+router.post("/signup/google", async (req, res) => {
+    try {
+        const { name, email, password, image } = req.body;
+
+        const existingUser = await User.findOne({ email });
+
+        if (existingUser) {
+            // Match name & image (optional match, or just email is enough)
+            if (existingUser.name === name) {
+                // ✅ User already exists & matches — treat as login
+                const token = jwt.sign(
+                    { userId: existingUser._id },
+                    process.env.JWT_SECRET,
+                    { expiresIn: "1h" }
+                );
+
+                res.cookie("token", token, {
+                    httpOnly: true,
+                    secure: false,
+                    domain: "localhost",
+                    path: "/",
+                    expires: new Date(Date.now() + 60 * 1000) // ⏱️ 60,000 ms = 1 minute
+                });
+
+                return res.status(200).json({
+                    message: "Google login successful (existing user)",
+                    user: existingUser,
+                    token,
+                });
+            } else {
+                return res
+                    .status(400)
+                    .json({ message: "Email already exists but name doesn't match" });
+            }
+        }
+
+        // User doesn't exist, create new
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = new User({
+            name,
+            email,
+            password: hashedPassword,
+            image,
+        });
+
+        const savedUser = await newUser.save();
+
+        const token = jwt.sign(
+            { userId: savedUser._id },
+            process.env.JWT_SECRET,
+            { expiresIn: "1h" }
+        );
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: false,
+            domain: "localhost",
+            path: "/",
+            expires: new Date(Date.now() + 3600000),
+        });
+
+        res.status(201).json({
+            message: "Google SignUp Successful",
+            user: savedUser,
+            token,
+        });
+    } catch (error) {
+        console.error("Signup Error:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+
+
 
 module.exports = router;

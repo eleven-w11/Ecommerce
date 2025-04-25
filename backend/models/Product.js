@@ -1,3 +1,4 @@
+// product.js
 const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema({
@@ -12,7 +13,8 @@ const productSchema = new mongoose.Schema({
         pi_1: String,
         pi_2: String,
         pi_3: String,
-        color_code: String
+        color_code: String,
+        color: String
     }]
 }, { collection: "best_selling_product" });
 

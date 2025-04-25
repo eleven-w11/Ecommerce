@@ -67,6 +67,15 @@ const UserProfile = ({ onSignOut }) => {
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
       {userData ? (
         <div>
+          {userData.image && (
+            <div>
+              <img
+                src={userData.image}
+                alt="User"
+                style={{ width: "150px", height: "150px", borderRadius: "50%" }}
+              />
+            </div>
+          )}
           <p><strong>Name:</strong> {userData.name}</p>
           <p><strong>Email:</strong> {userData.email}</p>
           <button onClick={handelSignOut}>Log Out</button>
@@ -79,6 +88,7 @@ const UserProfile = ({ onSignOut }) => {
       )}
     </div>
   );
+
 };
 
 export default UserProfile;

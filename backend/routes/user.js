@@ -22,3 +22,6 @@ router.get("/profile", verifyPath, async (req, res) => {
 });
 
 module.exports = router;
+
+// Ye route /profile pe logged-in user ka name, email, aur image database 
+// se nikal ke return karta hai — sirf agar token valid ho.
