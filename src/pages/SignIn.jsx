@@ -126,33 +126,10 @@ const SignIn = ({ onSignIn }) => {
     }, []);
 
 
-    // height calculate 
-    const [dimensions, setDimensions] = useState({
-        width: window.innerWidth,
-        height: window.innerHeight
-    });
-
-    useEffect(() => {
-        const handleResize = () => {
-            setDimensions({
-                width: window.innerWidth,
-                height: window.innerHeight
-            });
-        };
-
-        window.addEventListener("resize", handleResize);
-
-        // Cleanup
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
 
     return (
         <div className='sign'>
-            <div style={{ padding: "20px", textAlign: "center" }} className='height_calculate'>
-                <h2>📏 Page Dimensions</h2>
-                <p>Width: {dimensions.width}px</p>
-                <p>Height: {dimensions.height}px</p>
-            </div>
+            
             <div className="sign_google">
                 <div className='errorndsucc'>
                     {error && <p className={`err ${error ? 'visible' : 'hidden'}`}>{error}</p>}

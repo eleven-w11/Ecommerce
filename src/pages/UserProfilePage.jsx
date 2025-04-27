@@ -20,6 +20,7 @@ const UserProfile = ({ onSignOut }) => {
 
         if (response.data.success === false) {
           navigate("/SignIn");
+          
         }
 
         setUserData(response.data);

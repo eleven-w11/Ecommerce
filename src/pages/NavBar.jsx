@@ -313,7 +313,6 @@ const NavBar = ({ Authentication }) => {
                                     <span className="material-symbols-outlined">account_circle</span>
                                 </Link>
                             )}
-
                         </div>
                         <div className='search-hide' onClick={() => setShowSearch(!showSearch)}>
                             <span className="material-symbols-outlined">search</span>

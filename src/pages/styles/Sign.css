@@ -13,11 +13,7 @@
     font-family: "Roboto", serif;
     position: relative;
 }
-.height_calculate{
-    position: absolute;
-    top: 0;
-    left: 0;
-}
+
 
 .sign_google {
     width: 360px;
@@ -155,6 +151,7 @@ form button {
     flex-direction: column;
     justify-content: center;
     color: white;
+    text-align: center;
     position: absolute;
     top: -45px;
     left: 0;

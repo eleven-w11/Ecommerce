@@ -76,37 +76,35 @@ const UserLocation = () => {
     };
 
     return (
-        <div className="container">
-            <h2 className="title">Get User's Country</h2>
-            {/* If country is found in cookie, show country name and disable all options */}
+        <div className="country-container">
+            <h2 className="country-title">Get Your Country</h2>
+
             {country ? (
-                <div>
-                    <p className="success">Country: {country}</p>
+                <div className="country-success">
+                    <p>Your Country: <span>{country}</span></p>
                 </div>
             ) : (
-                <div>
-                    {/* Options to get country automatically or manually */}
+                <div className="country-actions">
                     <button
-                        className="button"
+                        className="country-button"
                         onClick={getLocation}
                         disabled={isDisabled}
                     >
-                        Get Location Automatically
+                        Detect Country Automatically
                     </button>
 
-                    {/* Manual input for country name */}
-                    <div className="manual-input">
-                        <p>Add Country Name</p>
+                    <div className="manual-country-section">
+                        <p className="manual-instruction">Or Enter Manually:</p>
                         <input
                             type="text"
-                            placeholder="Enter Country Name"
+                            placeholder="Enter Your Country"
                             value={manualCountry}
                             onChange={(e) => setManualCountry(e.target.value)}
-                            className="input"
+                            className="country-input"
                             disabled={isDisabled}
                         />
                         <button
-                            className="button"
+                            className="country-button"
                             onClick={handleManualCountrySubmit}
                             disabled={isDisabled}
                         >
@@ -116,9 +114,9 @@ const UserLocation = () => {
                 </div>
             )}
 
-            {/* Display error if any */}
-            {error && <p className="error">{error}</p>}
+            {error && <p className="country-error">{error}</p>}
         </div>
+
     );
 };
 
