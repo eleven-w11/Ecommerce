@@ -10,16 +10,16 @@ const UserLocation = () => {
     const [isDisabled, setIsDisabled] = useState(false);
 
     // Check for country in cookie when component mounts
-    useEffect(() => {
-        const countryFromCookie = Cookies.get("country"); // Fetch country from cookie
-        if (countryFromCookie) {
-            console.log("Country from cookie:", countryFromCookie); // Log cookie value for debugging
-            setCountry(countryFromCookie);
-            setIsDisabled(true); // Disable all inputs if country is already in the cookie
-        } else {
-            console.log("No country found in cookie.");
-        }
-    }, []); // Empty dependency array ensures this runs once on component mount
+    // useEffect(() => {
+    //     const countryFromCookie = Cookies.get("country"); // Fetch country from cookie
+    //     if (countryFromCookie) {
+    //         console.log("Country from cookie:", countryFromCookie); // Log cookie value for debugging
+    //         setCountry(countryFromCookie);
+    //         setIsDisabled(true); // Disable all inputs if country is already in the cookie
+    //     } else {
+    //         console.log("No country found in cookie.");
+    //     }
+    // }, []); // Empty dependency array ensures this runs once on component mount
 
     // Fetch country by coordinates using Nominatim API
     const fetchCountryByCoords = async (lat, lng) => {
@@ -75,46 +75,68 @@ const UserLocation = () => {
         }
     };
 
+    useEffect(() => {
+        const setLocationHeight = () => {
+            const height = window.innerHeight - 60;
+            const locationElement = document.querySelector(".location");
+
+            if (locationElement) {
+                locationElement.style.height = `${height}px`;
+            }
+        };
+
+        // Set on mount
+        setLocationHeight();
+
+        // Update on window resize
+        window.addEventListener("resize", setLocationHeight);
+
+        // Cleanup
+        return () => window.removeEventListener("resize", setLocationHeight);
+    }, []);
+
     return (
-        <div className="country-container">
-            <h2 className="country-title">Get Your Country</h2>
+        <div className="location">
+            <div className="country-container">
+                <h2 className="country-title">Your Country</h2>
 
-            {country ? (
-                <div className="country-success">
-                    <p>Your Country: <span>{country}</span></p>
-                </div>
-            ) : (
-                <div className="country-actions">
-                    <button
-                        className="country-button"
-                        onClick={getLocation}
-                        disabled={isDisabled}
-                    >
-                        Detect Country Automatically
-                    </button>
-
-                    <div className="manual-country-section">
-                        <p className="manual-instruction">Or Enter Manually:</p>
-                        <input
-                            type="text"
-                            placeholder="Enter Your Country"
-                            value={manualCountry}
-                            onChange={(e) => setManualCountry(e.target.value)}
-                            className="country-input"
-                            disabled={isDisabled}
-                        />
+                {country ? (
+                    <div className="country-success">
+                        <p>Your Country: <span>{country}</span></p>
+                    </div>
+                ) : (
+                    <div className="country-actions">
                         <button
                             className="country-button"
-                            onClick={handleManualCountrySubmit}
+                            onClick={getLocation}
                             disabled={isDisabled}
                         >
-                            Submit
+                            Detect Country Automatically
                         </button>
-                    </div>
-                </div>
-            )}
 
-            {error && <p className="country-error">{error}</p>}
+                        <div className="manual-country-section">
+                            <p className="manual-instruction">Or Enter Manually:</p>
+                            <input
+                                type="text"
+                                placeholder="Enter Your Country"
+                                value={manualCountry}
+                                onChange={(e) => setManualCountry(e.target.value)}
+                                className="country-input"
+                                disabled={isDisabled}
+                            />
+                            <button
+                                className="country-button"
+                                onClick={handleManualCountrySubmit}
+                                disabled={isDisabled}
+                            >
+                                Submit
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {error && <p className="country-error">{error}</p>}
+            </div>
         </div>
 
     );

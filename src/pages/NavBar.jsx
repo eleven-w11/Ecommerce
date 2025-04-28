@@ -27,7 +27,9 @@ const NavBar = ({ Authentication }) => {
     const [showWomanDropdown, setShowWomanDropdown] = useState(false);
     const manDropdownRef = useRef(null);
     const womanDropdownRef = useRef(null);
-
+    const [selectedIndex, setSelectedIndex] = useState(-1);
+    const selectedRefs = useRef([]);
+    const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
 
     // cart icon
     useEffect(() => {
@@ -136,18 +138,7 @@ const NavBar = ({ Authentication }) => {
         }
     }, [showSearch, isToggle]);
 
-    // ✅ GSAP Animation for Search Container
-    useEffect(() => {
-        if (showSearch && searchContainerRef.current) {
-            gsap.fromTo(
-                searchContainerRef.current,
-                { opacity: 0, scale: 0.1 }, // Start from invisible & small
-                { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" } // Animate to full opacity & scale
-            );
-        } else if (!showSearch && searchContainerRef.current) {
-            gsap.to(searchContainerRef.current, { opacity: 0, scale: 0.8, duration: 0.3, ease: "power2.in" });
-        }
-    }, [showSearch]);
+
 
     const handleSearchOutsideClick = useCallback((event) => {
         if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
@@ -177,7 +168,7 @@ const NavBar = ({ Authentication }) => {
 
         const fetchUserData = async () => {
             try {
-                const response = await axios.get("http://localhost:5000/api/user/profile", { withCredentials: true });
+                const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/user/profile`, { withCredentials: true });
                 setUserData(response.data);
             } catch (err) {
                 console.error(err);
@@ -257,7 +248,7 @@ const NavBar = ({ Authentication }) => {
     useEffect(() => {
         const fetchFiltered = async () => {
             try {
-                const res = await axios.get(`http://localhost:5000/api/products/search?query=${query}`);
+                const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/products/search?query=${query}`);
                 setResults(res.data); // already filtered results
             } catch (err) {
                 console.error("❌ Error fetching search results:", err);
@@ -271,8 +262,80 @@ const NavBar = ({ Authentication }) => {
     // Function to highlight the search term in the product name
 
 
+    const handleKeyDown = (e) => {
+        if (!results.length) return;
 
+        if (e.key === "ArrowDown") {
+            e.preventDefault();
+            setSelectedIndex(prev => (prev + 1) % results.length);
+        } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            setSelectedIndex(prev => (prev - 1 + results.length) % results.length);
+        } else if (e.key === "Enter" && selectedIndex >= 0) {
+            const selectedProduct = results[selectedIndex];
+            if (selectedProduct) {
+                window.location.href = `/product/${selectedProduct._id}`;
+                setShowSearch(false);
+            }
+        }
+    };
 
+    useEffect(() => {
+        if (selectedIndex !== -1 && selectedRefs.current[selectedIndex]) {
+            selectedRefs.current[selectedIndex].scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest',
+            });
+        }
+    }, [selectedIndex]);
+
+    const handleSearchIconClick = (e) => {
+        // Get the position of the search icon on the page
+        const rect = e.target.getBoundingClientRect();
+        const offsetX = e.clientX - rect.left;
+        const offsetY = e.clientY - rect.top;
+
+        // Save cursor position
+        setCursorPosition({ x: offsetX, y: offsetY });
+
+        // Trigger search container to show
+        setShowSearch(true);
+    };
+
+    useEffect(() => {
+        if (showSearch && searchContainerRef.current) {
+            // GSAP animation to expand from cursor position
+            gsap.fromTo(
+                searchContainerRef.current,
+                {
+                    opacity: 0,
+                    scale: 0.3,
+                    x: cursorPosition.x,
+                    y: cursorPosition.y,
+                    clipPath: 'circle(0% at center)', // Start from small circle
+                },
+                {
+                    opacity: 1,
+                    scale: 1,
+                    x: 0,
+                    y: 0,
+                    clipPath: 'circle(150% at center)', // Expand to full screen
+                    duration: 1.2,
+                    ease: "power3.out",
+                }
+            );
+        } else if (!showSearch && searchContainerRef.current) {
+            gsap.to(searchContainerRef.current, {
+                opacity: 0,
+                scale: 0.3,
+                x: cursorPosition.x,
+                y: cursorPosition.y,
+                clipPath: 'circle(0% at center)', // Shrink back to the cursor
+                duration: 0.5,
+                ease: "power3.in",
+            });
+        }
+    }, [showSearch, cursorPosition]);
 
 
 
@@ -284,9 +347,9 @@ const NavBar = ({ Authentication }) => {
                     <li className='menu'>
                         <span onClick={handleToggle} className={`material-symbols-outlined `} >menu</span>
                     </li>
-                    <li className='baroque-logo'>
+                    <li className='nav-logo'>
                         <Link to="/">
-                            <h1>YOUR<span>W</span>EB</h1>
+                            <h1>WEB<span>V</span>ERSE</h1>
                         </Link>
                     </li>
                     <li className="location-account-search-cart">
@@ -315,7 +378,7 @@ const NavBar = ({ Authentication }) => {
                             )}
                         </div>
                         <div className='search-hide' onClick={() => setShowSearch(!showSearch)}>
-                            <span className="material-symbols-outlined">search</span>
+                            <span className="material-symbols-outlined" onClick={handleSearchIconClick}>search</span>
                         </div>
                         <div>
                             <Link to="/Cart" className='cart_count'>
@@ -327,67 +390,68 @@ const NavBar = ({ Authentication }) => {
                 </ul>
             </nav>
             {showSearch && (
-                <div className="search-container" ref={searchContainerRef}>
-                    <div className="search_result">
-                        <div className="search-box">
+                <div
+                    className="search-overlay"
+                    ref={searchContainerRef}
+                    tabIndex={0} // 👈 important for keyboard events
+                    onKeyDown={(e) => handleKeyDown(e)}
+                >
+                    <div className="search-box">
+                        <div className="search-header">
                             <input
                                 type="text"
                                 placeholder="Search..."
                                 value={query}
-                                onChange={(e) => setQuery(e.target.value)}
+                                onChange={(e) => {
+                                    setQuery(e.target.value);
+                                    setSelectedIndex(-1); // Reset selection on typing
+                                }}
+                                className="search-input"
                             />
-                            <button onClick={() => setShowSearch(false)}>Close</button>
+                            <button className="cancel-btn" onClick={() => setShowSearch(false)}>×</button>
                         </div>
 
-                        <div className="products-grid  search-grid">
+                        <div className="search-results">
                             {results.map((product, index) => {
                                 const queryWords = query.toLowerCase().split(/\s+/).filter(Boolean);
-
                                 const matchingImageObj = product.images.find(img =>
                                     queryWords.includes(img.color?.toLowerCase())
                                 );
-
                                 const fallbackImageObj = product.images[0];
                                 const imageObjToUse = matchingImageObj || fallbackImageObj;
-                                const hasDiscount = product.dis_product_price !== undefined;
-
-
                                 const imageKey = Object.keys(imageObjToUse).find(key =>
                                     key.startsWith("pi_")
                                 );
-
                                 const imageToShow = imageObjToUse[imageKey];
 
                                 return (
-                                    <div key={product._id} className="product-card">
-                                        <div className="product-image-wrapper">
-                                            <img
-                                                src={`/images/${imageToShow}`}
-                                                alt={product.product_name}
-                                            />
-                                        </div>
-                                        <div className="product-details">
+                                    <Link
+                                        key={product._id}
+                                        to={`/product/${product._id}`}
+                                        className={`search-item ${index === selectedIndex ? "selected" : ""}`}
+                                        ref={(el) => selectedRefs.current[index] = el} // ✅ ref set kar rahe hain
+                                    >
+                                        <img
+                                            src={`/images/${imageToShow}`}
+                                            alt={product.product_name}
+                                            className="search-item-image"
+                                        />
+                                        <div className="search-item-details">
                                             <h3>{product.product_name}</h3>
-                                            {hasDiscount ? (
-                                                <p className="product-price dual-price">
-                                                    <span className="original-price">${product.product_price}</span>
-                                                    <span className="discount-price">${product.dis_product_price}</span>
-                                                </p>
-                                            ) : (
-                                                <p className="product-price">${product.product_price}</p>
-                                            )}
-                                            <Link to={`/product/${product._id}`}>
-                                                Shop Now
-                                            </Link>
                                         </div>
-                                    </div>
+                                    </Link>
                                 );
                             })}
+
                         </div>
                     </div>
-
                 </div>
             )}
+
+
+
+
+
 
 
 
