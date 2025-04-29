@@ -168,7 +168,7 @@ const NavBar = ({ Authentication }) => {
 
         const fetchUserData = async () => {
             try {
-                const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/user/profile`, { withCredentials: true });
+                const response = await axios.get("http://localhost:5000/api/user/profile", { withCredentials: true });
                 setUserData(response.data);
             } catch (err) {
                 console.error(err);
@@ -248,7 +248,7 @@ const NavBar = ({ Authentication }) => {
     useEffect(() => {
         const fetchFiltered = async () => {
             try {
-                const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/products/search?query=${query}`);
+                const res = await axios.get(`http://localhost:5000/api/products/search?query=${query}`);
                 setResults(res.data); // already filtered results
             } catch (err) {
                 console.error("❌ Error fetching search results:", err);
@@ -412,7 +412,7 @@ const NavBar = ({ Authentication }) => {
                         </div>
 
                         <div className="search-results">
-                            {results.map((product, index) => {
+                            {Array.isArray(results) && results.length > 0 && results.map((product, index) => {
                                 const queryWords = query.toLowerCase().split(/\s+/).filter(Boolean);
                                 const matchingImageObj = product.images.find(img =>
                                     queryWords.includes(img.color?.toLowerCase())
@@ -429,7 +429,7 @@ const NavBar = ({ Authentication }) => {
                                         key={product._id}
                                         to={`/product/${product._id}`}
                                         className={`search-item ${index === selectedIndex ? "selected" : ""}`}
-                                        ref={(el) => selectedRefs.current[index] = el} // ✅ ref set kar rahe hain
+                                        ref={(el) => selectedRefs.current[index] = el}
                                     >
                                         <img
                                             src={`/images/${imageToShow}`}
@@ -442,6 +442,7 @@ const NavBar = ({ Authentication }) => {
                                     </Link>
                                 );
                             })}
+
 
                         </div>
                     </div>
