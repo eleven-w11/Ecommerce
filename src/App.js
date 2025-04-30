@@ -26,7 +26,7 @@ function App() {
     const checkAuth = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/verifytoken",
+          `${process.env.REACT_APP_API_BASE_URL}/api/verifytoken`,
           { withCredentials: true }
         );
 

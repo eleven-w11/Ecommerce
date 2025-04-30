@@ -76,7 +76,7 @@ const SignUp = ({ onSignUp }) => {
 
         try {
             const response = await axios.post(
-                "http://localhost:5000/api/signup",
+                `${process.env.REACT_APP_API_BASE_URL}/api/signup`,
                 { name, email, password },
                 { withCredentials: true }
             );
@@ -124,7 +124,7 @@ const SignUp = ({ onSignUp }) => {
             const { name, email, picture } = res.data;
             const password = email + "_GoogleAuth";
 
-            await axios.post("http://localhost:5000/api/signup/google", {
+            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/signup/google`, {
                 name,
                 email,
                 password,

@@ -167,7 +167,7 @@ const ProductView = () => {
 
 
     useEffect(() => {
-        axios.get(`http://localhost:5000/api/products/${id}`)
+        axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/products/${id}`)
             .then(response => {
                 console.log("Fetched Product Data:", response.data);
                 const data = response.data;
@@ -237,7 +237,7 @@ const ProductView = () => {
 
 
     useEffect(() => {
-        axios.get("http://localhost:5000/api/products")
+        axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/products`)
             .then(response => {
                 const allProducts = response.data;
                 const filteredProducts = allProducts.filter(p => p._id !== id);

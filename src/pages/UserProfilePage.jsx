@@ -12,7 +12,7 @@ const UserProfile = ({ onSignOut }) => {
     const fetchUserData = async () => {
 
       try {
-        const response = await axios.get("http://localhost:5000/api/user/profile", { withCredentials: true });
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/user/profile`, { withCredentials: true });
         console.log("Full response:", response);
 
         // Debugging specific parts of the response
@@ -20,7 +20,7 @@ const UserProfile = ({ onSignOut }) => {
 
         if (response.data.success === false) {
           navigate("/SignIn");
-          
+
         }
 
         setUserData(response.data);
@@ -48,7 +48,7 @@ const UserProfile = ({ onSignOut }) => {
   }
   const handelSignOut = async () => {
     try {
-      const response = await axios.delete("http://localhost:5000/api/signout", { withCredentials: true });
+      const response = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/signout`, { withCredentials: true });
       if (response.data.success) {
         onSignOut();
         navigate("/signin");

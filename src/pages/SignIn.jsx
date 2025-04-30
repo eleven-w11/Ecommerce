@@ -34,7 +34,7 @@ const SignIn = ({ onSignIn }) => {
         }
 
         try {
-            const response = await axios.post("http://localhost:5000/api/signin", { email, password }, { withCredentials: true });
+            const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/signin`, { email, password }, { withCredentials: true });
 
             onSignIn();
             setError("");
@@ -77,7 +77,7 @@ const SignIn = ({ onSignIn }) => {
             const { name, email, picture } = res.data;
             const password = email + "_GoogleAuth";
 
-            await axios.post("http://localhost:5000/api/signup/google", {
+            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/signup/google`, {
                 name,
                 email,
                 password,

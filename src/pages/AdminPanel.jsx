@@ -12,7 +12,7 @@ const DataPage = () => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(
-                    'http://localhost:5000/api/data',
+                    `${process.env.REACT_APP_API_BASE_URL}/api/data`,
                     { withCredentials: true }
 
                 );
@@ -38,7 +38,7 @@ const DataPage = () => {
         if (!confirmDelete) return;
 
         try {
-            await axios.delete(`http://localhost:5000/api/data/delete/${id}`, {
+            await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/data/delete/${id}`, {
                 withCredentials: true,
             });
             alert(`user deleted Successfully`);
