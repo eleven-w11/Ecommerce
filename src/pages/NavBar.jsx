@@ -20,7 +20,6 @@ const NavBar = ({ Authentication }) => {
     const searchContainerRef = useRef(null);
     const [query, setQuery] = useState("");
     const [results, setResults] = useState([]);
-    const [allProducts, setAllProducts] = useState([]);
     const linksRef = useRef([]);
     const animationPlayed = useRef(false);
     const [showManDropdown, setShowManDropdown] = useState(false);
@@ -74,10 +73,8 @@ const NavBar = ({ Authentication }) => {
                 }
             );
         }
-        if (!isToggle) {
-            animationPlayed.current = false;
-        }
-    }, [isToggle]);
+    }, [isToggle]); // ✅ Jab toggle change ho tabhi chale
+
 
     // slidemenu 
 
@@ -289,53 +286,38 @@ const NavBar = ({ Authentication }) => {
         }
     }, [selectedIndex]);
 
-    const handleSearchIconClick = (e) => {
-        // Get the position of the search icon on the page
-        const rect = e.target.getBoundingClientRect();
-        const offsetX = e.clientX - rect.left;
-        const offsetY = e.clientY - rect.top;
-
-        // Save cursor position
-        setCursorPosition({ x: offsetX, y: offsetY });
-
-        // Trigger search container to show
-        setShowSearch(true);
-    };
-
     useEffect(() => {
         if (showSearch && searchContainerRef.current) {
-            // GSAP animation to expand from cursor position
             gsap.fromTo(
                 searchContainerRef.current,
                 {
                     opacity: 0,
-                    scale: 0.3,
-                    x: cursorPosition.x,
-                    y: cursorPosition.y,
-                    clipPath: 'circle(0% at center)', // Start from small circle
+                    scale: 0.5,
+                    transformOrigin: "top right",
+                    y: -50,
+                    clipPath: "circle(0% at 90% 10%)",
                 },
                 {
                     opacity: 1,
                     scale: 1,
-                    x: 0,
                     y: 0,
-                    clipPath: 'circle(150% at center)', // Expand to full screen
-                    duration: 1.2,
-                    ease: "power3.out",
+                    clipPath: "circle(150% at 90% 10%)",
+                    duration: 1,
+                    ease: "elastic.out(1, 0.5)", // 🧠 elastic bounce style
                 }
             );
         } else if (!showSearch && searchContainerRef.current) {
             gsap.to(searchContainerRef.current, {
                 opacity: 0,
-                scale: 0.3,
-                x: cursorPosition.x,
-                y: cursorPosition.y,
-                clipPath: 'circle(0% at center)', // Shrink back to the cursor
+                scale: 0.5,
+                y: -50,
+                clipPath: "circle(0% at 90% 10%)",
                 duration: 0.5,
-                ease: "power3.in",
+                ease: "power3.inOut",
             });
         }
-    }, [showSearch, cursorPosition]);
+    }, [showSearch]);
+
 
 
 
@@ -378,7 +360,7 @@ const NavBar = ({ Authentication }) => {
                             )}
                         </div>
                         <div className='search-hide' onClick={() => setShowSearch(!showSearch)}>
-                            <span className="material-symbols-outlined" onClick={handleSearchIconClick}>search</span>
+                            <span className="material-symbols-outlined">search</span>
                         </div>
                         <div>
                             <Link to="/Cart" className='cart_count'>
