@@ -530,22 +530,27 @@ const Cart = () => {
                         <p>No items in your cart.</p>
                     </div>
                 )}
-                <div className="hr"></div>
-                <div className="total-amount_checkout">
-                    <div className="E-total">
-                        <h3>Estimated Total</h3>
-                        <p className="estimated-total-amount">
-                            ${cartProducts.reduce((total, product) => {
-                                const price = product.dis_product_price || product.product_price;
-                                return total + price * product.quantity;
-                            }, 0).toFixed(2)}
-                        </p>
-                    </div>
-                    <div className="hr"></div>
-                    <div className="checkout_button">
-                        <Link>Checkout</Link>
-                    </div>
-                </div>
+                {cartProducts && cartProducts.length > 0 ? (
+                    <>
+                        <div className="hr"></div>
+                        <div className="total-amount_checkout">
+                            <div className="E-total">
+                                <h3>Estimated Total</h3>
+                                <p className="estimated-total-amount">
+                                    ${cartProducts.reduce((total, product) => {
+                                        const price = product.dis_product_price || product.product_price;
+                                        return total + price * product.quantity;
+                                    }, 0).toFixed(2)}
+                                </p>
+                            </div>
+                            <div className="hr"></div>
+                            <div className="checkout_button">
+                                <Link to="/checkout">Checkout</Link>
+                            </div>
+                        </div>
+                    </>
+                ) : null}
+
 
             </div>
         </>

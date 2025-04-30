@@ -196,11 +196,9 @@ li {
 .pro_view_loader{
     width: 100%;
     height: 90vh;
-    /* background-color: red; */
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: red;
 
 }
 /* Loader Container */
@@ -208,9 +206,7 @@ li {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* height: 100vh; */
     flex-direction: column;
-    /* background: #f4f4f4; */
     padding: 10px 0 25px 0;
 }
 

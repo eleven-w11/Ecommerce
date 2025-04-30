@@ -66,7 +66,8 @@ const BestSellingProducts = () => {
     <div className="best-selling-section">
       <div className="product-container">
         <h2>Best Selling</h2>
-        <div className="products-grid">
+        <div className={products.length > 0 ? "products-grid" : "products-flex"}>
+
           {products.length > 0 ? (
             products.map(product => {
               const hasDiscount = product.dis_product_price !== undefined;
