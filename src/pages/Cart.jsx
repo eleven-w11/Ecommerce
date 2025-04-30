@@ -27,7 +27,7 @@ const Cart = () => {
 
         const productIds = cart.map(item => item.id);
 
-        axios.post("${process.env.REACT_APP_API_BASE_URL}/api/cart-products", { productIds })
+        axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/cart-products`, { productIds })
             .then(response => {
                 console.log("🧾 API Response:", response.data);
 
