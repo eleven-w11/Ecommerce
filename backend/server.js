@@ -36,16 +36,13 @@ const allowedOrigins = [
     "http://192.168.10.8:3000"
 ];
 
+const cors = require("cors");
+
 app.use(cors({
-    origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error("Not allowed by CORS"));
-        }
-    },
-    credentials: true
+    origin: ["http://localhost:3000", "https://yourweb-backend.onrender.com"],
+    credentials: true,
 }));
+
 
 // ✅ Test route
 app.get("/", (req, res) => {

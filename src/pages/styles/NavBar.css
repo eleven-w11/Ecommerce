@@ -82,7 +82,7 @@ nav .location-account-search-cart div .cart {
     margin: 0 20px 0 0;
 }
 
-nav a {}
+
 
 .slidemenu .material-symbols-outlined,
 nav .material-symbols-outlined {
@@ -219,6 +219,22 @@ nav .userimg {
     justify-content: space-between;
 }
 
+.active-link {
+    /* font-weight: bold; */
+    color: rgb(85, 85, 255);
+    /* tomato or any highlight color */
+    /* border-bottom: 2px solid currentColor; */
+}
+
+
+/* .slidemenu li{
+    background-color: blueviolet;
+} */
+
+/* .slidemenu li:hover{
+    background-color: gray;
+    border-radius: 20px;
+} */
 .slidemenu li .man_woman {
     cursor: pointer;
 }
@@ -297,6 +313,10 @@ nav .userimg {
 .navline_dropdown {
     width: 89%;
     margin-left: 35px;
+}
+
+.active-line {
+    border-top: 1px solid blue;
 }
 
 .no-scroll {

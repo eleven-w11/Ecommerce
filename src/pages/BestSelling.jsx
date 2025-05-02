@@ -76,7 +76,10 @@ const BestSellingProducts = () => {
               return (
                 <div key={product._id} className="product-card">
                   <div className="product-image-wrapper">
-                    <img src={`/images/${firstImage}`} className="bsp-img" alt={product.product_name} />
+                    <img src={`/images/${firstImage}`}
+                      className="bsp-img"
+                      {...(product.width ? { style: { width: product.width } } : {})}
+                      alt={product.product_name} />
                     <img
                       src={addTocart}
                       className="add-to-cart-icon"
@@ -94,6 +97,7 @@ const BestSellingProducts = () => {
                     ) : (
                       <p className="product-price">${product.product_price}</p>
                     )}
+                    {/* <p>{product.id}</p> */}
                     <Link to={`/product/${product._id}`}>
                       Shop Now
                     </Link>

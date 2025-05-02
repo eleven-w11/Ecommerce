@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './styles/NavBar.css';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Cookies from "js-cookie";
 import axios from 'axios';
 import { gsap } from "gsap";
@@ -29,6 +29,15 @@ const NavBar = ({ Authentication }) => {
     const [selectedIndex, setSelectedIndex] = useState(-1);
     const selectedRefs = useRef([]);
     const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+    // active-link
+    const location = useLocation();
+    const [activePath, setActivePath] = useState(location.pathname);
+
+
+
+
+
+
 
     // cart icon
     useEffect(() => {
@@ -319,6 +328,11 @@ const NavBar = ({ Authentication }) => {
     }, [showSearch]);
 
 
+    // activelink
+
+    useEffect(() => {
+        setActivePath(location.pathname);
+    }, [location.pathname]);
 
 
 
@@ -498,27 +512,39 @@ const NavBar = ({ Authentication }) => {
                     <div className="line_hide_box"></div>
                     <li>
                         <Link
-                            ref={(el) => (linksRef.current[2] = el)}>
+                            to="/UserLocation"
+                            ref={(el) => (linksRef.current[2] = el)}
+                            className={activePath === "/UserLocation" ? "active-link" : ""}
+                        >
                             On Sale
                         </Link>
                     </li>
-                    <div className="navline"
-                        ref={(el) => (linksRef.current[3] = el)}></div>
+                    <div
+                        className={`navline ${activePath === "/UserLocation" ? "active-line" : ""}`}
+                        ref={(el) => (linksRef.current[3] = el)}
+                    ></div>
                     <li>
-                        <Link to="/Top Products"
+                        <Link
+                            to="/TopProducts"
+                            className={activePath === "/TopProducts" ? "active-link" : ""}
                             ref={(el) => (linksRef.current[4] = el)}>
                             Top Products
                         </Link>
                     </li>
-                    <div className="navline"
-                        ref={(el) => (linksRef.current[5] = el)}></div>
+                    <div
+                        className={`navline ${activePath === "/TopProducts" ? "active-line" : ""}`}
+                        ref={(el) => (linksRef.current[6] = el)}
+                    ></div>
                     <li>
-                        <Link to="/Best Selling"
+                        <Link
+                            to="/BestSelling"
+                            className={activePath === "/BestSelling" ? "active-link" : ""}
                             ref={(el) => (linksRef.current[6] = el)}>
                             Best Selling
                         </Link>
                     </li>
-                    <div className="navline"
+                    <div
+                        className={`navline ${activePath === "/BestSelling" ? "active-line" : ""}`}
                         ref={(el) => (linksRef.current[7] = el)}></div>
                     <li className="man_nolink" onClick={handleManClick}>
                         <span className='man_woman' ref={(el) => (linksRef.current[8] = el)}>Man</span>
@@ -534,12 +560,31 @@ const NavBar = ({ Authentication }) => {
                     ></div>
                     {showManDropdown && (
                         <div className="dropdown-man" ref={manDropdownRef}>
-                            <li><Link>Top</Link></li>
-                            <div className="navline navline_dropdown"></div>
-                            <li><Link>Bottom</Link></li>
-                            <div className="navline navline_dropdown"></div>
-                            <li><Link>Shoes</Link></li>
-                            <div className="navline navline_dropdown"></div>
+                            <li><Link
+                                to="/ManTop"
+                                state={{ category: "man", type: "top" }}
+                                className={activePath === "/ManTop" ? "active-link" : ""}
+                            >Top</Link></li>
+                            <div
+                                className={`navline navline_dropdown ${activePath === "/ManTop" ? "active-line" : ""}`}
+                            ></div>
+                            <li><Link
+                                to="/ManBottom"
+                                state={{ category: "man", type: "bottom" }}
+                                className={activePath === "/ManBottom" ? "active-link" : ""}
+                            >Bottom</Link></li>
+
+                            <div
+                                className={`navline navline_dropdown ${activePath === "/ManBottom" ? "active-line" : ""}`}
+                            ></div>
+                            <li><Link
+                                to="/ManShoes"
+                                state={{ category: "man", type: "shoes" }}
+                                className={activePath === "/ManShoes" ? "active-link" : ""}
+                            >Shoes</Link></li>
+                            <div
+                                className={`navline navline_dropdown ${activePath === "/ManShoes" ? "active-line" : ""}`}
+                            ></div>
                         </div>
                     )}
                     <li className="woman_nolink" onClick={handleWomanClick}>
@@ -555,21 +600,55 @@ const NavBar = ({ Authentication }) => {
                         ref={(el) => (linksRef.current[13] = el)}></div>
                     {showWomanDropdown && (
                         <div className="dropdown-woman" ref={womanDropdownRef}>
-                            <li><Link>Top</Link></li>
-                            <div className="navline navline_dropdown"></div>
-                            <li><Link>Bottom</Link></li>
-                            <div className="navline navline_dropdown"></div>
-                            <li><Link>Shoes</Link></li>
-                            <div className="navline navline_dropdown"></div>
-                            <li><Link>Bags</Link></li>
-                            <div className="navline navline_dropdown"></div>
-                            <li><Link>Accessories</Link></li>
-                            <div className="navline navline_dropdown"></div>
+                            <li>
+                                <Link
+                                    to="/WomanTop"
+                                    state={{ category: "woman", type: "top" }}
+                                    className={activePath === "/WomanTop" ? "active-link" : ""}
+                                >Top</Link>
+                            </li>
+                            <div
+                                className={`navline navline_dropdown ${activePath === "/WomanTop" ? "active-line" : ""}`}
+                            ></div>
+                            <li><Link
+                                to="/WomanBottom"
+                                state={{ category: "woman", type: "bottom" }}
+                                className={activePath === "/WomanBottom" ? "active-link" : ""}
+                            >Bottom</Link></li>
+                            <div
+                                className={`navline navline_dropdown ${activePath === "/WomanBottom" ? "active-line" : ""}`}
+                            ></div>
+                            <li><Link
+                                to="/WomanShoes"
+                                state={{ category: "woman", type: "shoes" }}
+                                className={activePath === "/WomanShoes" ? "active-link" : ""}
+                            >Shoes</Link></li>
+                            <div
+                                className={`navline navline_dropdown ${activePath === "/WomanShoes" ? "active-line" : ""}`}
+                            ></div>
+
+                            <li><Link
+                                to="/WomanBags"
+                                state={{ category: "woman", type: "bags" }}
+                                className={activePath === "/WomanBags" ? "active-link" : ""}
+                            >Bags</Link></li>
+                            <div
+                                className={`navline navline_dropdown ${activePath === "/WomanBags" ? "active-line" : ""}`}
+                            ></div>
+                            <li><Link
+                                to="/WomanAccessories"
+                                state={{ category: "woman", type: "accessories" }}
+                                className={activePath === "/WomanAccessories" ? "active-link" : ""}
+                            >Accessories</Link></li>
+                            <div
+                                className={`navline navline_dropdown ${activePath === "/WomanAccessories" ? "active-line" : ""}`}
+                            ></div>
                         </div>
                     )}
                     <li>
                         <Link
-                            to="/Products"
+                            to="/SignIn"
+                            className={activePath === "/SignIn" ? "active-link" : ""}
                             ref={(el) => (linksRef.current[14] = el)}
                         >
                             About Us
@@ -580,6 +659,8 @@ const NavBar = ({ Authentication }) => {
                         ref={(el) => (linksRef.current[15] = el)}></div>
                     <li>
                         <Link
+                            to="/Cart"
+                            className={activePath === "/Cart" ? "active-link" : ""}
                             ref={(el) => (linksRef.current[16] = el)}>
                             Contact Us
                         </Link>
