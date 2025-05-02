@@ -104,18 +104,26 @@ const SignUp = ({ onSignUp }) => {
 
 
     const handleGoogleSuccess = async (response) => {
-        if (!response || !response.credential) {
-            console.error("No credential received from Google.");
+        console.log("Google token response", response);
+
+        const accessToken = response.access_token;
+
+        if (!accessToken) {
+            console.error("No access token received from Google.");
             setError("Google Sign up failed. Please try again.");
             return;
         }
 
-        const userData = decodeJwt(response.credential);
-
-        const { name, email, picture } = userData;
-        const password = email + "_GoogleAuth";
-
         try {
+            const res = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo", {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            const { name, email, picture } = res.data;
+            const password = email + "_GoogleAuth";
+
             await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/signup/google`, {
                 name,
                 email,
@@ -130,6 +138,7 @@ const SignUp = ({ onSignUp }) => {
             setError("Google Sign up failed.");
         }
     };
+
 
 
 
