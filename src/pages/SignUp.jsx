@@ -103,18 +103,13 @@ const SignUp = ({ onSignUp }) => {
 
 
 
-    const decodeJwt = (token) => {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(
-            atob(base64).split('').map((c) =>
-                '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-            ).join('')
-        );
-        return JSON.parse(jsonPayload);
-    };
-
     const handleGoogleSuccess = async (response) => {
+        if (!response || !response.credential) {
+            console.error("No credential received from Google.");
+            setError("Google Sign up failed. Please try again.");
+            return;
+        }
+
         const userData = decodeJwt(response.credential);
 
         const { name, email, picture } = userData;
@@ -135,6 +130,7 @@ const SignUp = ({ onSignUp }) => {
             setError("Google Sign up failed.");
         }
     };
+
 
 
 
