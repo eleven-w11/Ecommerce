@@ -33,16 +33,20 @@ app.use((req, res, next) => {
 const allowedOrigins = [
     "http://localhost:3000",
     "https://your-web-gamma.vercel.app",
+    "https://your-web-gamma.vercel.app",
     "http://192.168.10.8:3000"
 ];
 
-const cors = require("cors");
-
 app.use(cors({
-    origin: ["http://localhost:3000", "https://yourweb-backend.onrender.com"],
-    credentials: true,
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    credentials: true
 }));
-
 
 // ✅ Test route
 app.get("/", (req, res) => {
