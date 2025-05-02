@@ -33,7 +33,7 @@ app.use((req, res, next) => {
 const allowedOrigins = [
     "http://localhost:3000",
     "https://your-web-gamma.vercel.app",
-    "https://your-web-gamma.vercel.app",
+    "https://yourweb-backend.onrender.com/auth/google/callback",
     "http://192.168.10.8:3000"
 ];
 
