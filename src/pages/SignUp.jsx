@@ -117,6 +117,7 @@ const SignUp = ({ onSignUp }) => {
                 headers: {
                     Authorization: `Bearer ${tokenResponse.access_token}`,
                 },
+                withCredentials: true
             });
 
 
