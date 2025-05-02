@@ -103,12 +103,10 @@ const SignUp = ({ onSignUp }) => {
 
 
 
-    const handleGoogleSuccess = async (response) => {
-        console.log("Google token response", response);
+    const handleGoogleSuccess = async (tokenResponse) => {
+        console.log("Google token response", tokenResponse);
 
-        const accessToken = response.access_token;
-
-        if (!accessToken) {
+        if (!tokenResponse || !tokenResponse.access_token) {
             console.error("No access token received from Google.");
             setError("Google Sign up failed. Please try again.");
             return;
@@ -117,9 +115,12 @@ const SignUp = ({ onSignUp }) => {
         try {
             const res = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo", {
                 headers: {
-                    Authorization: `Bearer ${accessToken}`,
+                    Authorization: `Bearer ${tokenResponse.access_token}`,
                 },
+                withCredentials: true
             });
+
+
 
             const { name, email, picture } = res.data;
             const password = email + "_GoogleAuth";
@@ -138,9 +139,6 @@ const SignUp = ({ onSignUp }) => {
             setError("Google Sign up failed.");
         }
     };
-
-
-
 
 
 
