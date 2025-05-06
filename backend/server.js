@@ -45,7 +45,10 @@ app.use(cors({
             callback(new Error("Not allowed by CORS"));
         }
     },
-    credentials: true
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'Set-Cookie'],
+    exposedHeaders: ['Set-Cookie'],
+    methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS']
 }));
 
 // ✅ Test route

@@ -1575,7 +1575,7 @@ const Cart = () => {
 
         const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-        const productIds = cart.map(item => item.id); 
+        const productIds = cart.map(item => item.id);
 
         axios.post("http://localhost:5000/api/cart-products", { productIds })
             .then(response => {
@@ -1588,7 +1588,7 @@ const Cart = () => {
 
                     return {
                         ...product,
-                        uniqueId: cartItem.uniqueId || null, 
+                        uniqueId: cartItem.uniqueId || null,
                         addedAt: cartItem.addedAt || null,
                         color: cartItem.color || null,
                         size: cartItem.size || null,
@@ -1644,7 +1644,7 @@ const Cart = () => {
 
     useEffect(() => {
         if (editProductId) {
-            const currentProduct = cartProducts.find(p => p.uniqueId === editProductId); 
+            const currentProduct = cartProducts.find(p => p.uniqueId === editProductId);
             if (currentProduct) {
                 setTempChanges({
                     color: currentProduct.color || currentProduct.images?.[0]?.color_code,
@@ -1656,14 +1656,14 @@ const Cart = () => {
 
     useEffect(() => {
         if (editProductId) {
-            const product = cartProducts.find(p => p.uniqueId === editProductId); 
+            const product = cartProducts.find(p => p.uniqueId === editProductId);
             if (product?.images) {
             }
         }
     }, [editProductId, cartProducts]);
 
     const handleTempColorChange = (colorCode) => {
-        const product = cartProducts.find(p => p.uniqueId === editProductId); 
+        const product = cartProducts.find(p => p.uniqueId === editProductId);
         if (!product) return;
 
         const matchedImage = product.images.find(img => img.color_code === colorCode);
@@ -1694,7 +1694,7 @@ const Cart = () => {
                     color: tempChanges.color || item.color,
                     size: tempChanges.size || item.size,
                     quantity: tempChanges.quantity || item.quantity,
-                    image: tempChanges.image || item.image, 
+                    image: tempChanges.image || item.image,
                 };
             }
             return item;
@@ -1738,16 +1738,16 @@ const Cart = () => {
     useEffect(() => {
         const storedCart = localStorage.getItem("cart");
         if (storedCart) {
-            setCart(JSON.parse(storedCart)); 
+            setCart(JSON.parse(storedCart));
         }
     }, []);
 
     useEffect(() => {
-        
+
         if (cart.length > 0) {
             localStorage.setItem("cart", JSON.stringify(cart));
         }
-    }, [cart]);  
+    }, [cart]);
 
 
 
@@ -1756,7 +1756,7 @@ const Cart = () => {
 
     const handleNextImage = (uniqueId, images) => {
         setImageIndexMap(prev => {
-            const currentIndex = prev[uniqueId] || 0;  
+            const currentIndex = prev[uniqueId] || 0;
             const nextIndex = (currentIndex + 1) % images.length;
 
             const imgObj = images[nextIndex];
@@ -1772,7 +1772,7 @@ const Cart = () => {
 
             return {
                 ...prev,
-                [uniqueId]: nextIndex  
+                [uniqueId]: nextIndex
             };
         });
     };
@@ -1802,10 +1802,10 @@ const Cart = () => {
 
     const removeFromCart = (uniqueId) => {
         let cart = JSON.parse(localStorage.getItem("cart")) || [];
-        cart = cart.filter(item => item.uniqueId !== uniqueId);  
+        cart = cart.filter(item => item.uniqueId !== uniqueId);
         localStorage.setItem("cart", JSON.stringify(cart));
 
-        setCartProducts(prevProducts => prevProducts.filter(p => p.uniqueId !== uniqueId));  
+        setCartProducts(prevProducts => prevProducts.filter(p => p.uniqueId !== uniqueId));
 
         window.dispatchEvent(new Event("storage"));
     };
@@ -1832,10 +1832,10 @@ const Cart = () => {
         if (activeId) {
             document.body.style.overflow = "hidden";
         } else {
-            document.body.style.overflow = "auto"; 
+            document.body.style.overflow = "auto";
         }
 
-        
+
         return () => {
             document.body.style.overflow = "auto";
         };
@@ -1925,14 +1925,14 @@ const Cart = () => {
                                                 src={
                                                     editProductId === product.uniqueId
                                                         ? `/images/${tempChanges.image
-                                                        || (() => { 
+                                                        || (() => {
                                                             const imgObj = product.images?.[imageIndexMap[product.uniqueId] || 0];
                                                             const key = Object.keys(imgObj || {}).find(k => k.startsWith('pi_'));
                                                             return imgObj?.[key];
                                                         })()
-                                                        || product.image 
+                                                        || product.image
                                                         }`
-                                                        : `/images/${product.image}` 
+                                                        : `/images/${product.image}`
                                                 }
                                                 alt={product.product_name}
                                             />
@@ -2039,7 +2039,7 @@ const Cart = () => {
                                                     </div>
                                                 </div>
                                                 <div className="edit_remove">
-                                                    {editProductId === product.uniqueId ? ( 
+                                                    {editProductId === product.uniqueId ? (
                                                         <>
                                                             <div className="update mob_top">
                                                                 <button onClick={() => handleUpdate(product.uniqueId)}>Update</button> {/* ✅ pass uniqueId */}
@@ -2315,3 +2315,194 @@ export default Cart;
 // app.listen(PORT, "0.0.0.0", () => {
 //     console.log(`🚀 Server running on port ${PORT}`);
 // });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const express = require("express");
+const router = express.Router();
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
+
+router.post("/signup", async (req, res) => {
+    try {
+        const { name, email, password } = req.body;
+
+        const existingUser = await User.findOne({ email });
+
+        if (existingUser) {
+            const isPasswordMatch = await bcrypt.compare(password, existingUser.password);
+
+            if (isPasswordMatch && existingUser.name === name) {
+                const token = jwt.sign(
+                    { userId: existingUser._id },
+                    process.env.JWT_SECRET,
+                    { expiresIn: "1h" }
+                );
+
+                res.cookie('token', token, {
+                    httpOnly: true,
+                    secure: false,
+                    domain: 'localhost',
+                    path: '/',
+                    expires: new Date(Date.now() + 3600000),
+                });
+
+                return res.status(200).json({ message: "User already exists. Sign In successful. #1", token });
+            }
+
+            if (isPasswordMatch && existingUser.name !== name) {
+                return res.status(400).json({ message: "Email already exists. #2" });
+            }
+
+            if (!isPasswordMatch) {
+                return res.status(400).json({ message: "Email already exists, Forgot Password. #3" });
+            }
+        } else {
+            const passwordMatchUser = await User.findOne({ name });
+            if (passwordMatchUser && await bcrypt.compare(password, passwordMatchUser.password)) {
+                return res.status(400).json({ message: "Please choose a stronger password. #4" });
+            }
+
+            const saltRounds = 10;
+            const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+            // Add the default image to the user object
+            const newUser = new User({
+                name,
+                email,
+                password: hashedPassword,
+                image: '/user.png'  // Add the default profile image path
+            });
+
+            const savedUser = await newUser.save();
+
+            const token = jwt.sign(
+                { userId: savedUser._id },
+                process.env.JWT_SECRET,
+                { expiresIn: "1h" }
+            );
+
+            res.cookie('token', token, {
+                httpOnly: true,
+                secure: false,
+                domain: 'localhost',
+                path: '/',
+                expires: new Date(Date.now() + 3600000),
+            });
+
+            return res.status(200).json({ message: "Sign In successful. #5", token, user: savedUser });
+        }
+    } catch (error) {
+        console.error("Signup Error:", error.message);
+        res.status(500).json({ message: "Error saving user", error });
+    }
+});
+
+
+// POST /api/signupGoogle
+router.post("/signup/google", async (req, res) => {
+    try {
+        const { name, email, password, image } = req.body;
+
+        const existingUser = await User.findOne({ email });
+
+        if (existingUser) {
+            // Match name & image (optional match, or just email is enough)
+            if (existingUser.name === name) {
+                // ✅ User already exists & matches — treat as login
+                const token = jwt.sign(
+                    { userId: existingUser._id },
+                    process.env.JWT_SECRET,
+                    { expiresIn: "1h" }
+                );
+
+                res.cookie("token", token, {
+                    httpOnly: true,
+                    secure: false,
+                    domain: "localhost",
+                    path: "/",
+                    expires: new Date(Date.now() + 60 * 1000) // ⏱️ 60,000 ms = 1 minute
+                });
+
+                return res.status(200).json({
+                    message: "Google login successful (existing user)",
+                    user: existingUser,
+                    token,
+                });
+            } else {
+                return res
+                    .status(400)
+                    .json({ message: "Email already exists but name doesn't match" });
+            }
+        }
+
+        // User doesn't exist, create new
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = new User({
+            name,
+            email,
+            password: hashedPassword,
+            image,
+        });
+
+        const savedUser = await newUser.save();
+
+        const token = jwt.sign(
+            { userId: savedUser._id },
+            process.env.JWT_SECRET,
+            { expiresIn: "1h" }
+        );
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: false,
+            domain: "localhost",
+            path: "/",
+            expires: new Date(Date.now() + 3600000),
+        });
+
+        res.status(201).json({
+            message: "Google SignUp Successful",
+            user: savedUser,
+            token,
+        });
+    } catch (error) {
+        console.error("Signup Error:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+
+
+
+module.exports = router;
