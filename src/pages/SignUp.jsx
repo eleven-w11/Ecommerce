@@ -104,34 +104,38 @@ const SignUp = ({ onSignUp }) => {
 
 
     const handleGoogleSuccess = async (tokenResponse) => {
+        console.log("Google token response", tokenResponse);
+
+        if (!tokenResponse || !tokenResponse.access_token) {
+            console.error("No access token received from Google.");
+            setError("Google Sign up failed. Please try again.");
+            return;
+        }
+
         try {
             const res = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo", {
                 headers: {
                     Authorization: `Bearer ${tokenResponse.access_token}`,
                 },
-                withCredentials: true
             });
+
+
 
             const { name, email, picture } = res.data;
             const password = email + "_GoogleAuth";
 
-            // Make sure to include withCredentials here
-            const signupResponse = await axios.post(
-                `${process.env.REACT_APP_API_BASE_URL}/api/signup/google`,
-                { name, email, password, image: picture },
-                { withCredentials: true }
-            );
-
-            // Check if the response contains a session cookie
-            if (signupResponse.data.token) {
-                localStorage.setItem('token', signupResponse.data.token);
-            }
+            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/signup/google`, {
+                name,
+                email,
+                password,
+                image: picture
+            }, { withCredentials: true });
 
             onSignUp();
             navigate("/userprofile");
         } catch (error) {
             console.error("Google Signup Error:", error);
-            setError("Google Sign up failed. " + (error.response?.data?.message || ''));
+            setError("Google Sign up failed.");
         }
     };
 

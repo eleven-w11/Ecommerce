@@ -512,9 +512,9 @@ const NavBar = ({ Authentication }) => {
                     <div className="line_hide_box"></div>
                     <li>
                         <Link
-                            to="/UserLocation"
+                            to="/Chat"
                             ref={(el) => (linksRef.current[2] = el)}
-                            className={activePath === "/UserLocation" ? "active-link" : ""}
+                            className={activePath === "/Chat" ? "active-link" : ""}
                         >
                             On Sale
                         </Link>

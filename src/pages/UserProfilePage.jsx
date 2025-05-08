@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "./styles/userProfile.css";
+
 
 const UserProfile = ({ onSignOut }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -63,22 +65,23 @@ const UserProfile = ({ onSignOut }) => {
 
 
   return (
-    <div>
+    <div className="user-profile-container">
       <h2>User Profile</h2>
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
       {userData ? (
         <div>
           {userData.image && (
-            <div>
+            <div className="user-profile-image">
               <img
                 src={userData.image}
                 alt="User"
-                style={{ width: "150px", height: "150px", borderRadius: "50%" }}
               />
             </div>
           )}
-          <p><strong>Name:</strong> {userData.name}</p>
-          <p><strong>Email:</strong> {userData.email}</p>
+          <div className="user-profile-details">
+            <p><strong>Name:</strong> {userData.name}</p>
+            <p><strong>Email:</strong> {userData.email}</p>
+          </div>
           <button onClick={handelSignOut}>Log Out</button>
         </div>
       ) : (

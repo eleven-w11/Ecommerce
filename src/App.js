@@ -18,6 +18,7 @@ import Footer from './pages/Footer';
 import Cart from './pages/Cart';
 import TestWeb from './pages/TestWeb';
 import AllProducts from './pages/AllProducts';
+import ChatBox from './pages/Chat';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -89,6 +90,7 @@ function App() {
         <Route path="/WomanShoes" element={<AllProducts />}/>
         <Route path="/WomanBags" element={<AllProducts />}/>
         <Route path="/WomanAccessories" element={<AllProducts />}/>
+        <Route path="/Chat" element={<ChatBox />}/>
 
 
       </Routes>
