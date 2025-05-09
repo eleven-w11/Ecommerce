@@ -13,7 +13,7 @@ const messageSchema = new mongoose.Schema(
         },
     },
     {
-        timestamps: false,
+        timestamps: true,
         collection: "Chat-box", // ✅ Yeh ab apply hoga
     }
 );

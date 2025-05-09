@@ -4,24 +4,29 @@ const verifyPath = require("../middleware/verifyPath");
 const router = express.Router();
 
 router.get("/profile", verifyPath, async (req, res) => {
-    // console.log("Profile endpoint hit, UserId:", req.userId);
     try {
-        const user = await User.findById(req.userId).select("name email image");
+        // Get user WITH role field
+        const user = await User.findById(req.userId).select("name email image role");
+
         if (!user) {
-            // console.log("User not found");
             return res.status(404).json({ message: "User not found" });
         }
-        // console.log("User data found:", user); // Debugging step
-        res.json(user);
-        // console.warn("user.js = user =", user);
-        
+
+        res.json({
+            success: true,
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            image: user.image,
+            role: user.role // Explicitly include role
+        });
     } catch (error) {
-        // console.error("Error fetching user profile:", error);
+        console.error("Profile error:", error);
         res.status(500).json({ message: "Server error" });
     }
 });
 
 module.exports = router;
 
-// Ye route /profile pe logged-in user ka name, email, aur image database 
+// Ye route /profile pe logged-in user ka name, email, aur image database
 // se nikal ke return karta hai — sirf agar token valid ho.
