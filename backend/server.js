@@ -42,7 +42,7 @@ app.use(express.json());
 const allowedOrigins = [
     "http://localhost:3000",
     "https://your-web-gamma.vercel.app",
-    "https://yourweb-backend.onrender.com/auth/google/callback",
+    "https://yourweb-backend.onrender.com",
     "http://192.168.10.8:3000"
 ];
 
@@ -61,9 +61,12 @@ app.use(cors({
 }));
 
 // Security headers
+// Replace your current security headers with:
 app.use((req, res, next) => {
-    res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
-    res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'geolocation=(), microphone=()');
     next();
 });
 

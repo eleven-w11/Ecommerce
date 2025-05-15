@@ -18,7 +18,7 @@
 }
 
 body {
-    background-color: #f5f7fa;
+    /* background-color: red; */
 }
 
 /* Animations */
@@ -73,13 +73,16 @@ body {
         opacity: 1;
     }
 }
+.user-chat-app{
+    background-color: tan;
+}
 
 /* Chat App Container */
 .chat-app {
     max-width: 900px;
-    /* height: 90vh; */
+    height: 90vh;
     /* Fixed viewport height */
-    margin: 20px auto;
+    margin: 0 auto;
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -87,7 +90,7 @@ body {
     flex-direction: column;
     background-color: red;
     /* Ensure the container isn't growing beyond viewport */
-    /* max-height: 90vh; */
+    max-height: 90vh;
 }
 
 /* Header Styles */
@@ -192,7 +195,6 @@ body {
     display: flex;
     flex-direction: column;
     background-color: #f8fafc;
-    background-color: red;
     position: relative;
     /* Add these to ensure proper container sizing */
     min-height: 0;
@@ -202,7 +204,6 @@ body {
 }
 
 .chat-app .messages-container {
-    height: 90vw;
     flex: 1;
     padding: 20px;
     overflow-y: auto;
@@ -211,10 +212,10 @@ body {
     flex-direction: column;
     gap: 12px;
     background-color: #f8fafc;
-    background-color: teal;
     /* Add these properties to ensure proper scrolling */
-    /* min-height: 0; */
+    min-height: 0;
     /* Important for flex children to scroll */
+    height: 0;
     /* Important for flex children to scroll */
 }
 
