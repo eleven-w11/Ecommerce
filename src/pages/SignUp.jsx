@@ -10,6 +10,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import google from "./images/google.png";
 
 
+
 const SignUp = ({ onSignUp }) => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -17,6 +18,8 @@ const SignUp = ({ onSignUp }) => {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [googleLoading, setGoogleLoading] = useState(false);
 
     const navigate = useNavigate();
 
@@ -64,15 +67,15 @@ const SignUp = ({ onSignUp }) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setIsLoading(true);
+        setError("");
 
         const validationError = validatePassword(password);
-
         if (validationError) {
             setError(validationError);
-            setSuccess("");
+            setIsLoading(false);
             return;
         }
-
 
         try {
             const response = await axios.post(
@@ -82,16 +85,13 @@ const SignUp = ({ onSignUp }) => {
             );
 
             onSignUp();
-            setError("");
-            navigate("/userprofile");
-            setName("");
-            setEmail("");
-            setPassword("");
+            setSuccess("Account created successfully!");
+            setTimeout(() => navigate("/userprofile"), 1500);
         } catch (error) {
-
             console.error("Signup Error:", error);
             setError(error.response?.data?.message || "Failed to create account. Please try again.");
-            setSuccess("");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -104,38 +104,41 @@ const SignUp = ({ onSignUp }) => {
 
 
     const handleGoogleSuccess = async (tokenResponse) => {
-        console.log("Google token response", tokenResponse);
-
-        if (!tokenResponse || !tokenResponse.access_token) {
-            console.error("No access token received from Google.");
-            setError("Google Sign up failed. Please try again.");
-            return;
-        }
+        setGoogleLoading(true);
+        setError("");
 
         try {
-            const res = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo", {
-                headers: {
-                    Authorization: `Bearer ${tokenResponse.access_token}`,
+            // First get the ID token from Google
+            const googleResponse = await axios.get(
+                `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenResponse.access_token}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${tokenResponse.access_token}`,
+                        Accept: 'application/json'
+                    }
+                }
+            );
+
+            // Then send the user info to your backend
+            const response = await axios.post(
+                `${process.env.REACT_APP_API_BASE_URL}/api/signup/google`,
+                {
+                    email: googleResponse.data.email,
+                    name: googleResponse.data.name,
+                    picture: googleResponse.data.picture,
+                    googleId: googleResponse.data.id
                 },
-            });
-
-
-
-            const { name, email, picture } = res.data;
-            const password = email + "_GoogleAuth";
-
-            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/signup/google`, {
-                name,
-                email,
-                password,
-                image: picture
-            }, { withCredentials: true });
+                { withCredentials: true }
+            );
 
             onSignUp();
-            navigate("/userprofile");
+            setSuccess("Google signup successful!");
+            setTimeout(() => navigate("/userprofile"), 1500);
         } catch (error) {
             console.error("Google Signup Error:", error);
-            setError("Google Sign up failed.");
+            setError(error.response?.data?.message || "Google signup failed. Please try again.");
+        } finally {
+            setGoogleLoading(false);
         }
     };
 
@@ -143,12 +146,13 @@ const SignUp = ({ onSignUp }) => {
 
 
     const handleGoogleFailure = () => {
-        console.log("Login Failed");
+        setError("Google authentication failed. Please try again.");
     };
 
     const login = useGoogleLogin({
         onSuccess: handleGoogleSuccess,
         onError: handleGoogleFailure,
+        flow: 'implicit'
     });
 
 
@@ -215,7 +219,9 @@ const SignUp = ({ onSignUp }) => {
 
                         </span>}
                     </div>
-                    <button type="submit">Sign Up</button>
+                    <button type="submit" disabled={isLoading}>
+                        {isLoading ? 'Creating Account...' : 'Sign Up'}
+                    </button>
                 </form>
                 <div className="signup-link">
                     <p>Already have an account? <Link to="/SignIn">Sign In</Link></p>
@@ -227,9 +233,13 @@ const SignUp = ({ onSignUp }) => {
                     <div className="hr"></div>
                 </div>
 
-                <button className="google-btn" onClick={() => login()}>
+                <button
+                    className="google-btn"
+                    onClick={() => login()}
+                    disabled={googleLoading}
+                >
                     <img src={google} alt="Google" className="icon" />
-                    <p>Sign Up With Google</p>
+                    <p>{googleLoading ? 'Signing Up...' : 'Sign Up With Google'}</p>
                 </button>
 
             </div>

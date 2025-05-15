@@ -12,6 +12,8 @@ const SignIn = ({ onSignIn }) => {
     const [success, setSuccess] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const location = useLocation();
+    const [isLoading, setIsLoading] = useState(false);
+    const [googleLoading, setGoogleLoading] = useState(false);
     const navigate = useNavigate();
 
     const from = location.state?.from?.pathname || "/";
@@ -57,38 +59,41 @@ const SignIn = ({ onSignIn }) => {
     };
 
     const handleGoogleSuccess = async (tokenResponse) => {
-        console.log("Google token response", tokenResponse);
-
-        if (!tokenResponse || !tokenResponse.access_token) {
-            console.error("No access token received from Google.");
-            setError("Google Sign up failed. Please try again.");
-            return;
-        }
+        setGoogleLoading(true);
+        setError("");
 
         try {
-            const res = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo", {
-                headers: {
-                    Authorization: `Bearer ${tokenResponse.access_token}`,
+            // First get the ID token from Google
+            const googleResponse = await axios.get(
+                `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenResponse.access_token}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${tokenResponse.access_token}`,
+                        Accept: 'application/json'
+                    }
+                }
+            );
+
+            // Then send the user info to your backend
+            const response = await axios.post(
+                `${process.env.REACT_APP_API_BASE_URL}/api/signup/google`,
+                {
+                    email: googleResponse.data.email,
+                    name: googleResponse.data.name,
+                    picture: googleResponse.data.picture,
+                    googleId: googleResponse.data.id
                 },
-            });
-
-
-
-            const { name, email, picture } = res.data;
-            const password = email + "_GoogleAuth";
-
-            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/signup/google`, {
-                name,
-                email,
-                password,
-                image: picture
-            }, { withCredentials: true });
+                { withCredentials: true }
+            );
 
             onSignIn();
-            navigate("/userprofile");
+            setSuccess("Google signup successful!");
+            setTimeout(() => navigate("/userprofile"), 1500);
         } catch (error) {
             console.error("Google Signup Error:", error);
-            setError("Google Sign up failed.");
+            setError(error.response?.data?.message || "Google signup failed. Please try again.");
+        } finally {
+            setGoogleLoading(false);
         }
     };
 
@@ -96,12 +101,13 @@ const SignIn = ({ onSignIn }) => {
 
 
     const handleGoogleFailure = () => {
-        console.log("Login Failed");
+        setError("Google authentication failed. Please try again.");
     };
 
     const login = useGoogleLogin({
         onSuccess: handleGoogleSuccess,
         onError: handleGoogleFailure,
+        flow: 'implicit'
     });
 
 
@@ -129,7 +135,7 @@ const SignIn = ({ onSignIn }) => {
 
     return (
         <div className='sign'>
-            
+
             <div className="sign_google">
                 <div className='errorndsucc'>
                     {error && <p className={`err ${error ? 'visible' : 'hidden'}`}>{error}</p>}
@@ -167,7 +173,9 @@ const SignIn = ({ onSignIn }) => {
                                     <path d="M480.24-340q66.76 0 113.26-46.74 46.5-46.73 46.5-113.5 0-66.76-46.74-113.26-46.73-46.5-113.5-46.5-66.76 0-113.26 46.74-46.5 46.73-46.5 113.5 0 66.76 46.74 113.26 46.73 46.5 113.5 46.5Zm-.36-50Q434-390 402-422.12q-32-32.12-32-78T402.12-578q32.12-32 78-32T558-577.88q32 32.12 32 78T557.88-422q-32.12 32-78 32Zm.26 168Q341-222 228-298T60-500q55-126 167.86-202 112.85-76 252-76Q619-778 732-702t168 202q-55 126-167.86 202-112.85 76-252 76ZM480-500Zm0 224q115 0 211.87-60.58T840-500q-51.26-102.84-148.13-163.42Q595-724 480-724t-211.87 60.58Q171.26-602.84 120-500q51.26 102.84 148.13 163.42Q365-276 480-276Z" /></svg>}
                         </span>}
                     </div>
-                    <button type="submit">Sign In</button>
+                    <button type="submit" disabled={isLoading}>
+                        {isLoading ? 'Creating Account...' : 'Sign Up'}
+                    </button>
                 </form>
 
                 <div className="signup-link">
@@ -179,9 +187,13 @@ const SignIn = ({ onSignIn }) => {
                     <div className="hr"></div>
                 </div>
 
-                <button className="google-btn" onClick={() => login()}>
+                <button
+                    className="google-btn"
+                    onClick={() => login()}
+                    disabled={googleLoading}
+                >
                     <img src={google} alt="Google" className="icon" />
-                    <p>Sign Up With Google</p>
+                    <p>{googleLoading ? 'Signing Up...' : 'Sign Up With Google'}</p>
                 </button>
 
             </div>

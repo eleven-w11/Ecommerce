@@ -5,7 +5,11 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const http = require("http");
 const { Server } = require("socket.io");
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const jwt = require("jsonwebtoken");
 const Message = require("./models/Message");
+
 // Route imports
 const signupRoutes = require("./routes/SignUpRoutes");
 const signinRoutes = require("./routes/signinRoutes");
@@ -21,19 +25,8 @@ const messageRoutes = require("./routes/messageRoutes");
 // Express & server setup
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
-    cors: {
-        origin: allowedOrigins, // Use the same allowed origins
-        credentials: true,
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-    }
-});
 
-// Middleware
-app.use(cookieParser());
-app.use(express.json());
-
-// CORS Config
+// Allowed origins configuration
 const allowedOrigins = [
     "http://localhost:3000",
     "https://your-web-gamma.vercel.app",
@@ -42,16 +35,13 @@ const allowedOrigins = [
     "http://192.168.10.8:3000"
 ];
 
+// CORS Configuration
 app.use(cors({
     origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
 
-        // Check if origin matches any allowed origin or subdomain pattern
         if (allowedOrigins.some(allowed => {
-            // Exact match
             if (origin === allowed) return true;
-            // Wildcard match (for Vercel preview URLs)
             if (allowed.includes('*')) {
                 const regex = new RegExp(allowed.replace('*', '.*'));
                 return regex.test(origin);
@@ -72,24 +62,31 @@ app.use(cors({
     optionsSuccessStatus: 204
 }));
 
+// Socket.IO Configuration
+const io = new Server(server, {
+    cors: {
+        origin: allowedOrigins,
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    }
+});
+
+// Middleware
+app.use(cookieParser());
+app.use(express.json());
+app.use(passport.initialize());
+
 // Security headers
-// Replace your current security headers with:
 app.use((req, res, next) => {
-    // Remove COOP/COEP headers that were causing issues
     res.removeHeader("Cross-Origin-Opener-Policy");
     res.removeHeader("Cross-Origin-Embedder-Policy");
-
-    // Set security headers
     res.setHeader('X-Frame-Options', 'DENY');
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     res.setHeader('Permissions-Policy', 'geolocation=(), microphone=()');
-
-    // Important for credentials/cookies
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     next();
 });
-
 
 // Static files
 app.use("/images", express.static("images"));
@@ -101,6 +98,53 @@ mongoose.connect(process.env.MONGO_URI, {
 })
     .then(() => console.log("✅ Connected to MongoDB"))
     .catch((err) => console.error("❌ MongoDB connection error:", err));
+
+// Google OAuth Strategy
+passport.use(new GoogleStrategy({
+    clientID: process.env.REACT_APP_GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: process.env.NODE_ENV === 'production'
+        ? "https://yourweb-backend.onrender.com/auth/google/callback"
+        : "http://localhost:5000/auth/google/callback"
+}, async (accessToken, refreshToken, profile, done) => {
+    try {
+        // Here you would typically find or create a user in your database
+        // For now, we'll just return the profile
+        return done(null, profile);
+    } catch (err) {
+        return done(err, null);
+    }
+}));
+
+// Generate JWT Token function
+const generateJWT = (user) => {
+    return jwt.sign(
+        { id: user.id, email: user.emails[0].value },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
+    );
+};
+
+// Google Auth Routes
+app.get('/auth/google', passport.authenticate('google', {
+    scope: ['profile', 'email'],
+    prompt: 'select_account'
+}));
+
+app.get('/auth/google/callback',
+    passport.authenticate('google', {
+        failureRedirect: '/login',
+        session: false
+    }),
+    (req, res) => {
+        const token = generateJWT(req.user);
+        const frontendUrl = process.env.NODE_ENV === 'production'
+            ? 'https://your-web-gamma.vercel.app'
+            : 'http://localhost:3000';
+
+        res.redirect(`${frontendUrl}/oauth-success?token=${token}`);
+    }
+);
 
 // API Routes
 app.use("/api/", signupRoutes);
@@ -114,12 +158,41 @@ app.use("/api/products", productRoutes);
 app.use("/api", cartRoutes);
 app.use("/api/messages", messageRoutes);
 
+// Google Signup Endpoint
+app.post("/api/signup/google", async (req, res) => {
+    try {
+        const { token } = req.body;
+
+        // Here you would verify the Google token and create/authenticate user
+        // This is a simplified version - implement proper validation
+
+        const user = {
+            id: "google_" + Date.now(),
+            email: "user@example.com",
+            name: "Google User"
+        };
+
+        const jwtToken = generateJWT(user);
+
+        res.cookie('token', jwtToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict'
+        });
+
+        res.json({ success: true, token: jwtToken });
+    } catch (err) {
+        console.error("Google signup error:", err);
+        res.status(500).json({ success: false, message: "Google authentication failed" });
+    }
+});
+
 // Test route
 app.get("/", (req, res) => {
     res.send("Server is running!");
 });
 
-// 🔌 --- Socket.IO Real-Time Chat Logic --- 🔌
+// Socket.IO Logic
 io.on("connection", (socket) => {
     console.log("🟢 New client connected:", socket.id);
 
@@ -128,7 +201,6 @@ io.on("connection", (socket) => {
         console.log(`🔐 Socket ${socket.id} joined room ${userId}`);
     });
 
-    // 🟡 User sends message to admin
     socket.on("userMessage", async ({ fromUserId, message, timestamp }) => {
         try {
             const saved = await Message.create({
@@ -138,11 +210,9 @@ io.on("connection", (socket) => {
                 message
             });
 
-            // Include the original timestamp in the response
             const response = saved.toObject();
             response.timestamp = timestamp || saved.timestamp;
 
-            // Emit to admin only (don't echo back to sender)
             const adminId = "681edcb10cadbac1be3540aa";
             io.to(adminId).emit("receiveMessage", response);
         } catch (err) {
@@ -150,7 +220,6 @@ io.on("connection", (socket) => {
         }
     });
 
-    // 🔵 Admin sends message to user
     socket.on("adminMessage", async ({ toUserId, message, timestamp }) => {
         try {
             const saved = await Message.create({
@@ -160,11 +229,9 @@ io.on("connection", (socket) => {
                 message
             });
 
-            // Include the original timestamp in the response
             const response = saved.toObject();
             response.timestamp = timestamp || saved.timestamp;
 
-            // Emit to target user only (don't echo back to admin)
             io.to(toUserId).emit("receiveMessage", response);
         } catch (err) {
             console.error("❌ adminMessage error:", err);
@@ -176,10 +243,17 @@ io.on("connection", (socket) => {
     });
 });
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({
+        error: 'Internal server error',
+        message: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
+});
+
 // Start the server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, "0.0.0.0", () => {
     console.log(`🚀 Server running on port ${PORT}`);
 });
-
-// deepseek
