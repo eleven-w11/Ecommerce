@@ -15,7 +15,7 @@ const UserProfile = ({ onSignOut }) => {
 
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/user/profile`, { withCredentials: true });
-        console.log("Full response:", response);
+        console.log("userprofile response:", response);
 
         // Debugging specific parts of the response
         console.log("Response data:", response.data);

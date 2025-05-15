@@ -1,156 +1,363 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import io from "socket.io-client";
+import React, { useEffect, useRef, useState } from "react";
+import { io } from "socket.io-client";
 import axios from "axios";
+import "./styles/Chat.css";
+import admin from "./images/admin.png";
+import { Link } from "react-router-dom";
 
-const socket = io("http://localhost:5000", {
-    withCredentials: true,
-    transports: ["websocket"]
-});
 
-const ChatSocket = () => {
+
+const Chat = () => {
     const [message, setMessage] = useState("");
     const [chat, setChat] = useState([]);
-    const [userData, setUserData] = useState(null);
+    const [userId, setUserId] = useState(undefined);
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [selectedUserId, setSelectedUserId] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [userProfile, setUserProfile] = useState(null);
+    const [authError, setAuthError] = useState(null);
     const messagesEndRef = useRef(null);
-    const navigate = useNavigate();
+    const socketRef = useRef(null);
+    const isMounted = useRef(true);
+    const pendingMessages = useRef(new Map());
+    // const navigate = useNavigate();
 
-    // Debug effect to log chat state changes
-    useEffect(() => {
-        console.log("Current chat state:", chat);
-    }, [chat]);
 
-    // Fetch user data
     useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/user/profile`, {
-                    withCredentials: true,
-                });
-                if (response.data.success !== false) {
-                    console.log("User data fetched:", response.data);
-                    setUserData(response.data);
-                }
-            } catch (error) {
-                console.error("Error fetching user data:", error);
+        const setSignHeight = () => {
+            const height = window.innerHeight - 60;
+            const signElement = document.querySelector(".chat-app");
+
+            if (signElement) {
+                signElement.style.height = `${height}px`;
             }
         };
-        fetchUser();
+
+        setSignHeight();
+
+        window.addEventListener("resize", setSignHeight);
+
+        return () => window.removeEventListener("resize", setSignHeight);
     }, []);
 
-    // Socket.IO setup
-    // Socket.IO setup with proper dependency array
+    // Component mount/unmount
     useEffect(() => {
-        console.log("Initializing socket listeners");
+        isMounted.current = true;
 
-        const handleHistory = (history) => {
-            console.log("Received history:", history);
-            setChat(history);
+        // Set timeout for showing auth error if loading takes too long
+        const authTimeout = setTimeout(() => {
+            if (isLoading && !userProfile && isMounted.current) {
+                setAuthError("Please sign in to access the chat");
+            }
+        }, 5000); // Show error after 5 seconds
+
+        return () => {
+            isMounted.current = false;
+            pendingMessages.current.clear();
+            clearTimeout(authTimeout);
         };
+    }, [isLoading, userProfile]);
 
-        const handleNewMessage = (newMsg) => {
-            console.log("Received new message:", newMsg);
-            setChat(prev => [...prev, newMsg]);
-        };
-
-        socket.on("message_history", handleHistory);
-        socket.on("receive_message", handleNewMessage);
-
-        // Request history on connect
-        socket.on("connect", () => {
-            console.log("Socket connected, requesting history");
-            socket.emit("request_history");
+    // Socket connection
+    useEffect(() => {
+        socketRef.current = io("http://localhost:5000", {
+            withCredentials: true,
         });
 
         return () => {
-            console.log("Cleaning up socket listeners");
-            socket.off("message_history", handleHistory);
-            socket.off("receive_message", handleNewMessage);
-            socket.off("connect");
+            if (socketRef.current) {
+                socketRef.current.disconnect();
+            }
         };
     }, []);
 
-    // Auto-scroll to bottom
+    // Fetch user data and register socket
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [chat]);
+        const fetchUserData = async () => {
+            try {
+                const response = await axios.get(
+                    `${process.env.REACT_APP_API_BASE_URL}/api/user/profile`,
+                    { withCredentials: true }
+                );
+
+                if (response.data._id && isMounted.current) {
+                    setUserId(response.data._id);
+                    setIsAdmin(response.data.isAdmin || false);
+                    setUserProfile(response.data);
+                    setAuthError(null);
+
+                    socketRef.current.emit("register", {
+                        userId: response.data._id,
+                        isAdmin: response.data.isAdmin
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching user profile:", error);
+                if (isMounted.current) {
+                    setAuthError("Please sign in to access the chat");
+                    setIsLoading(false);
+                }
+            }
+        };
+
+        fetchUserData();
+    }, []);
+
+    // Fetch chat history and setup socket listener
+    useEffect(() => {
+        if (!userId || !socketRef.current) return;
+
+        const fetchChatHistory = async () => {
+            try {
+                setIsLoading(true);
+                const res = await axios.get(
+                    `${process.env.REACT_APP_API_BASE_URL}/api/messages/chat/history/${userId}`,
+                    { withCredentials: true }
+                );
+
+                if (res.data.success && isMounted.current) {
+                    setChat(res.data.messages || []);
+                }
+            } catch (error) {
+                console.error("Error fetching chat history:", error);
+            } finally {
+                if (isMounted.current) {
+                    setIsLoading(false);
+                }
+            }
+        };
+
+        const handleReceiveMessage = (data) => {
+            if (!isMounted.current) return;
+
+            setChat(prev => {
+                // Check if this is a response to our own message
+                const isOwnMessage = data.fromUserId === userId && !data.fromAdmin;
+                const isOwnAdminMessage = data.fromAdmin && data.toUserId === selectedUserId;
+
+                if (isOwnMessage || isOwnAdminMessage) {
+                    // Find and replace the optimistic update
+                    const existingIndex = prev.findIndex(msg =>
+                        pendingMessages.current.has(msg.timestamp) &&
+                        pendingMessages.current.get(msg.timestamp).message === data.message
+                    );
+
+                    if (existingIndex !== -1) {
+                        pendingMessages.current.delete(prev[existingIndex].timestamp);
+                        const newChat = [...prev];
+                        newChat[existingIndex] = data;
+                        return newChat;
+                    }
+                }
+
+                // Check for duplicates using database _id
+                const exists = prev.some(msg =>
+                    (msg._id && msg._id === data._id) ||
+                    (msg.timestamp === data.timestamp && msg.message === data.message)
+                );
+
+                return exists ? prev : [...prev, data];
+            });
+        };
+
+        fetchChatHistory();
+        socketRef.current.on("receiveMessage", handleReceiveMessage);
+
+        return () => {
+            if (socketRef.current) {
+                socketRef.current.off("receiveMessage", handleReceiveMessage);
+            }
+        };
+    }, [userId, selectedUserId]);
+
+    // Scroll to bottom on new messages
+    useEffect(() => {
+        if (messagesEndRef.current && !isLoading) {
+            messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [chat, isLoading]);
 
     const sendMessage = () => {
-        if (!userData) {
-            navigate("/SignIn");
-            return;
+        if (!message.trim() || !socketRef.current) return;
+
+        const tempId = Date.now();
+        const timestamp = new Date().toISOString();
+
+        if (isAdmin) {
+            if (!selectedUserId) {
+                alert("Please select a user to chat with");
+                return;
+            }
+
+            const optimisticMsg = {
+                _id: tempId,
+                message,
+                fromAdmin: true,
+                timestamp,
+                toUserId: selectedUserId
+            };
+
+            pendingMessages.current.set(timestamp, {
+                tempId,
+                message
+            });
+
+            setChat(prev => [...prev, optimisticMsg]);
+            socketRef.current.emit("adminMessage", {
+                toUserId: selectedUserId,
+                message,
+                timestamp
+            });
+        } else {
+            const optimisticMsg = {
+                _id: tempId,
+                message,
+                fromAdmin: false,
+                timestamp,
+                fromUserId: userId
+            };
+
+            pendingMessages.current.set(timestamp, {
+                tempId,
+                message
+            });
+
+            setChat(prev => [...prev, optimisticMsg]);
+            socketRef.current.emit("userMessage", {
+                fromUserId: userId,
+                message,
+                timestamp
+            });
         }
 
-        if (message.trim() === "") return;
-
-        console.log("Sending message:", message);
-        socket.emit("send_message", {
-            senderId: userData._id,
-            text: message
-        });
         setMessage("");
     };
 
-    return (
-        <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
-            <h3>Chat</h3>
-            <div style={{
-                border: "1px solid #ddd",
-                height: "400px",
-                overflowY: "auto",
-                padding: "10px",
-                marginBottom: "10px",
-                backgroundColor: "#f9f9f9"
-            }}>
-                {chat.length === 0 ? (
-                    <p style={{ textAlign: "center", color: "#999" }}>No messages yet</p>
-                ) : (
-                    chat.map((msg) => (
-                        <div key={msg.id} style={{
-                            marginBottom: "10px",
-                            padding: "10px",
-                            backgroundColor: msg.senderId === userData?._id ? "#DCF8C6" : "#FFFFFF",
-                            borderRadius: "8px",
-                            maxWidth: "80%",
-                            marginLeft: msg.senderId === userData?._id ? "auto" : "0",
-                            border: "1px solid #eee",
-                            boxShadow: "0 1px 1px rgba(0,0,0,0.1)"
-                        }}>
-                            <div style={{ fontWeight: "bold" }}>{msg.sender}</div>
-                            <div style={{ margin: "5px 0" }}>{msg.text}</div>
-                            <div style={{ fontSize: "0.8em", color: "#666", textAlign: "right" }}>
-                                {new Date(msg.timestamp).toLocaleTimeString()}
-                            </div>
-                        </div>
-                    ))
-                )}
-                <div ref={messagesEndRef} />
+
+
+
+    if (authError) {
+        return (
+            <div className="auth-error-container">
+                <div className="auth-error-card">
+                    <div className="error-icon">⚠️</div>
+                    <h2>Authentication Required</h2>
+                    <p>{authError}</p>
+                    <Link to="/signin" className="auth-redirect-button pulse">
+                        Sign In Now
+                    </Link>
+                </div>
             </div>
-            <div style={{ display: "flex", gap: "10px" }}>
-                <input
-                    type="text"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && sendMessage()}
-                    style={{ flex: 1, padding: "10px", borderRadius: "4px", border: "1px solid #ddd" }}
-                    placeholder="Type a message..."
-                />
-                <button
-                    onClick={sendMessage}
-                    style={{
-                        padding: "10px 20px",
-                        backgroundColor: "#4CAF50",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "4px",
-                        cursor: "pointer"
-                    }}
-                >
-                    Send
-                </button>
+        );
+    }
+
+    if (isLoading && !userProfile) {
+        return (
+            <div className="loader-container">
+                <div className="loader-animation">
+                    <div className="loader-dot"></div>
+                    <div className="loader-dot"></div>
+                    <div className="loader-dot"></div>
+                </div>
+                <p className="loader-text">Connecting to chat...</p>
+            </div>
+        );
+    }
+
+
+    return (
+        <div className="chat-app">
+            <div className="chat-header glassmorphism">
+                <div className="header-content">
+                    <div className="admin-profile">
+                        <div className="profile-image-container">
+                            <img src={admin} alt="Admin" className="profile-image" />
+                            <span className="online-indicator"></span>
+                        </div>
+                        <div className="profile-info">
+                            <p className="profile-name">Admin</p>
+                            <p className="profile-status">Online</p>
+                        </div>
+                    </div>
+
+                    <h2 className="chat-title">Chat Support</h2>
+
+                    <div className="user-profile">
+                        <div className="profile-info">
+                            <p className="profile-name">{userProfile?.name || "User"}</p>
+                            <p className="profile-status">Active now</p>
+                        </div>
+                        <div className="profile-image-container">
+                            {userProfile?.image ? (
+                                <img src={userProfile.image} alt="Profile" className="profile-image" />
+                            ) : (
+                                <div className="avatar-placeholder">
+                                    {userProfile?.name?.charAt(0) || "U"}
+                                </div>
+                            )}
+                            <span className="online-indicator"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="chat-body">
+                {isLoading ? (
+                    <div className="messages-loading">
+                        <div className="loading-animation">
+                            <div className="loading-bar"></div>
+                            <div className="loading-bar"></div>
+                            <div className="loading-bar"></div>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="messages-container">
+                        {chat.length === 0 ? (
+                            <div className="empty-chat">
+                                <div className="empty-icon">💬</div>
+                                <h3>Start the conversation</h3>
+                                <p>Send your first message to get started</p>
+                            </div>
+                        ) : (
+                            chat.map((msg) => (
+                                <div
+                                    key={msg._id || msg.timestamp}
+                                    className={`message-bubble ${msg.fromAdmin ? "admin-message" : "user-message"} fade-in`}
+                                >
+                                    <p className="message-text">{msg.message}</p>
+                                    <p className="message-time">
+                                        {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </p>
+                                </div>
+                            ))
+                        )}
+                        <div ref={messagesEndRef}></div>
+                    </div>
+                )}
+
+                <div className="message-input-container slide-up">
+                    <div className="input-wrapper">
+                        <input
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                            placeholder="Type your message..."
+                            className="message-input"
+                        />
+                        <button
+                            onClick={sendMessage}
+                            className="send-button hover-effect"
+                            disabled={!message.trim()}
+                        >
+                            <span className="send-icon">✈️</span>
+                            <span className="send-text">Send</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     );
 };
 
-export default ChatSocket;
+
+export default Chat;

@@ -1,22 +1,25 @@
+// routes/messageRoutes.js
 const express = require("express");
 const router = express.Router();
-const Message = require('../models/Message');
+const ChatModel = require("../models/Message");
 
-// REST API routes only (Socket.IO logic moved to server.js)
-router.get("/", async (req, res) => {
+// GET chat history for logged-in user
+router.get("/chat/history/:userId", async (req, res) => {
     try {
-        const messages = await Message.find().populate("senderId", "name");
-        const formattedMessages = messages.map(msg => ({
-            sender: msg.senderId.name,
-            text: msg.message,
-            timestamp: msg.createdAt
-        }));
-        res.json(formattedMessages);
-    } catch (error) {
-        res.status(500).json({ message: "Failed to fetch messages" });
+        const userId = req.params.userId;
+
+        const messages = await ChatModel.find({
+            $or: [
+                { fromUserId: userId },
+                { toUserId: userId, fromAdmin: true }
+            ]
+        }).sort({ timestamp: 1 });
+
+        res.json({ success: true, messages });
+    } catch (err) {
+        console.error("❌ Error fetching chat history:", err.message);
+        res.status(500).json({ success: false, message: "Server error" });
     }
 });
-
-
 
 module.exports = router;

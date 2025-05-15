@@ -1,11 +1,12 @@
 const express = require("express");
-const User = require("../models/User");
+const User = require("../models/StoreUser");
 const verifyPath = require("../middleware/verifyPath");
 const router = express.Router();
 
 router.get("/profile", verifyPath, async (req, res) => {
     try {
-        // Get user WITH role field
+        res.set('Cache-Control', 'no-store'); // ⬅️ No caching allowed
+
         const user = await User.findById(req.userId).select("name email image role");
 
         if (!user) {
@@ -18,8 +19,18 @@ router.get("/profile", verifyPath, async (req, res) => {
             name: user.name,
             email: user.email,
             image: user.image,
-            role: user.role // Explicitly include role
+            role: user.role
         });
+
+        // console.warn("userproRoutes", {
+        //     _id: user._id,
+        //     name: user.name,
+        //     email: user.email,
+        //     image: user.image,
+        //     role: user.role
+        // });
+
+
     } catch (error) {
         console.error("Profile error:", error);
         res.status(500).json({ message: "Server error" });
@@ -27,6 +38,7 @@ router.get("/profile", verifyPath, async (req, res) => {
 });
 
 module.exports = router;
+
 
 // Ye route /profile pe logged-in user ka name, email, aur image database
 // se nikal ke return karta hai — sirf agar token valid ho.

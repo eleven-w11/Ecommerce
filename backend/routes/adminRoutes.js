@@ -1,25 +1,77 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const User = require('../models/User');
-const Chat = require('../models/Message');
-const mongoose = require('mongoose');
+const ChatModel = require("../models/Message");
+const User = require("../models/StoreUser");
 
-// In your backend routes (e.g., chatRoutes.js)
-router.get('/chat/:userId', async (req, res) => {
-    const userId = req.params.userId;
-    const adminId = "ADMIN_ID_HERE"; // Replace with actual admin ID (maybe from req.user?)
-
+router.get("/all-chats", async (req, res) => {
     try {
-        const messages = await Chat.find({
-            $or: [
-                { senderId: userId, receiverId: adminId },
-                { senderId: adminId, receiverId: userId }
-            ]
-        }).sort({ timestamp: 1 });
+        const messages = await ChatModel.find();
+        const userIds = [...new Set(messages.map(msg => msg.fromUserId).filter(Boolean))];
 
-        res.json({ messages });
-    } catch (error) {
-        res.status(500).json({ error: 'Could not fetch messages' });
+        const users = await User.find({ _id: { $in: userIds } })
+            .select("_id name email image");
+
+        res.json({ success: true, users });
+    } catch (err) {
+        console.error("❌ Error fetching all chats:", err.message);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+});
+
+// GET chat by user ID
+// router.get("/chat/:userId", async (req, res) => {
+//     try {
+//         const userId = req.params.userId;
+//         const messages = await ChatModel.find({ fromUserId: userId }).sort({ timestamp: 1 }); // oldest first
+//         res.json({ success: true, messages });
+//     } catch (err) {
+//         console.error("❌ Error fetching chat for user:", err.message);
+//         res.status(500).json({ success: false, message: "Server error" });
+//     }
+// });
+
+// GET chat by user ID (both user and admin messages)
+router.get("/chat/:userId", async (req, res) => {
+    try {
+        const userId = req.params.userId;
+
+        const messages = await ChatModel.find({
+            $or: [
+                { fromUserId: userId },                 // messages sent by user
+                { toUserId: userId, fromAdmin: true }   // messages sent by admin to this user
+            ]
+        }).sort({ timestamp: 1 }); // oldest first
+
+        res.json({ success: true, messages });
+    } catch (err) {
+        console.error("❌ Error fetching chat for user:", err.message);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+});
+
+
+// Admin sends a message to a user
+router.post("/chat/reply", async (req, res) => {
+    try {
+        const { toUserId, message } = req.body;
+
+        if (!toUserId || !message) {
+            return res.status(400).json({ success: false, message: "User ID and message are required." });
+        }
+
+        const newMessage = new ChatModel({
+            fromAdmin: true,
+            toUserId,
+            message,
+            timestamp: new Date(),
+        });
+
+        await newMessage.save();
+
+        res.json({ success: true, message: "Message sent successfully." });
+    } catch (err) {
+        console.error("❌ Error sending admin message:", err.message);
+        res.status(500).json({ success: false, message: "Server error" });
     }
 });
 
