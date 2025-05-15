@@ -23,14 +23,9 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: [
-            "http://localhost:3000",
-            "https://your-web-gamma.vercel.app",
-            "https://yourweb-backend.onrender.com/auth/google/callback",
-            "http://192.168.10.8:3000"
-        ],
+        origin: allowedOrigins, // Use the same allowed origins
         credentials: true,
-        methods: ["GET", "POST"]
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
     }
 });
 
@@ -42,33 +37,59 @@ app.use(express.json());
 const allowedOrigins = [
     "http://localhost:3000",
     "https://your-web-gamma.vercel.app",
+    "https://your-web-git-main-elevens-projects-0c000431.vercel.app",
     "https://yourweb-backend.onrender.com",
     "http://192.168.10.8:3000"
 ];
 
 app.use(cors({
     origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error("Not allowed by CORS"));
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+
+        // Check if origin matches any allowed origin or subdomain pattern
+        if (allowedOrigins.some(allowed => {
+            // Exact match
+            if (origin === allowed) return true;
+            // Wildcard match (for Vercel preview URLs)
+            if (allowed.includes('*')) {
+                const regex = new RegExp(allowed.replace('*', '.*'));
+                return regex.test(origin);
+            }
+            return false;
+        })) {
+            return callback(null, true);
         }
+
+        console.log('Blocked by CORS:', origin);
+        return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization", "Set-Cookie"],
+    allowedHeaders: ["Content-Type", "Authorization", "Set-Cookie", "X-Requested-With"],
     exposedHeaders: ["Set-Cookie"],
-    methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"]
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    preflightContinue: false,
+    optionsSuccessStatus: 204
 }));
 
 // Security headers
 // Replace your current security headers with:
 app.use((req, res, next) => {
+    // Remove COOP/COEP headers that were causing issues
+    res.removeHeader("Cross-Origin-Opener-Policy");
+    res.removeHeader("Cross-Origin-Embedder-Policy");
+
+    // Set security headers
     res.setHeader('X-Frame-Options', 'DENY');
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     res.setHeader('Permissions-Policy', 'geolocation=(), microphone=()');
+
+    // Important for credentials/cookies
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
     next();
 });
+
 
 // Static files
 app.use("/images", express.static("images"));
