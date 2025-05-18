@@ -467,14 +467,10 @@ const NavBar = ({ Authentication }) => {
                                 <Link to="/UserProfile"
                                     ref={(el) => (linksRef.current[19] = el)}
                                 >
-                                    {loading ? (
-                                        <span>Loading...</span>
+                                    {loading || !userData ? (
+                                        <img src="./user.png" alt="Default" />
                                     ) : (
-                                        userData ? (
-                                            <img src="./user.png" alt="User" className='userimg' />
-                                        ) : (
-                                            <img src="./favicon.ico" alt="Default" />
-                                        )
+                                        <img src={userData.image} alt="User" className='userimg' />
                                     )}
                                 </Link>
                             ) : (

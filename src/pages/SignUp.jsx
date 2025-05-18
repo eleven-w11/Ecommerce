@@ -248,3 +248,18 @@ const SignUp = ({ onSignUp }) => {
 }
 
 export default SignUp;
+{/* <div className='userprofile-hide'>
+    {Authentication ? (
+        <Link to="/UserProfile">
+            {loading || !userData ? (
+                <img src="./user.png" alt="Default" />
+            ) : (
+                <img src={userData.image} alt="User" className='userimg' />
+            )}
+        </Link>
+    ) : (
+        <Link to="/SignIn">
+            <span className="material-symbols-outlined">account_circle</span>
+        </Link>
+    )}
+</div> */}
