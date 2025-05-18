@@ -116,6 +116,7 @@ passport.use(new GoogleStrategy({
     }
 }));
 
+
 // Generate JWT Token function
 const generateJWT = (user) => {
     return jwt.sign(
