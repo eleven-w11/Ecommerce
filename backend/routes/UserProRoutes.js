@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get("/profile", verifyPath, async (req, res) => {
     try {
-        res.set('Cache-Control', 'no-store'); // ⬅️ No caching allowed
+        res.set('Cache-Control', 'no-store');
 
         const user = await User.findById(req.userId).select("name email image role");
 
@@ -21,14 +21,6 @@ router.get("/profile", verifyPath, async (req, res) => {
             image: user.image,
             role: user.role
         });
-
-        // console.warn("userproRoutes", {
-        //     _id: user._id,
-        //     name: user.name,
-        //     email: user.email,
-        //     image: user.image,
-        //     role: user.role
-        // });
 
 
     } catch (error) {

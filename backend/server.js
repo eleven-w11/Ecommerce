@@ -6,7 +6,7 @@ const cookieParser = require("cookie-parser");
 const http = require("http");
 const { Server } = require("socket.io");
 const passport = require("passport");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
+// const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const jwt = require("jsonwebtoken");
 const Message = require("./models/Message");
 
@@ -100,21 +100,19 @@ mongoose.connect(process.env.MONGO_URI, {
     .catch((err) => console.error("❌ MongoDB connection error:", err));
 
 // Google OAuth Strategy
-passport.use(new GoogleStrategy({
-    clientID: process.env.REACT_APP_GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.NODE_ENV === 'production'
-        ? "https://yourweb-backend.onrender.com/auth/google/callback"
-        : "http://localhost:5000/auth/google/callback"
-}, async (accessToken, refreshToken, profile, done) => {
-    try {
-        // Here you would typically find or create a user in your database
-        // For now, we'll just return the profile
-        return done(null, profile);
-    } catch (err) {
-        return done(err, null);
-    }
-}));
+// passport.use(new GoogleStrategy({
+//     clientID: process.env.REACT_APP_GOOGLE_CLIENT_ID,
+//     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+//     callbackURL: process.env.NODE_ENV === 'production'
+//         ? "https://yourweb-backend.onrender.com/auth/google/callback"
+//         : "http://localhost:5000/auth/google/callback"
+// }, async (accessToken, refreshToken, profile, done) => {
+//     try {
+//         return done(null, profile);
+//     } catch (err) {
+//         return done(err, null);
+//     }
+// }));
 
 
 // Generate JWT Token function
