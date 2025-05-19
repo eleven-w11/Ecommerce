@@ -132,8 +132,8 @@ function createToken(userId) {
 function setAuthCookie(res, token) {
     res.cookie('token', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        secure: true,
+        sameSite: "None",
         maxAge: 3600000 // 1 hour
     });
 }

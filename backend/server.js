@@ -32,7 +32,7 @@ const allowedOrigins = [
     "https://your-web-gamma.vercel.app",
     "https://your-web-git-main-elevens-projects-0c000431.vercel.app",
     "https://yourweb-backend.onrender.com",
-    "http://192.168.10.8:3000"
+    "http://192.168.10.8:3000",
 ];
 
 // CORS Configuration
