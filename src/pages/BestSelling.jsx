@@ -106,7 +106,7 @@ const BestSellingProducts = () => {
               );
             })
           ) : (
-            <div className="loader-container">
+            <div className="fp-loader-container">
               <div className="loader">
                 <span></span>
                 <span></span>

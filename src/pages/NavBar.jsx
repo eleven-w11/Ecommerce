@@ -296,35 +296,44 @@ const NavBar = ({ Authentication }) => {
     }, [selectedIndex]);
 
     useEffect(() => {
-        if (showSearch && searchContainerRef.current) {
-            gsap.fromTo(
-                searchContainerRef.current,
-                {
-                    opacity: 0,
-                    scale: 0.5,
-                    transformOrigin: "top right",
-                    y: -50,
-                    clipPath: "circle(0% at 90% 10%)",
-                },
-                {
-                    opacity: 1,
-                    scale: 1,
-                    y: 0,
-                    clipPath: "circle(150% at 90% 10%)",
-                    duration: 1,
-                    ease: "elastic.out(1, 0.5)", // 🧠 elastic bounce style
-                }
-            );
-        } else if (!showSearch && searchContainerRef.current) {
-            gsap.to(searchContainerRef.current, {
+        if (!searchContainerRef.current) return;
+
+        const anim = gsap.timeline({
+            defaults: {
+                ease: "expo.out",  // 🚀 Smooth acceleration/deceleration
+                overwrite: "auto"  // Prevents animation conflicts
+            }
+        });
+
+        if (showSearch) {
+            // Initial hidden state (optimized for performance)
+            gsap.set(searchContainerRef.current, {
                 opacity: 0,
-                scale: 0.5,
-                y: -50,
-                clipPath: "circle(0% at 90% 10%)",
-                duration: 0.5,
-                ease: "power3.inOut",
+                y: 30,
+                scale: 0.98,
+                filter: "blur(2px)",  // Subtle blur (GPU-accelerated)
+                transformOrigin: "top center"
+            });
+
+            anim.to(searchContainerRef.current, {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                filter: "blur(0px)",
+                duration: 0.6,
+            });
+        } else {
+            anim.to(searchContainerRef.current, {
+                opacity: 0,
+                y: 20,
+                scale: 0.98,
+                filter: "blur(2px)",
+                duration: 0.4,
+                ease: "power2.in"  // Faster exit
             });
         }
+
+        return () => anim.kill();  // Cleanup
     }, [showSearch]);
 
 
@@ -470,7 +479,11 @@ const NavBar = ({ Authentication }) => {
                                     {loading || !userData ? (
                                         <img src="./user.png" alt="Default" />
                                     ) : (
-                                        <img src={userData.image} alt="User" className='userimg' />
+                                        <img
+                                            crossOrigin="anonymous"
+                                            src={userData.image}
+                                            alt="User"
+                                            className='userimg' />
                                     )}
                                 </Link>
                             ) : (
@@ -669,6 +682,16 @@ const NavBar = ({ Authentication }) => {
                             className={activePath === "/AdminChat" ? "active-link" : ""}
                             ref={(el) => (linksRef.current[16] = el)}>
                             Admin Chat
+                        </Link>
+                    </li>
+                    <div className="navline"
+                        ref={(el) => (linksRef.current[17] = el)}></div>
+                    <li>
+                        <Link
+                            to="/AnimationT"
+                            className={activePath === "/AnimationT" ? "active-link" : ""}
+                            ref={(el) => (linksRef.current[16] = el)}>
+                            Animation
                         </Link>
                     </li>
                     <div className="navline"

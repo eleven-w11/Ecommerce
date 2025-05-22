@@ -341,19 +341,19 @@ body {
 }
 
 /* Loading States */
-.loader-container {
+/* .loader-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background-color: #f8f9fa;
+    background-color: red;
 }
 
 .loader-animation {
     display: flex;
     gap: 8px;
     margin-bottom: 20px;
+    background-color: rgb(0, 255, 0);
 }
 
 .loader-dot {
@@ -380,7 +380,18 @@ body {
     color: var(--dark-gray);
     font-size: 1rem;
     margin-top: 15px;
+} */
+
+.fp-chat{
+    width: 80%;
+    height: 80vh;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* background-color: red; */
 }
+
 
 .messages-loading {
     flex: 1;

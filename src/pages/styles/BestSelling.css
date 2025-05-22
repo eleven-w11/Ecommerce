@@ -207,7 +207,7 @@
 } */
 
 
-.no-products-wrapper {
+/* .no-products-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -247,7 +247,7 @@
     100% {
         transform: translateY(0);
     }
-}
+} */
 
 @keyframes fadeIn {
     0% {

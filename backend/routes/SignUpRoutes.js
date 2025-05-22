@@ -133,8 +133,12 @@ function setAuthCookie(res, token) {
     res.cookie('token', token, {
         httpOnly: true,
         secure: true,
-        sameSite: "None",
-        maxAge: 3600000 // 1 hour
+        domain: process.env.NODE_ENV === 'production'
+            ? 'yourweb-backend.onrender.com' // Use backend domain
+            : undefined, // Local development
+        sameSite: 'none',
+        path: '/',
+        maxAge: 3600000
     });
 }
 

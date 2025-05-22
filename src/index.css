@@ -7,6 +7,7 @@
 
 body {
     position: relative;
+    /* background-color: black; */
 }
 
 
@@ -189,7 +190,7 @@ li {
 
 
 
-.inline-loader{
+/* .inline-loader{
     background-color: blue;
 }
 
@@ -200,14 +201,14 @@ li {
     justify-content: center;
     align-items: center;
 
-}
+} */
 /* Loader Container */
-.loader-container {
+.fp-loader-container {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    padding: 10px 0 25px 0;
+    /* padding: 10px 0 25px 0; */
 }
 
 /* Loader Bouncing Effect */
@@ -258,7 +259,7 @@ li {
 
 
 /* Fade-in animation */
-@keyframes fadeIn {
+/* @keyframes fadeIn {
     from {
         opacity: 0;
         transform: translateY(10px);
@@ -268,4 +269,4 @@ li {
         opacity: 1;
         transform: translateY(0);
     }
-}
+} */
