@@ -291,19 +291,39 @@ const Cart = () => {
         };
     }, [activeId]);
 
+    // useEffect(() => {
+    //     const setSignHeight = () => {
+    //         const totalHeight = window.innerHeight - 60;
+    //         const verticalMargin = window.innerWidth * 0.03; // 10% of width for top/bottom margin
+    //         const horizontalMargin = window.innerWidth * 0.03; // 10% of width for left/right
+
+    //         const adjustedHeight = totalHeight - verticalMargin * 2; // subtract top + bottom margin
+
+    //         const signElement = document.querySelector(".empty-cart-page");
+
+    //         if (signElement) {
+    //             signElement.style.width = `calc(100% - ${horizontalMargin * 2}px)`;
+    //             signElement.style.height = `${adjustedHeight}px`;
+    //             signElement.style.margin = `${verticalMargin}px ${horizontalMargin}px`;
+    //         }
+    //     };
+
+    //     setSignHeight();
+    //     window.addEventListener("resize", setSignHeight);
+
+    //     return () => window.removeEventListener("resize", setSignHeight);
+    // }, []);
 
 
     return (
         <>
             <div className="cart-page">
                 {loading ? (
-                    <div className="pro_view_loader">
-                        <div className="loader-container">
-                            <div className="loader">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                            </div>
+                    <div className="fp-cart-loader-container">
+                        <div className="loader">
+                            <span></span>
+                            <span></span>
+                            <span></span>
                         </div>
                     </div>
                 ) : cartProducts.length > 0 ? (
@@ -550,11 +570,8 @@ const Cart = () => {
                         </div>
                     </>
                 ) : null}
-
-
             </div>
         </>
-
     );
 
 };

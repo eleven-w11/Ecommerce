@@ -49,7 +49,7 @@ const ProductView = () => {
 
             localStorage.setItem("cart", JSON.stringify(storedCart));
             window.dispatchEvent(new Event("storage"));
-            alert("Quantity increased!");
+            // alert("Quantity increased!");
             return;
         }
 
@@ -63,7 +63,7 @@ const ProductView = () => {
         const updatedCart = [...storedCart, newCartItem];
         localStorage.setItem("cart", JSON.stringify(updatedCart));
         window.dispatchEvent(new Event("storage"));
-        alert("Product added to cart!");
+        // alert("Product added to cart!");
     };
 
 
@@ -94,7 +94,7 @@ const ProductView = () => {
 
             localStorage.setItem("cart", JSON.stringify(storedCart));
             window.dispatchEvent(new Event("storage"));
-            alert("Quantity updated for existing item!");
+            // alert("Quantity updated for existing item!");
             return;
         }
 
@@ -112,7 +112,7 @@ const ProductView = () => {
         const updatedCart = [...storedCart, newCartItem];
         localStorage.setItem("cart", JSON.stringify(updatedCart));
         window.dispatchEvent(new Event("storage"));
-        alert("New item added to cart!");
+        // alert("New item added to cart!");
     };
 
 
@@ -242,7 +242,7 @@ const ProductView = () => {
                 const allProducts = response.data;
                 const filteredProducts = allProducts.filter(p => p._id !== id);
                 const shuffled = filteredProducts.sort(() => 0.5 - Math.random());
-                setRandomProducts(shuffled.slice(0, 6));
+                setRandomProducts(shuffled.slice(0, 8));
             })
             .catch(error => console.error("Error fetching products:", error));
     }, [id]);
@@ -250,8 +250,9 @@ const ProductView = () => {
 
     if (!product || !product.images || product.images.length === 0) {
         return (
-            <div className="pro_view_loader">
-                <div className="loader-container">
+
+            <div className="fp-chat">
+                <div className="fp-loader-container">
                     <div className="loader">
                         <span></span>
                         <span></span>
@@ -319,7 +320,7 @@ const ProductView = () => {
                                         <p className="price">${product.product_price}</p>
                                     </div>
                                 )}
-                                <p>${product.id}</p>
+                                {/* <p>${product.id}</p> */}
                                 {product.images && (
                                     <div className="color-selection">
                                         <div className="colors">
@@ -337,7 +338,7 @@ const ProductView = () => {
 
                                 {/* ✅ Sizes Section */}
                                 <div className="sizes">
-                                    <span className="pro_data_heading">Size</span>
+                                    <span className="pro_data_heading size-heading">Size</span>
                                     <div className="size-options">
                                         {Object.entries(product.sizes).map(([size, available]) => (
                                             <span

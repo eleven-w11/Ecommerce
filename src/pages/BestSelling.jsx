@@ -26,7 +26,7 @@ const BestSellingProducts = () => {
 
       localStorage.setItem("cart", JSON.stringify(storedCart));
       window.dispatchEvent(new Event("storage"));
-      alert("Quantity increased!");
+      // alert("Quantity increased!");
       return;
     }
 
@@ -40,7 +40,7 @@ const BestSellingProducts = () => {
     const updatedCart = [...storedCart, newCartItem];
     localStorage.setItem("cart", JSON.stringify(updatedCart));
     window.dispatchEvent(new Event("storage"));
-    alert("Product added to cart!");
+    // alert("Product added to cart!");
   };
 
   useEffect(() => {

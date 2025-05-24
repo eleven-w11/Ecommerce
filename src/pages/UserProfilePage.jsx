@@ -46,7 +46,17 @@ const UserProfile = ({ onSignOut }) => {
   }, [navigate]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="fp-chat">
+        <div className="fp-loader-container">
+          <div className="loader">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+    );
   }
   const handelSignOut = async () => {
     try {

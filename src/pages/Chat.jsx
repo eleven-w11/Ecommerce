@@ -1,66 +1,177 @@
+// OOK Code Mob testing 367 line
 import React, { useEffect, useRef, useState } from "react";
+import { io } from "socket.io-client";
+import axios from "axios";
 import "./styles/Chat.css";
 import admin from "./images/admin.png";
+import { Link } from "react-router-dom";
+
+
 
 const Chat = () => {
     const [message, setMessage] = useState("");
     const [chat, setChat] = useState([]);
+    const [userId, setUserId] = useState(undefined);
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [selectedUserId, setSelectedUserId] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [userProfile, setUserProfile] = useState(null);
+    const [authError, setAuthError] = useState(null);
     const messagesEndRef = useRef(null);
+    const socketRef = useRef(null);
+    const isMounted = useRef(true);
+    const pendingMessages = useRef(new Map());
+    // const navigate = useNavigate();
 
-    // Sample user profile data
-    const userProfile = {
-        name: "Demo User",
-        image: "https://lh3.googleusercontent.com/a/ACg8ocJ4YwnRno-0XrfMDaS5LQpWanxTK9B9OBycUXhop9STQ_Y4PzQ=s96-c"
-    };
-
-    // Simulated chat data
-    const sampleChat = [
-        {
-            _id: 1,
-            message: "Hello! How can I help you today?",
-            fromAdmin: true,
-            timestamp: new Date(Date.now() - 60000).toISOString()
-        },
-        {
-            _id: 2,
-            message: "Hi there! I'm having trouble with my account.",
-            fromAdmin: false,
-            timestamp: new Date(Date.now() - 30000).toISOString()
-        },
-        {
-            _id: 3,
-            message: "What seems to be the problem?",
-            fromAdmin: true,
-            timestamp: new Date(Date.now() - 15000).toISOString()
-        }
-    ];
 
     useEffect(() => {
-        // Set initial loading state
-        const loadingTimer = setTimeout(() => {
-            setIsLoading(false);
-            setChat(sampleChat);
-        }, 3000); // 3 seconds loading simulation
-
-        // Set chat height
         const setSignHeight = () => {
             const height = window.innerHeight - 60;
             const signElement = document.querySelector(".user-chat-app");
+
             if (signElement) {
                 signElement.style.height = `${height}px`;
             }
         };
 
         setSignHeight();
+
         window.addEventListener("resize", setSignHeight);
 
+        return () => window.removeEventListener("resize", setSignHeight);
+    }, []);
+
+    // Component mount/unmount
+    useEffect(() => {
+        isMounted.current = true;
+
+        // Set timeout for showing auth error if loading takes too long
+        const authTimeout = setTimeout(() => {
+            if (isLoading && !userProfile && isMounted.current) {
+                setAuthError("Please sign in to access the chat");
+            }
+        }, 5000); // Show error after 5 seconds
+
         return () => {
-            clearTimeout(loadingTimer);
-            window.removeEventListener("resize", setSignHeight);
+            isMounted.current = false;
+            pendingMessages.current.clear();
+            clearTimeout(authTimeout);
+        };
+    }, [isLoading, userProfile]);
+
+    // Socket connection
+    useEffect(() => {
+        socketRef.current = io("http://localhost:5000", {
+            withCredentials: true,
+        });
+
+        return () => {
+            if (socketRef.current) {
+                socketRef.current.disconnect();
+            }
         };
     }, []);
 
+    // Fetch user data and register socket
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await axios.get(
+                    `${process.env.REACT_APP_API_BASE_URL}/api/user/profile`,
+                    { withCredentials: true }
+                );
+
+                if (response.data._id && isMounted.current) {
+                    setUserId(response.data._id);
+                    setIsAdmin(response.data.isAdmin || false);
+                    setUserProfile(response.data);
+                    setAuthError(null);
+
+                    socketRef.current.emit("register", {
+                        userId: response.data._id,
+                        isAdmin: response.data.isAdmin
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching user profile:", error);
+                if (isMounted.current) {
+                    setAuthError("Please sign in to access the chat");
+                    setIsLoading(false);
+                }
+            }
+        };
+
+        fetchUserData();
+    }, []);
+
+    // Fetch chat history and setup socket listener
+    useEffect(() => {
+        if (!userId || !socketRef.current) return;
+
+        const fetchChatHistory = async () => {
+            try {
+                setIsLoading(true);
+                const res = await axios.get(
+                    `${process.env.REACT_APP_API_BASE_URL}/api/messages/chat/history/${userId}`,
+                    { withCredentials: true }
+                );
+
+                if (res.data.success && isMounted.current) {
+                    setChat(res.data.messages || []);
+                }
+            } catch (error) {
+                console.error("Error fetching chat history:", error);
+            } finally {
+                if (isMounted.current) {
+                    setIsLoading(false);
+                }
+            }
+        };
+
+        const handleReceiveMessage = (data) => {
+            if (!isMounted.current) return;
+
+            setChat(prev => {
+                // Check if this is a response to our own message
+                const isOwnMessage = data.fromUserId === userId && !data.fromAdmin;
+                const isOwnAdminMessage = data.fromAdmin && data.toUserId === selectedUserId;
+
+                if (isOwnMessage || isOwnAdminMessage) {
+                    // Find and replace the optimistic update
+                    const existingIndex = prev.findIndex(msg =>
+                        pendingMessages.current.has(msg.timestamp) &&
+                        pendingMessages.current.get(msg.timestamp).message === data.message
+                    );
+
+                    if (existingIndex !== -1) {
+                        pendingMessages.current.delete(prev[existingIndex].timestamp);
+                        const newChat = [...prev];
+                        newChat[existingIndex] = data;
+                        return newChat;
+                    }
+                }
+
+                // Check for duplicates using database _id
+                const exists = prev.some(msg =>
+                    (msg._id && msg._id === data._id) ||
+                    (msg.timestamp === data.timestamp && msg.message === data.message)
+                );
+
+                return exists ? prev : [...prev, data];
+            });
+        };
+
+        fetchChatHistory();
+        socketRef.current.on("receiveMessage", handleReceiveMessage);
+
+        return () => {
+            if (socketRef.current) {
+                socketRef.current.off("receiveMessage", handleReceiveMessage);
+            }
+        };
+    }, [userId, selectedUserId]);
+
+    // Scroll to bottom on new messages
     useEffect(() => {
         if (messagesEndRef.current && !isLoading) {
             messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -68,29 +179,93 @@ const Chat = () => {
     }, [chat, isLoading]);
 
     const sendMessage = () => {
-        if (!message.trim()) return;
+        if (!message.trim() || !socketRef.current) return;
 
-        const newMessage = {
-            _id: Date.now(),
-            message,
-            fromAdmin: false,
-            timestamp: new Date().toISOString()
-        };
+        const tempId = Date.now();
+        const timestamp = new Date().toISOString();
 
-        setChat(prev => [...prev, newMessage]);
-        setMessage("");
+        if (isAdmin) {
+            if (!selectedUserId) {
+                alert("Please select a user to chat with");
+                return;
+            }
 
-        // Simulate admin reply after 1-2 seconds
-        setTimeout(() => {
-            const replyMessage = {
-                _id: Date.now() + 1,
-                message: "Thanks for your message! This is an offline demo.",
+            const optimisticMsg = {
+                _id: tempId,
+                message,
                 fromAdmin: true,
-                timestamp: new Date().toISOString()
+                timestamp,
+                toUserId: selectedUserId
             };
-            setChat(prev => [...prev, replyMessage]);
-        }, 1500);
+
+            pendingMessages.current.set(timestamp, {
+                tempId,
+                message
+            });
+
+            setChat(prev => [...prev, optimisticMsg]);
+            socketRef.current.emit("adminMessage", {
+                toUserId: selectedUserId,
+                message,
+                timestamp
+            });
+        } else {
+            const optimisticMsg = {
+                _id: tempId,
+                message,
+                fromAdmin: false,
+                timestamp,
+                fromUserId: userId
+            };
+
+            pendingMessages.current.set(timestamp, {
+                tempId,
+                message
+            });
+
+            setChat(prev => [...prev, optimisticMsg]);
+            socketRef.current.emit("userMessage", {
+                fromUserId: userId,
+                message,
+                timestamp
+            });
+        }
+
+        setMessage("");
     };
+
+
+
+
+    if (authError) {
+        return (
+            <div className="auth-error-container">
+                <div className="auth-error-card">
+                    <div className="error-icon">⚠️</div>
+                    <h2>Authentication Required</h2>
+                    <p>{authError}</p>
+                    <Link to="/signin" className="auth-redirect-button pulse">
+                        Sign In Now
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
+    if (isLoading && !userProfile) {
+        return (
+            <div className="fp-chat">
+                <div className="fp-loader-container">
+                    <div className="loader">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
 
     return (
         <div className="user-chat-app">
@@ -108,15 +283,21 @@ const Chat = () => {
                             </div>
                         </div>
 
-                        <h2 className="chat-title">Chat Support (Offline Demo)</h2>
+                        <h2 className="chat-title">Chat Support</h2>
 
                         <div className="user-profile">
                             <div className="profile-info">
-                                <p className="profile-name">{userProfile.name}</p>
+                                <p className="profile-name">{userProfile?.name || "User"}</p>
                                 <p className="profile-status">Active now</p>
                             </div>
                             <div className="profile-image-container">
-                                <img src={userProfile.image} alt="Profile" className="profile-image" />
+                                {userProfile?.image ? (
+                                    <img src={userProfile.image} alt="Profile" className="profile-image" />
+                                ) : (
+                                    <div className="avatar-placeholder">
+                                        {userProfile?.name?.charAt(0) || "U"}
+                                    </div>
+                                )}
                                 <span className="online-indicator"></span>
                             </div>
                         </div>
@@ -125,13 +306,11 @@ const Chat = () => {
 
                 <div className="chat-body">
                     {isLoading ? (
-                        <div className="fp-chat">
-                            <div className="fp-loader-container">
-                                <div className="loader">
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                </div>
+                        <div className="messages-loading">
+                            <div className="loading-animation">
+                                <div className="loading-bar"></div>
+                                <div className="loading-bar"></div>
+                                <div className="loading-bar"></div>
                             </div>
                         </div>
                     ) : (
@@ -145,7 +324,7 @@ const Chat = () => {
                             ) : (
                                 chat.map((msg) => (
                                     <div
-                                        key={msg._id}
+                                        key={msg._id || msg.timestamp}
                                         className={`message-bubble ${msg.fromAdmin ? "admin-message" : "user-message"} fade-in`}
                                     >
                                         <p className="message-text">{msg.message}</p>
@@ -183,5 +362,6 @@ const Chat = () => {
         </div>
     );
 };
+
 
 export default Chat;

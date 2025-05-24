@@ -39,6 +39,7 @@ const NavBar = ({ Authentication }) => {
 
 
 
+
     // cart icon
     useEffect(() => {
         const updateCartCount = () => {
@@ -300,40 +301,40 @@ const NavBar = ({ Authentication }) => {
 
         const anim = gsap.timeline({
             defaults: {
-                ease: "expo.out",  // 🚀 Smooth acceleration/deceleration
-                overwrite: "auto"  // Prevents animation conflicts
+                ease: "sine.inOut",  // Smoother, less bouncy easing
+                overwrite: "auto"
             }
         });
 
         if (showSearch) {
-            // Initial hidden state (optimized for performance)
-            gsap.set(searchContainerRef.current, {
-                opacity: 0,
-                y: 30,
-                scale: 0.98,
-                filter: "blur(2px)",  // Subtle blur (GPU-accelerated)
-                transformOrigin: "top center"
-            });
-
-            anim.to(searchContainerRef.current, {
-                opacity: 1,
-                y: 0,
-                scale: 1,
-                filter: "blur(0px)",
-                duration: 0.6,
-            });
+            // Slide in from left with smooth deceleration
+            anim.fromTo(searchContainerRef.current,
+                {
+                    x: "-50%",
+                    opacity: 0,
+                    filter: "blur(2px)"  // Optional subtle blur
+                },
+                {
+                    x: "0%",
+                    opacity: 1,
+                    filter: "blur(0px)",
+                    duration: 0.7,
+                    ease: "circ.out"  // Smooth deceleration
+                }
+            );
         } else {
-            anim.to(searchContainerRef.current, {
-                opacity: 0,
-                y: 20,
-                scale: 0.98,
-                filter: "blur(2px)",
-                duration: 0.4,
-                ease: "power2.in"  // Faster exit
-            });
+            // Slide out to right with consistent speed
+            anim.to(searchContainerRef.current,
+                {
+                    x: "100%",
+                    opacity: 0,
+                    duration: 0.5,
+                    ease: "sine.in"  // Consistent speed exit
+                }
+            );
         }
 
-        return () => anim.kill();  // Cleanup
+        return () => anim.kill();
     }, [showSearch]);
 
 
