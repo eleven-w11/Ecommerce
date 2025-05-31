@@ -1,3 +1,4 @@
+// Gooooooooooooooooooooooooooood
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import "./styles/Cart.css";
@@ -97,9 +98,19 @@ const Cart = () => {
         if (editProductId) {
             const currentProduct = cartProducts.find(p => p.uniqueId === editProductId);
             if (currentProduct) {
+                // Find the index of the current color in the images array
+                const currentColor = currentProduct.color || currentProduct.images?.[0]?.color_code;
+                const currentImageIndex = currentProduct.images?.findIndex(img => img.color_code === currentColor) || 0;
+
+                setImageIndexMap(prev => ({
+                    ...prev,
+                    [editProductId]: currentImageIndex
+                }));
+
                 setTempChanges({
-                    color: currentProduct.color || currentProduct.images?.[0]?.color_code,
-                    size: currentProduct.size || Object.keys(currentProduct.sizes || {})[0]
+                    color: currentColor,
+                    size: currentProduct.size || Object.keys(currentProduct.sizes || {})[0],
+                    image: currentProduct.image
                 });
             }
         }
@@ -392,7 +403,7 @@ const Cart = () => {
                                                     </>
                                                 )}
 
-                                                <img
+                                                {/* <img
                                                     src={
                                                         editProductId === product.uniqueId
                                                             ? `/images/${tempChanges.image
@@ -403,6 +414,16 @@ const Cart = () => {
                                                             })()
                                                             || product.image
                                                             }`
+                                                            : `/images/${product.image}`
+                                                    }
+                                                    alt={product.product_name}
+                                                /> */}
+                                                <img
+                                                    src={
+                                                        editProductId === product.uniqueId
+                                                            ? `/images/${tempChanges.image ||
+                                                            (product.images?.[imageIndexMap[product.uniqueId] || 0]?.pi_1) ||
+                                                            product.image}`
                                                             : `/images/${product.image}`
                                                     }
                                                     alt={product.product_name}

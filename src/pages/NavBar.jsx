@@ -699,6 +699,7 @@ const NavBar = ({ Authentication }) => {
                         ref={(el) => (linksRef.current[17] = el)}></div>
                 </ul>
             </div>
+            <div className={`black-screen ${isToggle ? 'visible' : 'hidden'}`}></div>
         </>
     );
 };
