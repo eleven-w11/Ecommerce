@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import "./styles/Cart.css";
+import "./styles/animation.css";
 import left from "./images/left.png";
 import right from "./images/right.png";
 import { Link } from "react-router-dom";
@@ -375,7 +376,8 @@ const Cart = () => {
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="cart_item-wrapper">
+                                        // <div className="cart_item-wrapper">
+                                        <div className={`cart_item-wrapper ${editProductId === product.uniqueId ? 'edit-mode' : ''}`}>
 
 
                                             <div className="images-frame">
@@ -410,8 +412,9 @@ const Cart = () => {
 
 
 
-                                            <div className="cart-detail-container">
-                                                <div className="cart-details">
+                                            <div className={`cart-detail-container ${editProductId === product.uniqueId ? 'cart-detail-container-edit-mode' : ''}`}>
+                                                <div className=" cart-details">
+                                                    {/* <div className="cart-details"> */}
                                                     <h2>{product.product_name}</h2>
 
                                                     {editProductId === product.uniqueId ? (
@@ -428,22 +431,30 @@ const Cart = () => {
                                                                 ))}
                                                             </div>
 
-                                                            <div className="size-option">
+
+                                                            <div className="sizes">
                                                                 <span>Size:</span>
-                                                                {Object.keys(product.sizes || {}).map((s, i) => {
-                                                                    const isAvailable = product.sizes[s];
-                                                                    return (
-                                                                        <button
-                                                                            key={i}
-                                                                            className={`size-btn ${tempChanges.size === s ? 'selected' : ''} ${!isAvailable ? 'disabled-size' : ''}`}
-                                                                            onClick={() => isAvailable && handleTempSizeChange(s)}
-                                                                            disabled={!isAvailable}
-                                                                        >
-                                                                            {s}
-                                                                        </button>
-                                                                    );
-                                                                })}
+                                                                <div className="size-options">
+                                                                    {Object.keys(product.sizes || {}).map((s, i) => {
+                                                                        const isAvailable = product.sizes[s];
+                                                                        const isSelected = tempChanges.size === s;
+                                                                        return (
+                                                                            <span
+                                                                                key={i}
+                                                                                className={`size-box ${isAvailable ? 'available' : 'unavailable'} ${isSelected ? 'selected' : ''}`}
+                                                                                onClick={() => {
+                                                                                    if (isAvailable) {
+                                                                                        handleTempSizeChange(s);
+                                                                                    }
+                                                                                }}
+                                                                            >
+                                                                                {s}
+                                                                            </span>
+                                                                        );
+                                                                    })}
+                                                                </div>
                                                             </div>
+
                                                         </>
                                                     ) : (
                                                         <>
@@ -457,9 +468,11 @@ const Cart = () => {
                                                                     title={`Color: ${product.color || product.images?.[0]?.color_code}`}
                                                                 ></div>
                                                             </div>
-                                                            <div className="size-option">
-                                                                <p>Size: </p>
-                                                                <button>{product.size || "N0N"}</button>
+                                                            <div className="sizes">
+                                                                <span>Size:</span>
+                                                                <div className="size-options selected-size">
+                                                                    <span>{product.size || "N0N"}</span>
+                                                                </div>
                                                             </div>
                                                         </>
                                                     )}
