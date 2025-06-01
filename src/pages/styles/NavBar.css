@@ -291,11 +291,15 @@ nav .userimg {
 }
 
 .black-screen.hidden {
+    width: 0;
+    height: 0;
     opacity: 0;
     pointer-events: none;
 }
 
 .black-screen.visible {
+    /* width: 100%;
+    height: 100vh; */
     opacity: 1;
 }
 
@@ -347,6 +351,7 @@ nav .userimg {
     height: 100%;
     backdrop-filter: blur(10px);
     background: rgba(0, 0, 0, 0.5);
+    /* background: red; */
     z-index: 1000;
     display: flex;
     align-items: center;

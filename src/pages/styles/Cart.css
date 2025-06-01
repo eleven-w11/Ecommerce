@@ -626,6 +626,7 @@
         margin: 3px 0 5px 0;
     }
 
+    .price-box h4,
     .discount-box_price h4 {
         display: none;
     }

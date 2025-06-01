@@ -426,7 +426,7 @@ const ProductView = () => {
                     <div className="best-selling-section">
                         <div className="product-container">
                             <h2>Related Products</h2>
-                            <div className="products-grid">
+                            <div className={randomProducts.length > 0 ? "products-grid" : "products-flex"}>
                                 {randomProducts.length > 0 ? (
                                     randomProducts.map((p) => {
                                         const hasDiscount = p.dis_product_price !== undefined;
@@ -462,13 +462,11 @@ const ProductView = () => {
                                         );
                                     })
                                 ) : (
-                                    <div className="pro_view_loader">
-                                        <div className="loader-container">
-                                            <div className="loader">
-                                                <span></span>
-                                                <span></span>
-                                                <span></span>
-                                            </div>
+                                    <div className="loader-container">
+                                        <div className="loader">
+                                            <span></span>
+                                            <span></span>
+                                            <span></span>
                                         </div>
                                     </div>
                                 )}

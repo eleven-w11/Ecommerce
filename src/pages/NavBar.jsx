@@ -28,11 +28,14 @@ const NavBar = ({ Authentication }) => {
     const womanDropdownRef = useRef(null);
     const [selectedIndex, setSelectedIndex] = useState(-1);
     const selectedRefs = useRef([]);
-    const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+    // const selectedRefs = useRef([]);
+
+    // const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
     // active-link
     const location = useLocation();
     const [activePath, setActivePath] = useState(location.pathname);
-
+    // const [showSearch, setShowSearch] = useState(false);
+    // const searchContainerRef = useRef(null);
 
 
 
@@ -296,47 +299,61 @@ const NavBar = ({ Authentication }) => {
         }
     }, [selectedIndex]);
 
-    useEffect(() => {
-        if (!searchContainerRef.current) return;
 
-        const anim = gsap.timeline({
-            defaults: {
-                ease: "sine.inOut",  // Smoother, less bouncy easing
-                overwrite: "auto"
+
+
+
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (
+                showSearch &&
+                searchContainerRef.current &&
+                // Check if click is outside the search-box
+                !event.target.closest('.search-box')
+            ) {
+                handleCloseSearch();
             }
-        });
+        };
 
         if (showSearch) {
-            // Slide in from left with smooth deceleration
-            anim.fromTo(searchContainerRef.current,
-                {
-                    x: "-50%",
-                    opacity: 0,
-                    filter: "blur(2px)"  // Optional subtle blur
-                },
-                {
-                    x: "0%",
-                    opacity: 1,
-                    filter: "blur(0px)",
-                    duration: 0.7,
-                    ease: "circ.out"  // Smooth deceleration
-                }
-            );
-        } else {
-            // Slide out to right with consistent speed
-            anim.to(searchContainerRef.current,
-                {
-                    x: "100%",
-                    opacity: 0,
-                    duration: 0.5,
-                    ease: "sine.in"  // Consistent speed exit
-                }
-            );
+            document.addEventListener('mousedown', handleClickOutside);
         }
 
-        return () => anim.kill();
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
     }, [showSearch]);
 
+    useEffect(() => {
+        if (showSearch && searchContainerRef.current) {
+            gsap.fromTo(
+                searchContainerRef.current,
+                { opacity: 0, x: "50%" },
+                { opacity: 1, x: 0, duration: 0.2, ease: "power2.in" }
+            );
+        }
+    }, [showSearch]);
+
+    const handleCloseSearch = () => {
+        if (searchContainerRef.current) {
+            gsap.to(searchContainerRef.current, {
+                opacity: 0,
+                x: "-50%",
+                duration: 0.2,
+                ease: "power2.in",
+                onComplete: () => {
+                    setShowSearch(false); // hide after animation
+                }
+            });
+        } else {
+            setShowSearch(false); // fallback
+        }
+    };
+
+
+
+    // searchContainerRef
 
     // activelink
 
@@ -414,7 +431,8 @@ const NavBar = ({ Authentication }) => {
                                 }}
                                 className="search-input"
                             />
-                            <button className="cancel-btn" onClick={() => setShowSearch(false)}>×</button>
+                            {/* <button className="cancel-btn" onClick={() => setShowSearch(false)}>×</button> */}
+                            <button className="cancel-btn" onClick={handleCloseSearch}>×</button>
                         </div>
 
                         <div className="search-results">
