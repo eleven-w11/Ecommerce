@@ -389,9 +389,16 @@ const NavBar = ({ Authentication }) => {
                             {Authentication ? (
                                 <Link to="/UserProfile">
                                     {loading || !userData ? (
-                                        <img src="./user.png" alt="Default" />
+                                        <img
+                                            className='default-user-profile'
+                                            src="./user.png"
+                                            alt="Default" />
                                     ) : (
-                                        <img src={userData.image} alt="User" className='userimg' />
+                                        <img
+                                            crossOrigin="anonymous"
+                                            src={userData.image}
+                                            alt="User"
+                                            className='userimg' />
                                     )}
                                 </Link>
                             ) : (
@@ -496,7 +503,10 @@ const NavBar = ({ Authentication }) => {
                                     ref={(el) => (linksRef.current[19] = el)}
                                 >
                                     {loading || !userData ? (
-                                        <img src="./user.png" alt="Default" />
+                                        <img
+                                            className='default-user-profile'
+                                            src="./user.png"
+                                            alt="Default" />
                                     ) : (
                                         <img
                                             crossOrigin="anonymous"

@@ -9,6 +9,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import left from "./images/left.png";
 import right from "./images/right.png";
 import addTocart from "./images/add-to-cart.png";
+import Footer from "./Footer";
 
 
 gsap.registerPlugin(ScrollTrigger);
@@ -66,11 +67,7 @@ const ProductView = () => {
         // alert("Product added to cart!");
     };
 
-
-
-
     // const proDetailsRef = useRef(null);
-
     const addToCartWithDetails = (product, selectedColor, selectedSize, quantity, currentIndex) => {
         const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -115,10 +112,6 @@ const ProductView = () => {
         // alert("New item added to cart!");
     };
 
-
-
-
-
     useEffect(() => {
         if (proDetails) {
             gsap.fromTo(
@@ -141,7 +134,6 @@ const ProductView = () => {
         }
     }, [proDetails]);
 
-
     useEffect(() => {
         if (shippingDetails) {
             gsap.fromTo(
@@ -163,8 +155,6 @@ const ProductView = () => {
             });
         }
     }, [shippingDetails]);
-
-
 
     useEffect(() => {
         axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/products/${id}`)
@@ -210,14 +200,11 @@ const ProductView = () => {
         }
     };
 
-
     const changeImage = (index) => {
         if (product?.images?.[index]) {
             setCurrentIndex(index);
         }
     };
-
-
 
     const selectImage = (index) => {
         setCurrentIndex(index);
@@ -234,7 +221,6 @@ const ProductView = () => {
         setSelectedColor(image.color_code);
         setCurrentIndex(index);
     };
-
 
     useEffect(() => {
         axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/products`)
@@ -263,12 +249,9 @@ const ProductView = () => {
         );
     }
 
-
-
     const handleSizeSelect = (size) => {
         setSelectedSize(size); // ✅ Selected size update karega
     };
-
 
     return (
         <>
@@ -335,7 +318,6 @@ const ProductView = () => {
                                         </div>
                                     </div>
                                 )}
-
                                 {/* ✅ Sizes Section */}
                                 <div className="sizes">
                                     <span className="pro_data_heading size-heading">Size</span>
@@ -352,7 +334,6 @@ const ProductView = () => {
                                     </div>
                                 </div>
                                 {/* <p>{product._id}</p> */}
-
                                 <div className="quantity-addtocart">
                                     <div className="quantity">
                                         <button className="quantity-btn decreaseQuantity" onClick={decreaseQuantity}>-</button>
@@ -394,8 +375,6 @@ const ProductView = () => {
                                             <li key={index}>{detail}</li>
                                         ))}
                                     </div>
-
-
                                 </div>
                                 <div className={`product-details-shipping shipping ${shippingDetails ? "active-border" : ""}`}
                                     onClick={() => setShippingDetails(!shippingDetails)}
@@ -431,7 +410,6 @@ const ProductView = () => {
                                     randomProducts.map((p) => {
                                         const hasDiscount = p.dis_product_price !== undefined;
                                         const firstImage = p.images?.[0]?.pi_1 || "default.jpg";
-
                                         return (
                                             <div key={p._id} className="product-card">
                                                 <div className="product-image-wrapper">
@@ -474,8 +452,10 @@ const ProductView = () => {
                         </div>
                     </div>
                 </div>
-
             </div>
+            
+            <Footer />
+
         </>
     );
 };
