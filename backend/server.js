@@ -29,10 +29,13 @@ const server = http.createServer(app);
 // Allowed origins configuration
 const allowedOrigins = [
     "http://localhost:3000",
+    "https://your-web.vercel.app",
     "https://your-web-gamma.vercel.app",
     "https://your-web-git-main-elevens-projects-0c000431.vercel.app",
     "https://yourweb-backend.onrender.com",
     "http://192.168.10.8:3000",
+    // "https://your-web-git-main-elevens-projects-0c000431.vercel.app",
+    // "https://your-web-gamma.vercel.app",
 ];
 
 // CORS Configuration
@@ -77,14 +80,22 @@ app.use(express.json());
 app.use(passport.initialize());
 
 // Security headers
+// app.use((req, res, next) => {
+//     res.removeHeader("Cross-Origin-Opener-Policy");
+//     res.removeHeader("Cross-Origin-Embedder-Policy");
+//     res.setHeader('X-Frame-Options', 'DENY');
+//     res.setHeader('X-Content-Type-Options', 'nosniff');
+//     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+//     res.setHeader('Permissions-Policy', 'geolocation=(), microphone=()');
+//     res.setHeader('Access-Control-Allow-Credentials', 'true');
+//     next();
+// });
+
 app.use((req, res, next) => {
-    res.removeHeader("Cross-Origin-Opener-Policy");
-    res.removeHeader("Cross-Origin-Embedder-Policy");
-    res.setHeader('X-Frame-Options', 'DENY');
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-    res.setHeader('Permissions-Policy', 'geolocation=(), microphone=()');
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     next();
 });
 
@@ -99,20 +110,33 @@ mongoose.connect(process.env.MONGO_URI, {
     .then(() => console.log("✅ Connected to MongoDB"))
     .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// Google OAuth Strategy
-// passport.use(new GoogleStrategy({
-//     clientID: process.env.REACT_APP_GOOGLE_CLIENT_ID,
-//     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-//     callbackURL: process.env.NODE_ENV === 'production'
-//         ? "https://yourweb-backend.onrender.com/auth/google/callback"
-//         : "http://localhost:5000/auth/google/callback"
-// }, async (accessToken, refreshToken, profile, done) => {
-//     try {
-//         return done(null, profile);
-//     } catch (err) {
-//         return done(err, null);
-//     }
-// }));
+// Uncomment and fix the Google Strategy
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID, // Ensure this matches your .env
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: process.env.NODE_ENV === 'production'
+        ? "https://yourweb-backend.onrender.com/auth/google/callback"
+        : "http://localhost:5000/auth/google/callback"
+}, async (accessToken, refreshToken, profile, done) => {
+    try {
+        // Add logic to find/create user in your database
+        let user = await User.findOne({ email: profile.emails[0].value });
+
+        if (!user) {
+            user = new User({
+                name: profile.displayName,
+                email: profile.emails[0].value,
+                googleId: profile.id,
+                image: profile.photos[0].value
+            });
+            await user.save();
+        }
+
+        return done(null, user);
+    } catch (err) {
+        return done(err, null);
+    }
+}));
 
 
 // Generate JWT Token function

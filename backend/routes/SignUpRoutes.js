@@ -132,11 +132,11 @@ function createToken(userId) {
 function setAuthCookie(res, token) {
     res.cookie('token', token, {
         httpOnly: true,
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
         domain: process.env.NODE_ENV === 'production'
-            ? 'yourweb-backend.onrender.com' // Use backend domain
+            ? '.onrender.com' // Top-level domain for all subdomains
             : undefined, // Local development
-        sameSite: 'none',
+        sameSite: 'none', // Changed from 'strict'
         path: '/',
         maxAge: 3600000
     });
