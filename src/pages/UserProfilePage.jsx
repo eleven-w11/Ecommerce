@@ -14,7 +14,14 @@ const UserProfile = ({ onSignOut }) => {
     const fetchUserData = async () => {
 
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/user/profile`, { withCredentials: true });
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/user/profile`, {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        },
+
+        );
         console.log("userprofile response:", response);
 
         // Debugging specific parts of the response
