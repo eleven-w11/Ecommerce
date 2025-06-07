@@ -6,9 +6,10 @@ const cookieParser = require("cookie-parser");
 const http = require("http");
 const { Server } = require("socket.io");
 const passport = require("passport");
-// const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const jwt = require("jsonwebtoken");
+
 const Message = require("./models/Message");
+const googleAuthRoutes = require("./routes/googleAuthRoutes");
 
 // Route imports
 const signupRoutes = require("./routes/SignUpRoutes");
@@ -22,85 +23,36 @@ const productRoutes = require("./routes/productRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 
-// Express & server setup
 const app = express();
 const server = http.createServer(app);
 
-// Allowed origins configuration
+// Allowed origins
 const allowedOrigins = [
     "http://localhost:3000",
-    "https://your-web.vercel.app",
     "https://your-web-gamma.vercel.app",
-    "https://your-web-git-main-elevens-projects-0c000431.vercel.app",
-    "https://yourweb-backend.onrender.com",
-    "http://192.168.10.8:3000",
-    // "https://your-web-git-main-elevens-projects-0c000431.vercel.app",
-    // "https://your-web-gamma.vercel.app",
+    "https://your-web-git-main-elevens-projects-0c000431.vercel.app"
 ];
 
-// CORS Configuration
-app.use(cors({
+const corsOptions = {
     origin: function (origin, callback) {
-        if (!origin) return callback(null, true);
-
-        if (allowedOrigins.some(allowed => {
-            if (origin === allowed) return true;
-            if (allowed.includes('*')) {
-                const regex = new RegExp(allowed.replace('*', '.*'));
-                return regex.test(origin);
-            }
-            return false;
-        })) {
-            return callback(null, true);
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            console.log('❌ Blocked by CORS:', origin);
+            callback(new Error('Not allowed by CORS'));
         }
-
-        console.log('Blocked by CORS:', origin);
-        return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization", "Set-Cookie", "X-Requested-With"],
-    exposedHeaders: ["Set-Cookie"],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-    preflightContinue: false,
-    optionsSuccessStatus: 204
-}));
-
-// Socket.IO Configuration
-const io = new Server(server, {
-    cors: {
-        origin: allowedOrigins,
-        credentials: true,
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-    }
-});
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    exposedHeaders: ['Set-Cookie']
+};
+app.use(cors(corsOptions));
 
 // Middleware
-app.use(cookieParser());
 app.use(express.json());
+app.use(cookieParser());
 app.use(passport.initialize());
-
-// Security headers
-// app.use((req, res, next) => {
-//     res.removeHeader("Cross-Origin-Opener-Policy");
-//     res.removeHeader("Cross-Origin-Embedder-Policy");
-//     res.setHeader('X-Frame-Options', 'DENY');
-//     res.setHeader('X-Content-Type-Options', 'nosniff');
-//     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-//     res.setHeader('Permissions-Policy', 'geolocation=(), microphone=()');
-//     res.setHeader('Access-Control-Allow-Credentials', 'true');
-//     next();
-// });
-
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next();
-});
-
-// Static files
-app.use("/images", express.static("images"));
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
@@ -110,70 +62,41 @@ mongoose.connect(process.env.MONGO_URI, {
     .then(() => console.log("✅ Connected to MongoDB"))
     .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// Uncomment and fix the Google Strategy
-passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID, // Ensure this matches your .env
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.NODE_ENV === 'production'
-        ? "https://yourweb-backend.onrender.com/auth/google/callback"
-        : "http://localhost:5000/auth/google/callback"
-}, async (accessToken, refreshToken, profile, done) => {
-    try {
-        // Add logic to find/create user in your database
-        let user = await User.findOne({ email: profile.emails[0].value });
+// Static files
+app.use("/images", express.static("images"));
 
-        if (!user) {
-            user = new User({
-                name: profile.displayName,
-                email: profile.emails[0].value,
-                googleId: profile.id,
-                image: profile.photos[0].value
-            });
-            await user.save();
-        }
+// Headers for CORS manually
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.removeHeader("Cross-Origin-Opener-Policy");
+    next();
+});
 
-        return done(null, user);
-    } catch (err) {
-        return done(err, null);
-    }
-}));
-
-
-// Generate JWT Token function
+// JWT Generator
 const generateJWT = (user) => {
     return jwt.sign(
-        { id: user.id, email: user.emails[0].value },
+        { id: user.id, email: user.email },
         process.env.JWT_SECRET,
         { expiresIn: '1h' }
     );
 };
 
 // Google Auth Routes
-app.get('/auth/google', passport.authenticate('google', {
-    scope: ['profile', 'email'],
-    prompt: 'select_account'
-}));
+app.use('/auth/google', googleAuthRoutes);
 
-app.get('/auth/google/callback',
-    passport.authenticate('google', {
-        failureRedirect: '/login',
-        session: false
-    }),
-    (req, res) => {
-        const token = generateJWT(req.user);
-        const frontendUrl = process.env.NODE_ENV === 'production'
-            ? 'https://your-web-gamma.vercel.app'
-            : 'http://localhost:3000';
-
-        res.redirect(`${frontendUrl}/oauth-success?token=${token}`);
-    }
-);
+// Redirect after Google Auth success
+app.get('/auth/google/callback-success', (req, res) => {
+    const token = generateJWT(req.user);
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    res.redirect(`${frontendUrl}/oauth-success?token=${token}`);
+});
 
 // API Routes
-app.use("/api/", signupRoutes);
-app.use("/api/", signinRoutes);
-app.use("/api/user", userRoutes);
+app.use("/api", signupRoutes);
+app.use("/api", signinRoutes);
 app.use("/api", signOutRoutes);
+app.use("/api/user", userRoutes);
 app.use("/api/verifytoken", verifyTokenRoutes);
 app.use("/api/protected", verifyPathRoutes);
 app.use("/api/admin", adminRoutes);
@@ -181,14 +104,10 @@ app.use("/api/products", productRoutes);
 app.use("/api", cartRoutes);
 app.use("/api/messages", messageRoutes);
 
-// Google Signup Endpoint
+// Google Signup Fallback (if needed)
 app.post("/api/signup/google", async (req, res) => {
     try {
         const { token } = req.body;
-
-        // Here you would verify the Google token and create/authenticate user
-        // This is a simplified version - implement proper validation
-
         const user = {
             id: "google_" + Date.now(),
             email: "user@example.com",
@@ -210,12 +129,15 @@ app.post("/api/signup/google", async (req, res) => {
     }
 });
 
-// Test route
-app.get("/", (req, res) => {
-    res.send("Server is running!");
+// Socket.IO
+const io = new Server(server, {
+    cors: {
+        origin: allowedOrigins,
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    }
 });
 
-// Socket.IO Logic
 io.on("connection", (socket) => {
     console.log("🟢 New client connected:", socket.id);
 
@@ -266,16 +188,22 @@ io.on("connection", (socket) => {
     });
 });
 
-// Error handling middleware
+// Test route
+app.get("/", (req, res) => {
+    res.send("✅ Server is running!");
+});
+
+// Global Error Handler
 app.use((err, req, res, next) => {
-    console.error(err.stack);
+    console.error('❌ Global error:', err.stack);
     res.status(500).json({
-        error: 'Internal server error',
-        message: process.env.NODE_ENV === 'development' ? err.message : undefined
+        error: 'Internal Server Error',
+        message: process.env.NODE_ENV === 'development' ? err.message : undefined,
+        stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
     });
 });
 
-// Start the server
+// Start Server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, "0.0.0.0", () => {
     console.log(`🚀 Server running on port ${PORT}`);

@@ -4,6 +4,9 @@ const verifyToken = (req, res, next) => {
     // Check both cookies and Authorization header
     const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
 
+    console.log('Incoming cookies:', req.cookies);
+    console.log('Auth header:', req.headers.authorization);
+
     if (!token) {
         return res.status(401).json({
             success: false,

@@ -717,10 +717,10 @@ const NavBar = ({ Authentication }) => {
                         ref={(el) => (linksRef.current[17] = el)}></div>
                     <li>
                         <Link
-                            to="/AnimationT"
-                            className={activePath === "/AnimationT" ? "active-link" : ""}
+                            to="/GoogleSignIn"
+                            className={activePath === "/GoogleSignIn" ? "active-link" : ""}
                             ref={(el) => (linksRef.current[16] = el)}>
-                            Animation
+                            GoogleSignIn
                         </Link>
                     </li>
                     <div className="navline"

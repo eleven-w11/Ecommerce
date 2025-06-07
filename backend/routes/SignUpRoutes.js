@@ -133,12 +133,12 @@ function setAuthCookie(res, token) {
     res.cookie('token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
+        sameSite: 'none', // Must be 'none' for cross-site cookies
         domain: process.env.NODE_ENV === 'production'
-            ? '.onrender.com' // Top-level domain for all subdomains
+            ? 'yourweb-backend.onrender.com' // Explicit domain
             : undefined, // Local development
-        sameSite: 'none', // Changed from 'strict'
         path: '/',
-        maxAge: 3600000
+        maxAge: 3600000 // 1 hour
     });
 }
 

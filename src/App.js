@@ -21,6 +21,7 @@ import AllProducts from './pages/AllProducts';
 import ChatBox from './pages/Chat';
 import AdminChat from './pages/AdminChat';
 import AnimationTest from './pages/AnimationT';
+import GoogleSignIn from './pages/GoogleSign';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -94,7 +95,7 @@ function App() {
         <Route path="/WomanAccessories" element={<AllProducts />}/>
         <Route path="/Chat" element={<ChatBox />}/>
         <Route path="/AdminChat" element={<AdminChat />}/>
-        <Route path="/AnimationT" element={<AnimationTest />} />
+        <Route path="/GoogleSignIn" element={<GoogleSignIn /> } />
 
 
       </Routes>
