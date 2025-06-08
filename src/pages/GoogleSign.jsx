@@ -16,10 +16,9 @@ const GoogleSign = () => {
     });
 
     return (
-        <a href="http://localhost:5000/auth/google" className="google-signin-btn">
+        <a href="https://yourweb-backend.onrender.com/auth/google" className="google-signin-btn">
             Continue with Google
         </a>
-
     );
 };
 
