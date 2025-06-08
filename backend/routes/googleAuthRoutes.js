@@ -120,7 +120,8 @@ router.get('/callback', (req, res, next) => {
                 sameSite: IS_PRODUCTION ? 'none' : 'lax',
                 maxAge: 60 * 60 * 1000,   // 1 hour
             });
-
+            
+            console.log("👉 Redirecting to:", `${FRONTEND_URL}/UserProfilePage`);
             return res.redirect(`${FRONTEND_URL}/UserProfilePage`);
         }
     )(req, res, next);

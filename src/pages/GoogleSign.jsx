@@ -1,8 +1,6 @@
 import React from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
-require('dotenv').config(); // Safe to repeat
-console.log("FRONTEND_URL from GoogleSign:", process.env.FRONTEND_URL);
 
 const GoogleSign = () => {
     const navigate = useNavigate();
