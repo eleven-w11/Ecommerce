@@ -1,4 +1,6 @@
-require("dotenv").config();
+require('dotenv').config();
+console.log("FRONTEND_URL from server.js:", process.env.FRONTEND_URL);
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -82,8 +84,6 @@ const generateJWT = (user) => {
     );
 };
 
-// Google Auth Routes
-app.use('/auth/google', googleAuthRoutes);
 
 // Redirect after Google Auth success
 app.get('/auth/google/callback-success', (req, res) => {
@@ -103,6 +103,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api", cartRoutes);
 app.use("/api/messages", messageRoutes);
+app.use('/auth/google', googleAuthRoutes);
 
 // Google Signup Fallback (if needed)
 app.post("/api/signup/google", async (req, res) => {

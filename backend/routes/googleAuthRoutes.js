@@ -1,4 +1,7 @@
 // routes/googleAuthRoutes.js
+require('dotenv').config(); // Safe to repeat
+
+console.log("FRONTEND_URL from googleAuthRoutes.js:", process.env.FRONTEND_URL);
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
@@ -70,6 +73,21 @@ router.get(
         prompt: 'select_account',
     })
 );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* ------------------------------------------------------------------ */
 /* 3.  /auth/google/callback                                          */
