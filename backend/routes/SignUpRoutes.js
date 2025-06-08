@@ -6,7 +6,7 @@ const { OAuth2Client } = require("google-auth-library");
 const User = require("../models/StoreUser");
 
 // const { OAuth2Client } = require('google-auth-library');
-const client = new OAuth2Client(process.env.REACT_APP_GOOGLE_CLIENT_ID);
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 // const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Regular email/password signup
@@ -141,5 +141,6 @@ function setAuthCookie(res, token) {
         maxAge: 3600000 // 1 hour
     });
 }
+
 
 module.exports = router;

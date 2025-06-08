@@ -6,14 +6,15 @@ const GoogleSign = () => {
     const navigate = useNavigate();
 
     const handleGoogleLogin = useGoogleLogin({
+        clientId: process.env.REACT_APP_GOOGLE_CLIENT_ID, // ✅ Required
         onSuccess: () => {
-            // Directly open the backend auth endpoint
             window.location.href = `${process.env.REACT_APP_API_BASE_URL}/auth/google`;
         },
         onError: () => {
             navigate('/login?error=google_auth_failed');
-        }
+        },
     });
+
 
     return (
         <button onClick={handleGoogleLogin} className="google-signin-btn">
