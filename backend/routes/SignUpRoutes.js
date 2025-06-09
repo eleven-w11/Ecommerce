@@ -151,6 +151,14 @@ function setAuthCookie(res, token) {
         maxAge: 3600000
     });
 }
+// res.cookie("token", token, {
+//     httpOnly: true,
+//     secure: true, // REQUIRED for HTTPS
+//     sameSite: "none", // REQUIRED for cross-origin
+//     domain: ".onrender.com", // Match your backend domain
+//     path: "/",
+//     maxAge: 3600000,
+// });
 
 
 module.exports = router;

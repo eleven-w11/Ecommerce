@@ -30,27 +30,25 @@ const server = http.createServer(app);
 // Allowed origins
 const allowedOrigins = [
     "http://localhost:3000",
-    "https://your-web-gamma.vercel.app",
-    "https://your-web-git-main-elevens-projects-0c000431.vercel.app"
+    "https://your-web.vercel.app",
+    "https://your-web-*.vercel.app" // Wildcard for Vercel preview URLs
 ];
 
 const corsOptions = {
-    origin: function (origin, callback) {
+    origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
-            console.log('❌ Blocked by CORS:', origin);
-            callback(new Error('Not allowed by CORS'));
+            callback(new Error("Blocked by CORS"));
         }
     },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    exposedHeaders: ['Set-Cookie']
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
 };
-app.options('*', cors(corsOptions)); // Handle preflight requests
 
-// 2. Update CORS middleware
+// Enable preflight for all routes
+app.options("*", cors(corsOptions));
 app.use(cors(corsOptions));
 
 // Middleware
