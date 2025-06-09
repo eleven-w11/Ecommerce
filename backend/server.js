@@ -48,6 +48,9 @@ const corsOptions = {
     allowedHeaders: ['Content-Type', 'Authorization'],
     exposedHeaders: ['Set-Cookie']
 };
+app.options('*', cors(corsOptions)); // Handle preflight requests
+
+// 2. Update CORS middleware
 app.use(cors(corsOptions));
 
 // Middleware
@@ -68,9 +71,10 @@ app.use("/images", express.static("images"));
 
 // Headers for CORS manually
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.removeHeader("Cross-Origin-Opener-Policy");
+    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     next();
 });
 
