@@ -2,16 +2,15 @@ const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
     // Check both cookies and Authorization header
-    const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
+    const token = req.cookies.token ||
+        req.headers.authorization?.split(' ')[1] ||
+        req.body.token;
 
     console.log('Incoming cookies:', req.cookies);
     console.log('Auth header:', req.headers.authorization);
 
     if (!token) {
-        return res.status(401).json({
-            success: false,
-            message: "No authentication token found"
-        });
+        return res.status(401).json({ success: false, message: "Unauthorized" });
     }
 
     try {

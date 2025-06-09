@@ -129,16 +129,26 @@ function createToken(userId) {
     );
 }
 
+// function setAuthCookie(res, token) {
+//     res.cookie('token', token, {
+//         httpOnly: true,
+//         secure: process.env.NODE_ENV === 'production',
+//         sameSite: 'none', // Must be 'none' for cross-site cookies
+//         domain: process.env.NODE_ENV === 'production'
+//             ? 'yourweb-backend.onrender.com' // Explicit domain
+//             : undefined, // Local development
+//         path: '/',
+//         maxAge: 3600000 // 1 hour
+//     });
+// }
 function setAuthCookie(res, token) {
     res.cookie('token', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'none', // Must be 'none' for cross-site cookies
-        domain: process.env.NODE_ENV === 'production'
-            ? 'yourweb-backend.onrender.com' // Explicit domain
-            : undefined, // Local development
+        secure: true, // Force HTTPS in production
+        sameSite: 'none', // Required for cross-origin
+        domain: '.onrender.com', // Match your backend domain
         path: '/',
-        maxAge: 3600000 // 1 hour
+        maxAge: 3600000
     });
 }
 
