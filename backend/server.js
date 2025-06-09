@@ -105,29 +105,29 @@ app.use("/api/messages", messageRoutes);
 // app.use('/auth/google', googleAuthRoutes);
 
 // Google Signup Fallback (if needed)
-// app.post("/api/signup/google", async (req, res) => {
-//     try {
-//         const { token } = req.body;
-//         const user = {
-//             id: "google_" + Date.now(),
-//             email: "user@example.com",
-//             name: "Google User"
-//         };
+app.post("/api/signup/google", async (req, res) => {
+    try {
+        const { token } = req.body;
+        const user = {
+            id: "google_" + Date.now(),
+            email: "user@example.com",
+            name: "Google User"
+        };
 
-//         const jwtToken = generateJWT(user);
+        const jwtToken = generateJWT(user);
 
-//         res.cookie('token', jwtToken, {
-//             httpOnly: true,
-//             secure: process.env.NODE_ENV === 'production',
-//             sameSite: 'strict'
-//         });
+        res.cookie('token', jwtToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict'
+        });
 
-//         res.json({ success: true, token: jwtToken });
-//     } catch (err) {
-//         console.error("Google signup error:", err);
-//         res.status(500).json({ success: false, message: "Google authentication failed" });
-//     }
-// });
+        res.json({ success: true, token: jwtToken });
+    } catch (err) {
+        console.error("Google signup error:", err);
+        res.status(500).json({ success: false, message: "Google authentication failed" });
+    }
+});
 
 // Socket.IO
 const io = new Server(server, {
