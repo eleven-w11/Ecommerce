@@ -715,7 +715,7 @@ const NavBar = ({ Authentication }) => {
                     </li>
                     <div className="navline"
                         ref={(el) => (linksRef.current[17] = el)}></div>
-                    <li>
+                    {/* <li>
                         <Link
                             to="/GoogleSignIn"
                             className={activePath === "/GoogleSignIn" ? "active-link" : ""}
@@ -724,7 +724,7 @@ const NavBar = ({ Authentication }) => {
                         </Link>
                     </li>
                     <div className="navline"
-                        ref={(el) => (linksRef.current[17] = el)}></div>
+                        ref={(el) => (linksRef.current[17] = el)}></div> */}
                 </ul>
             </div>
             <div className={`black-screen ${isToggle ? 'visible' : 'hidden'}`}></div>
