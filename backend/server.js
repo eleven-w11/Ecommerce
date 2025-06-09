@@ -11,7 +11,6 @@ const passport = require("passport");
 const jwt = require("jsonwebtoken");
 
 const Message = require("./models/Message");
-const googleAuthRoutes = require("./routes/googleAuthRoutes");
 
 // Route imports
 const signupRoutes = require("./routes/SignUpRoutes");
@@ -75,22 +74,22 @@ app.use((req, res, next) => {
     next();
 });
 
-// JWT Generator
-const generateJWT = (user) => {
-    return jwt.sign(
-        { id: user.id, email: user.email },
-        process.env.JWT_SECRET,
-        { expiresIn: '1h' }
-    );
-};
+// // JWT Generator
+// const generateJWT = (user) => {
+//     return jwt.sign(
+//         { id: user.id, email: user.email },
+//         process.env.JWT_SECRET,
+//         { expiresIn: '1h' }
+//     );
+// };
 
 
-// Redirect after Google Auth success
-app.get('/auth/google/callback-success', (req, res) => {
-    const token = generateJWT(req.user);
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-    res.redirect(`${frontendUrl}/oauth-success?token=${token}`);
-});
+// // Redirect after Google Auth success
+// app.get('/auth/google/callback-success', (req, res) => {
+//     const token = generateJWT(req.user);
+//     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+//     res.redirect(`${frontendUrl}/oauth-success?token=${token}`);
+// });
 
 // API Routes
 app.use("/api", signupRoutes);
@@ -103,32 +102,32 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api", cartRoutes);
 app.use("/api/messages", messageRoutes);
-app.use('/auth/google', googleAuthRoutes);
+// app.use('/auth/google', googleAuthRoutes);
 
 // Google Signup Fallback (if needed)
-app.post("/api/signup/google", async (req, res) => {
-    try {
-        const { token } = req.body;
-        const user = {
-            id: "google_" + Date.now(),
-            email: "user@example.com",
-            name: "Google User"
-        };
+// app.post("/api/signup/google", async (req, res) => {
+//     try {
+//         const { token } = req.body;
+//         const user = {
+//             id: "google_" + Date.now(),
+//             email: "user@example.com",
+//             name: "Google User"
+//         };
 
-        const jwtToken = generateJWT(user);
+//         const jwtToken = generateJWT(user);
 
-        res.cookie('token', jwtToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict'
-        });
+//         res.cookie('token', jwtToken, {
+//             httpOnly: true,
+//             secure: process.env.NODE_ENV === 'production',
+//             sameSite: 'strict'
+//         });
 
-        res.json({ success: true, token: jwtToken });
-    } catch (err) {
-        console.error("Google signup error:", err);
-        res.status(500).json({ success: false, message: "Google authentication failed" });
-    }
-});
+//         res.json({ success: true, token: jwtToken });
+//     } catch (err) {
+//         console.error("Google signup error:", err);
+//         res.status(500).json({ success: false, message: "Google authentication failed" });
+//     }
+// });
 
 // Socket.IO
 const io = new Server(server, {
