@@ -62,21 +62,15 @@ const SignIn = ({ onSignIn }) => {
         try {
             const { data } = await axios.post(
                 `${process.env.REACT_APP_API_BASE_URL}/api/signup/google`,
-                { access_token: tokenResponse.access_token }, // Simplified payload
-                {
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    }
-                }
+                { access_token: tokenResponse.access_token }
+                // REMOVE withCredentials: true
             );
 
+            // Store token in localStorage
             localStorage.setItem('token', data.token);
             navigate("/userprofile");
         } catch (error) {
             console.error("Google auth failed:", error);
-            setError("Google authentication failed");
         }
     };
 

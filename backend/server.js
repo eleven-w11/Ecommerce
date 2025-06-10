@@ -38,7 +38,7 @@ const corsOptions = {
     origin: function (origin, callback) {
         // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
-        
+
         if (allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
@@ -63,8 +63,9 @@ app.use(passport.initialize());
 
 // 3. Additional CORS headers (if needed)
 app.use((req, res, next) => {
-    res.header('Access-Control-Expose-Headers', 'Set-Cookie');
-    res.header('Vary', 'Origin');
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     next();
 });
 
