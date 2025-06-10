@@ -83,22 +83,7 @@ app.use((req, res, next) => {
 });
 
 
-// // JWT Generator
-// const generateJWT = (user) => {
-//     return jwt.sign(
-//         { id: user.id, email: user.email },
-//         process.env.JWT_SECRET,
-//         { expiresIn: '1h' }
-//     );
-// };
 
-
-// // Redirect after Google Auth success
-// app.get('/auth/google/callback-success', (req, res) => {
-//     const token = generateJWT(req.user);
-//     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-//     res.redirect(`${frontendUrl}/oauth-success?token=${token}`);
-// });
 
 // API Routes
 app.use("/api", signupRoutes);
