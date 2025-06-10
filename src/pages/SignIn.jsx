@@ -58,21 +58,44 @@ const SignIn = ({ onSignIn }) => {
         setShowPassword(!showPassword);
     };
 
+
+
     const handleGoogleSuccess = async (tokenResponse) => {
+        setGoogleLoading(true);
+        setError("");
         try {
             const { data } = await axios.post(
                 `${process.env.REACT_APP_API_BASE_URL}/api/signup/google`,
-                { access_token: tokenResponse.access_token }
-                // REMOVE withCredentials: true
+                { access_token: tokenResponse.access_token },
+                { withCredentials: true }
             );
 
-            // Store token in localStorage
+            // Store token in localStorage as fallback
             localStorage.setItem('token', data.token);
             navigate("/userprofile");
+            onSignUp();
+            setSuccess("Google signup successful!");
         } catch (error) {
-            console.error("Google auth failed:", error);
+            console.error("Google Signup Error:", error);
         }
     };
+
+
+    // const handleGoogleSuccess = async (tokenResponse) => {
+    //     try {
+    //         const { data } = await axios.post(
+    //             `${process.env.REACT_APP_API_BASE_URL}/api/signup/google`,
+    //             { access_token: tokenResponse.access_token }
+    //             // REMOVE withCredentials: true
+    //         );
+
+    //         // Store token in localStorage
+    //         localStorage.setItem('token', data.token);
+    //         navigate("/userprofile");
+    //     } catch (error) {
+    //         console.error("Google auth failed:", error);
+    //     }
+    // };
 
 
 
