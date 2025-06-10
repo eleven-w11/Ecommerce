@@ -68,13 +68,20 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use("/images", express.static("images"));
 
 // Headers for CORS manually
+// app.use((req, res, next) => {
+//     res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+//     res.header('Access-Control-Allow-Credentials', 'true');
+//     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+//     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+//     next();
+// });
+
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.removeHeader("X-Powered-By");
+    res.removeHeader("Cross-Origin-Opener-Policy");
     next();
 });
+
 
 // // JWT Generator
 // const generateJWT = (user) => {

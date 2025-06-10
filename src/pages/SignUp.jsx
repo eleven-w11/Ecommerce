@@ -127,6 +127,8 @@ const SignUp = ({ onSignUp }) => {
 
 
     // const handleGoogleSuccess = async (tokenResponse) => {
+    //     setGoogleLoading(true);
+    //     setError("");
 
     //     try {
     //         // First get the ID token from Google
@@ -152,8 +154,9 @@ const SignUp = ({ onSignUp }) => {
     //             { withCredentials: true }
     //         );
 
+    //         onSignUp();
+    //         setSuccess("Google signup successful!");
     //         setTimeout(() => navigate("/userprofile"), 1500);
-
     //     } catch (error) {
     //         console.error("Google Signup Error:", error);
     //         setError(error.response?.data?.message || "Google signup failed. Please try again.");
