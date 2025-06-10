@@ -58,82 +58,49 @@ const SignIn = ({ onSignIn }) => {
         setShowPassword(!showPassword);
     };
 
-
-
     const handleGoogleSuccess = async (tokenResponse) => {
-        setGoogleLoading(true);
-        setError("");
+        // setGoogleLoading(true);
+        // setError("");
 
         try {
-            // 1. Get Google user info
-            const googleRes = await fetch(
+            // First get the ID token from Google
+            const googleResponse = await axios.get(
                 `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenResponse.access_token}`,
                 {
                     headers: {
-                        Authorization: `Bearer ${tokenResponse.access_token}`,
-                        Accept: 'application/json'
+                        Authorization: `Bearer ${tokenResponse.access_token}`
+                        // Accept: 'application/json'
                     }
                 }
             );
 
-            if (!googleRes.ok) throw new Error("Failed to fetch Google profile");
-            const googleData = await googleRes.json();
-
-            // 2. Send to your backend - using fetch instead of axios
-            const response = await fetch(
+            // Then send the user info to your backend
+            const { data } = await axios.post(
                 `${process.env.REACT_APP_API_BASE_URL}/api/signup/google`,
                 {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        email: googleData.email,
-                        name: googleData.name,
-                        picture: googleData.picture,
-                        googleId: googleData.id
-                    })
+                    email: googleResponse.data.email,
+                    name: googleResponse.data.name,
+                    picture: googleResponse.data.picture,
+                    googleId: googleResponse.data.id
+                },
+                {
+                    withCredentials: true,
+                    headers: { 'Content-Type': 'application/json' }
                 }
             );
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || "Authentication failed");
-            }
-
-            const data = await response.json();
-
-            // 3. Store token and update state
+            onSignIn();
+            setSuccess("Google signup successful!");
+            setTimeout(() => navigate("/userprofile"), 1500);
             localStorage.setItem('token', data.token);
-            if (onSignIn) onSignIn(); // Call your auth state updater
-
             navigate("/userprofile");
-            setSuccess("Login successful!");
-
         } catch (error) {
-            setError(error.message);
-            console.error("Authentication error:", error);
+            console.error("Google Signup Error:", error);
+            setError(error.response?.data?.message || "Google signup failed. Please try again.");
         } finally {
             setGoogleLoading(false);
         }
     };
-
-
-    // const handleGoogleSuccess = async (tokenResponse) => {
-    //     try {
-    //         const { data } = await axios.post(
-    //             `${process.env.REACT_APP_API_BASE_URL}/api/signup/google`,
-    //             { access_token: tokenResponse.access_token }
-    //             // REMOVE withCredentials: true
-    //         );
-
-    //         // Store token in localStorage
-    //         localStorage.setItem('token', data.token);
-    //         navigate("/userprofile");
-    //     } catch (error) {
-    //         console.error("Google auth failed:", error);
-    //     }
-    // };
 
 
 

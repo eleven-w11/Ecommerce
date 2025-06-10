@@ -27,6 +27,9 @@ const messageRoutes = require("./routes/messageRoutes");
 const app = express();
 const server = http.createServer(app);
 
+app.options("*", cors(corsOptions));
+app.use(cors(corsOptions));
+
 // Allowed origins
 const allowedOrigins = [
     "http://localhost:3000",
@@ -35,40 +38,38 @@ const allowedOrigins = [
 ];
 
 const corsOptions = {
-    origin: function (origin, callback) {
-        const allowedOrigins = [
-            "http://localhost:3000",
-            "https://your-web.vercel.app",
-            "https://your-web-git-main-elevens-projects-0c000431.vercel.app"
-        ];
-
+    origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
-            callback(new Error('Not allowed by CORS'));
+            callback(new Error("Blocked by CORS"));
         }
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     exposedHeaders: ['Set-Cookie']
 };
 
-app.options('*', cors(corsOptions));
-app.use(cors(corsOptions));
+// Enable preflight for all routes
 
-// 2. Standard middleware
+
+// Middleware
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
 
-// 3. Additional CORS headers (if needed)
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next();
-});
+
+app.use("/api", signupRoutes);
+app.use("/api", signinRoutes);
+app.use("/api", signOutRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/verifytoken", verifyTokenRoutes);
+app.use("/api/protected", verifyPathRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api", cartRoutes);
+app.use("/api/messages", messageRoutes);
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
@@ -81,19 +82,54 @@ mongoose.connect(process.env.MONGO_URI, {
 // Static files
 app.use("/images", express.static("images"));
 
-// API Routes
-app.use("/api", signupRoutes);
-app.use("/api", signinRoutes);
-app.use("/api", signOutRoutes);
-app.use("/api/user", userRoutes);
-app.use("/api/verifytoken", verifyTokenRoutes);
-app.use("/api/protected", verifyPathRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/api/products", productRoutes);
-app.use("/api", cartRoutes);
-app.use("/api/messages", messageRoutes);
+// Headers for CORS manually
+// app.use((req, res, next) => {
+//     res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+//     res.header('Access-Control-Allow-Credentials', 'true');
+//     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+//     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+//     next();
+// });
 
-// Socket.IO Configuration
+app.use((req, res, next) => {
+    res.header('Access-Control-Expose-Headers', 'Set-Cookie');
+    res.header('Vary', 'Origin');
+    next();
+});
+
+
+
+
+// API Routes
+
+// app.use('/auth/google', googleAuthRoutes);
+
+// Google Signup Fallback (if needed)
+app.post("/api/signup/google", async (req, res) => {
+    try {
+        const { token } = req.body;
+        const user = {
+            id: "google_" + Date.now(),
+            email: "user@example.com",
+            name: "Google User"
+        };
+
+        const jwtToken = generateJWT(user);
+
+        res.cookie('token', jwtToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict'
+        });
+
+        res.json({ success: true, token: jwtToken });
+    } catch (err) {
+        console.error("Google signup error:", err);
+        res.status(500).json({ success: false, message: "Google authentication failed" });
+    }
+});
+
+// Socket.IO
 const io = new Server(server, {
     cors: {
         origin: allowedOrigins,
@@ -152,7 +188,7 @@ io.on("connection", (socket) => {
     });
 });
 
-// Health check route
+// Test route
 app.get("/", (req, res) => {
     res.send("✅ Server is running!");
 });
