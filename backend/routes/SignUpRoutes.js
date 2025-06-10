@@ -96,7 +96,7 @@ router.post("/signup/google", async (req, res) => {
         res.cookie('token', jwtToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict'
+            sameSite: 'none'
         });
 
         res.status(200).json({
@@ -141,12 +141,13 @@ function createToken(userId) {
 //         maxAge: 3600000 // 1 hour
 //     });
 // }
+// Replace all cookie-setting instances with this unified version:
 function setAuthCookie(res, token) {
     res.cookie('token', token, {
         httpOnly: true,
-        secure: true, // Force HTTPS in production
-        sameSite: 'none', // Required for cross-origin
-        domain: '.onrender.com', // Match your backend domain
+        secure: true,
+        sameSite: 'none',
+        domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined,
         path: '/',
         maxAge: 3600000
     });

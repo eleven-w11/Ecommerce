@@ -16,10 +16,10 @@ const verifyToken = (req, res, next) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.userId = decoded.userId;
-        
+
         res.header('Access-Control-Allow-Origin', req.headers.origin);
         res.header('Access-Control-Allow-Credentials', 'true');
-        res.json({ success: true });
+        // res.json({ success: true });
         return res.status(200).json({ success: true, userId: decoded.userId });
     } catch (error) {
         console.error('Token verification error:', error);

@@ -35,11 +35,15 @@ const allowedOrigins = [
 ];
 
 const corsOptions = {
-    origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        if (allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
-            callback(new Error("Blocked by CORS"));
+            console.error(`CORS blocked for origin: ${origin}`);
+            callback(new Error('Not allowed by CORS'));
         }
     },
     credentials: true,
@@ -48,26 +52,21 @@ const corsOptions = {
     exposedHeaders: ['Set-Cookie']
 };
 
-// Enable preflight for all routes
+// 1. FIRST: Handle CORS at the very top
+app.options('*', cors(corsOptions)); // Preflight requests
 app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
 
-// Middleware
+// 2. Standard middleware
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
 
-
-app.use("/api", signupRoutes);
-app.use("/api", signinRoutes);
-app.use("/api", signOutRoutes);
-app.use("/api/user", userRoutes);
-app.use("/api/verifytoken", verifyTokenRoutes);
-app.use("/api/protected", verifyPathRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/api/products", productRoutes);
-app.use("/api", cartRoutes);
-app.use("/api/messages", messageRoutes);
+// 3. Additional CORS headers (if needed)
+app.use((req, res, next) => {
+    res.header('Access-Control-Expose-Headers', 'Set-Cookie');
+    res.header('Vary', 'Origin');
+    next();
+});
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
@@ -80,54 +79,19 @@ mongoose.connect(process.env.MONGO_URI, {
 // Static files
 app.use("/images", express.static("images"));
 
-// Headers for CORS manually
-// app.use((req, res, next) => {
-//     res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-//     res.header('Access-Control-Allow-Credentials', 'true');
-//     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-//     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-//     next();
-// });
-
-app.use((req, res, next) => {
-    res.removeHeader("X-Powered-By");
-    res.removeHeader("Cross-Origin-Opener-Policy");
-    next();
-});
-
-
-
-
 // API Routes
+app.use("/api", signupRoutes);
+app.use("/api", signinRoutes);
+app.use("/api", signOutRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/verifytoken", verifyTokenRoutes);
+app.use("/api/protected", verifyPathRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api", cartRoutes);
+app.use("/api/messages", messageRoutes);
 
-// app.use('/auth/google', googleAuthRoutes);
-
-// Google Signup Fallback (if needed)
-app.post("/api/signup/google", async (req, res) => {
-    try {
-        const { token } = req.body;
-        const user = {
-            id: "google_" + Date.now(),
-            email: "user@example.com",
-            name: "Google User"
-        };
-
-        const jwtToken = generateJWT(user);
-
-        res.cookie('token', jwtToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict'
-        });
-
-        res.json({ success: true, token: jwtToken });
-    } catch (err) {
-        console.error("Google signup error:", err);
-        res.status(500).json({ success: false, message: "Google authentication failed" });
-    }
-});
-
-// Socket.IO
+// Socket.IO Configuration
 const io = new Server(server, {
     cors: {
         origin: allowedOrigins,
@@ -186,7 +150,7 @@ io.on("connection", (socket) => {
     });
 });
 
-// Test route
+// Health check route
 app.get("/", (req, res) => {
     res.send("✅ Server is running!");
 });
@@ -206,4 +170,3 @@ const PORT = process.env.PORT || 5000;
 server.listen(PORT, "0.0.0.0", () => {
     console.log(`🚀 Server running on port ${PORT}`);
 });
-
