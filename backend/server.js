@@ -31,7 +31,7 @@ const server = http.createServer(app);
 const allowedOrigins = [
     "http://localhost:3000",
     "https://your-web.vercel.app",
-    "https://your-web-*.vercel.app" // Wildcard for Vercel preview URLs
+    "https://your-web-git-main-elevens-projects-0c000431.vercel.app"
 ];
 
 const corsOptions = {
@@ -43,18 +43,31 @@ const corsOptions = {
         }
     },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    exposedHeaders: ['Set-Cookie']
 };
 
 // Enable preflight for all routes
-app.options("*", cors(corsOptions));
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
+
+
+app.use("/api", signupRoutes);
+app.use("/api", signinRoutes);
+app.use("/api", signOutRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/verifytoken", verifyTokenRoutes);
+app.use("/api/protected", verifyPathRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api", cartRoutes);
+app.use("/api/messages", messageRoutes);
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
@@ -86,16 +99,7 @@ app.use((req, res, next) => {
 
 
 // API Routes
-app.use("/api", signupRoutes);
-app.use("/api", signinRoutes);
-app.use("/api", signOutRoutes);
-app.use("/api/user", userRoutes);
-app.use("/api/verifytoken", verifyTokenRoutes);
-app.use("/api/protected", verifyPathRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/api/products", productRoutes);
-app.use("/api", cartRoutes);
-app.use("/api/messages", messageRoutes);
+
 // app.use('/auth/google', googleAuthRoutes);
 
 // Google Signup Fallback (if needed)
