@@ -63,20 +63,58 @@ const SignIn = ({ onSignIn }) => {
     const handleGoogleSuccess = async (tokenResponse) => {
         setGoogleLoading(true);
         setError("");
+
         try {
-            const { data } = await axios.post(
-                `${process.env.REACT_APP_API_BASE_URL}/api/signup/google`,
-                { access_token: tokenResponse.access_token },
-                { withCredentials: true }
+            // 1. Get Google user info
+            const googleRes = await fetch(
+                `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenResponse.access_token}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${tokenResponse.access_token}`,
+                        Accept: 'application/json'
+                    }
+                }
             );
 
-            // Store token in localStorage as fallback
+            if (!googleRes.ok) throw new Error("Failed to fetch Google profile");
+            const googleData = await googleRes.json();
+
+            // 2. Send to your backend - using fetch instead of axios
+            const response = await fetch(
+                `${process.env.REACT_APP_API_BASE_URL}/api/signup/google`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: googleData.email,
+                        name: googleData.name,
+                        picture: googleData.picture,
+                        googleId: googleData.id
+                    })
+                }
+            );
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Authentication failed");
+            }
+
+            const data = await response.json();
+
+            // 3. Store token and update state
             localStorage.setItem('token', data.token);
+            if (onSignIn) onSignIn(); // Call your auth state updater
+
             navigate("/userprofile");
-            onSignUp();
-            setSuccess("Google signup successful!");
+            setSuccess("Login successful!");
+
         } catch (error) {
-            console.error("Google Signup Error:", error);
+            setError(error.message);
+            console.error("Authentication error:", error);
+        } finally {
+            setGoogleLoading(false);
         }
     };
 

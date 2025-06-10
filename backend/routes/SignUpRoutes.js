@@ -86,21 +86,40 @@ router.post("/signup", async (req, res) => {
 });
 
 // Google signup endpoint
+// Google signup endpoint - UPDATED
 router.post("/signup/google", async (req, res) => {
     try {
+        console.log("Google signup request received:", req.body); // Add logging
+
         const { email, name, picture, googleId } = req.body;
 
-        let user = await User.findOne({ email }) || await new User({
-            name,
-            email,
-            password: googleId,
-            image: picture,
-            googleId
-        }).save();
+        if (!email || !googleId) {
+            return res.status(400).json({
+                success: false,
+                message: "Email and Google ID are required"
+            });
+        }
 
-        const token = createToken(user._id);
-        setAuthCookie(res, token);
+        let user = await User.findOne({ email });
 
+        if (!user) {
+            user = new User({
+                name: name || "Google User",
+                email,
+                password: googleId,
+                image: picture || "/user.png",
+                googleId
+            });
+            await user.save();
+        }
+
+        const token = jwt.sign(
+            { userId: user._id },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+        // Return token in response ONLY (skip cookies for now)
         res.status(200).json({
             success: true,
             token,
@@ -116,8 +135,8 @@ router.post("/signup/google", async (req, res) => {
         console.error("Google Signup Error:", error);
         res.status(500).json({
             success: false,
-            message: "Google authentication failed",
-            error: error.message
+            message: "Internal server error",
+            error: error.message // Include actual error message
         });
     }
 });

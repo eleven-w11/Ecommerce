@@ -36,24 +36,25 @@ const allowedOrigins = [
 
 const corsOptions = {
     origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
+        const allowedOrigins = [
+            "http://localhost:3000",
+            "https://your-web.vercel.app",
+            "https://your-web-git-main-elevens-projects-0c000431.vercel.app"
+        ];
 
-        if (allowedOrigins.includes(origin)) {
+        if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
-            console.error(`CORS blocked for origin: ${origin}`);
             callback(new Error('Not allowed by CORS'));
         }
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     exposedHeaders: ['Set-Cookie']
 };
 
-// 1. FIRST: Handle CORS at the very top
-app.options('*', cors(corsOptions)); // Preflight requests
+app.options('*', cors(corsOptions));
 app.use(cors(corsOptions));
 
 // 2. Standard middleware
