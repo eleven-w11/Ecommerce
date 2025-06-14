@@ -44,6 +44,9 @@ const BestSellingProducts = () => {
   };
 
   useEffect(() => {
+
+    console.log("🌐 API best selling Base URL:", process.env.REACT_APP_API_BASE_URL);
+
     axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/products`) // ✅ Backend se sab products fetch karo
       .then(response => {
         console.log("📢 All Products Fetched:", response.data);
