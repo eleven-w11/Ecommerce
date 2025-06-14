@@ -5,6 +5,7 @@ const router = express.Router();
 
 router.get("/profile", verifyPath, async (req, res) => {
     try {
+        console.log("✅ /profile route hit");
         res.set('Cache-Control', 'no-store');
 
         const user = await User.findById(req.userId).select("name email image role");

@@ -67,7 +67,8 @@ const UserProfile = ({ onSignOut }) => {
   }
   const handelSignOut = async () => {
     try {
-      const response = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/signout`, { withCredentials: true });
+      const response = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/signout`,
+        { withCredentials: true });
       if (response.data.success) {
         onSignOut();
         navigate("/signin");
