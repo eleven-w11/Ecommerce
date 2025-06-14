@@ -58,49 +58,44 @@ const SignIn = ({ onSignIn }) => {
         setShowPassword(!showPassword);
     };
 
+
+
     const handleGoogleSuccess = async (tokenResponse) => {
-        // setGoogleLoading(true);
-        // setError("");
-
+        setGoogleLoading(true);
+        setError("");
         try {
-            // First get the ID token from Google
-            const googleResponse = await axios.get(
-                `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenResponse.access_token}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${tokenResponse.access_token}`
-                        // Accept: 'application/json'
-                    }
-                }
-            );
-
-            // Then send the user info to your backend
             const { data } = await axios.post(
                 `${process.env.REACT_APP_API_BASE_URL}/api/signup/google`,
-                {
-                    email: googleResponse.data.email,
-                    name: googleResponse.data.name,
-                    picture: googleResponse.data.picture,
-                    googleId: googleResponse.data.id
-                },
-                {
-                    withCredentials: true,
-                    headers: { 'Content-Type': 'application/json' }
-                }
+                { access_token: tokenResponse.access_token },
+                { withCredentials: true }
             );
 
-            onSignIn();
-            setSuccess("Google signup successful!");
-            setTimeout(() => navigate("/userprofile"), 1500);
+            // Store token in localStorage as fallback
             localStorage.setItem('token', data.token);
             navigate("/userprofile");
+            onSignIn();
+            setSuccess("Google signup successful!");
         } catch (error) {
             console.error("Google Signup Error:", error);
-            setError(error.response?.data?.message || "Google signup failed. Please try again.");
-        } finally {
-            setGoogleLoading(false);
         }
     };
+
+
+    // const handleGoogleSuccess = async (tokenResponse) => {
+    //     try {
+    //         const { data } = await axios.post(
+    //             `${process.env.REACT_APP_API_BASE_URL}/api/signup/google`,
+    //             { access_token: tokenResponse.access_token }
+    //             // REMOVE withCredentials: true
+    //         );
+
+    //         // Store token in localStorage
+    //         localStorage.setItem('token', data.token);
+    //         navigate("/userprofile");
+    //     } catch (error) {
+    //         console.error("Google auth failed:", error);
+    //     }
+    // };
 
 
 
@@ -163,9 +158,7 @@ const SignIn = ({ onSignIn }) => {
                             value={password}
                             onChange={handleUserPassword}
                         />
-                        <div className="forget_password">
-                            <Link>forget password</Link>
-                        </div>
+
                         {password && <span
                             type="button"
                             onClick={togglePasswordVisibility}
@@ -181,6 +174,9 @@ const SignIn = ({ onSignIn }) => {
                     <button type="submit" disabled={isLoading}>
                         {isLoading ? 'Creating Account...' : 'Sign Up'}
                     </button>
+                    <div className="forget_password">
+                        <Link>forget password</Link>
+                    </div>
                 </form>
 
                 <div className="signup-link">

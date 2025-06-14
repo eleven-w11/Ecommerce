@@ -27,14 +27,11 @@ const messageRoutes = require("./routes/messageRoutes");
 const app = express();
 const server = http.createServer(app);
 
-app.options("*", cors(corsOptions));
-app.use(cors(corsOptions));
-
 // Allowed origins
 const allowedOrigins = [
     "http://localhost:3000",
     "https://your-web.vercel.app",
-    "https://your-web-git-main-elevens-projects-0c000431.vercel.app"
+    "https://your-web-*.vercel.app" // Wildcard for Vercel preview URLs
 ];
 
 const corsOptions = {
@@ -46,30 +43,18 @@ const corsOptions = {
         }
     },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-    exposedHeaders: ['Set-Cookie']
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
 };
 
 // Enable preflight for all routes
-
+app.options("*", cors(corsOptions));
+app.use(cors(corsOptions));
 
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
-
-
-app.use("/api", signupRoutes);
-app.use("/api", signinRoutes);
-app.use("/api", signOutRoutes);
-app.use("/api/user", userRoutes);
-app.use("/api/verifytoken", verifyTokenRoutes);
-app.use("/api/protected", verifyPathRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/api/products", productRoutes);
-app.use("/api", cartRoutes);
-app.use("/api/messages", messageRoutes);
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
@@ -83,25 +68,42 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use("/images", express.static("images"));
 
 // Headers for CORS manually
-// app.use((req, res, next) => {
-//     res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-//     res.header('Access-Control-Allow-Credentials', 'true');
-//     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-//     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-//     next();
-// });
-
 app.use((req, res, next) => {
-    res.header('Access-Control-Expose-Headers', 'Set-Cookie');
-    res.header('Vary', 'Origin');
+    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     next();
 });
 
+// // JWT Generator
+// const generateJWT = (user) => {
+//     return jwt.sign(
+//         { id: user.id, email: user.email },
+//         process.env.JWT_SECRET,
+//         { expiresIn: '1h' }
+//     );
+// };
 
 
+// // Redirect after Google Auth success
+// app.get('/auth/google/callback-success', (req, res) => {
+//     const token = generateJWT(req.user);
+//     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+//     res.redirect(`${frontendUrl}/oauth-success?token=${token}`);
+// });
 
 // API Routes
-
+app.use("/api", signupRoutes);
+app.use("/api", signinRoutes);
+app.use("/api", signOutRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/verifytoken", verifyTokenRoutes);
+app.use("/api/protected", verifyPathRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api", cartRoutes);
+app.use("/api/messages", messageRoutes);
 // app.use('/auth/google', googleAuthRoutes);
 
 // Google Signup Fallback (if needed)
@@ -208,3 +210,4 @@ const PORT = process.env.PORT || 5000;
 server.listen(PORT, "0.0.0.0", () => {
     console.log(`🚀 Server running on port ${PORT}`);
 });
+

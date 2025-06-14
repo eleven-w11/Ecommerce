@@ -4,12 +4,9 @@ import { Link, useLocation } from 'react-router-dom';
 import Cookies from "js-cookie";
 import axios from 'axios';
 import { gsap } from "gsap";
-import ImageSwapper from './HeroSection';
 
 
 const NavBar = ({ Authentication }) => {
-    // console.warn("Navbar.jsx", Authentication);
-
     const [country, setCountry] = useState("");
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -28,14 +25,8 @@ const NavBar = ({ Authentication }) => {
     const womanDropdownRef = useRef(null);
     const [selectedIndex, setSelectedIndex] = useState(-1);
     const selectedRefs = useRef([]);
-    // const selectedRefs = useRef([]);
-
-    // const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
-    // active-link
     const location = useLocation();
     const [activePath, setActivePath] = useState(location.pathname);
-    // const [showSearch, setShowSearch] = useState(false);
-    // const searchContainerRef = useRef(null);
 
 
 
@@ -50,13 +41,10 @@ const NavBar = ({ Authentication }) => {
             setCartCount(storedCart.length);
         };
 
-        // ✅ Pehli dafa count update karo
         updateCartCount();
 
-        // ✅ Storage event listen karo (Dusre components ki updates bhi ayengi)
         window.addEventListener("storage", updateCartCount);
 
-        // ✅ Cleanup function (Jab component unmount ho to listener hata do)
         return () => {
             window.removeEventListener("storage", updateCartCount);
         };
@@ -86,19 +74,16 @@ const NavBar = ({ Authentication }) => {
                 }
             );
         }
-    }, [isToggle]); // ✅ Jab toggle change ho tabhi chale
+    }, [isToggle]);
 
 
     // slidemenu 
-
     useEffect(() => {
         if (isToggle) {
-            // ✅ Save current scroll position when menu opens
             setScrollPosition(window.scrollY);
-            document.body.style.overflow = "hidden"; // Disable scrolling
+            document.body.style.overflow = "hidden";
         } else {
-            // ✅ Restore scroll position when menu closes
-            document.body.style.overflow = ""; // Enable scrolling
+            document.body.style.overflow = "";
             window.scrollTo(0, scrollPosition);
         }
     }, [isToggle]);
@@ -115,8 +100,8 @@ const NavBar = ({ Authentication }) => {
 
         if (!isInsideSlideMenu && !isMenuButton && !isManClick && !isWomanClick) {
             setIsToggle(false);
-            setShowManDropdown(false); // hide dropdown also
-            setShowWomanDropdown(false); // hide dropdown also
+            setShowManDropdown(false); 
+            setShowWomanDropdown(false);
         }
     };
 
