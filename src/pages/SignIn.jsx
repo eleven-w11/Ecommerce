@@ -16,8 +16,6 @@ const SignIn = ({ onSignIn }) => {
     const [googleLoading, setGoogleLoading] = useState(false);
     const navigate = useNavigate();
 
-    const from = location.state?.from?.pathname || "/";
-
     const handleUserEmail = (event) => {
         setEmail(event.target.value);
     };
@@ -36,13 +34,15 @@ const SignIn = ({ onSignIn }) => {
         }
 
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/signin`, { email, password }, { withCredentials: true });
+            const response = await axios.post(
+                `${process.env.REACT_APP_API_BASE_URL}/api/signin`,
+                { email, password },
+                { withCredentials: true });
 
             onSignIn();
             setError("");
             setSuccess("Sign in SuccessFully");
-            await new Promise((resolve) => setTimeout(resolve, 1500));
-            navigate(from, { replace: true });
+            setTimeout(() => navigate("/userprofile"), 1500);
 
             setEmail("");
             setPassword("");
