@@ -44,18 +44,25 @@ const BestSellingProducts = () => {
     };
 
     useEffect(() => {
-        axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/products`) // ✅ Backend se sab products fetch karo
+        axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/products`)
             .then(response => {
-                console.log("📢 All Products Fetched:", response.data);
+                console.log("📢 API Response:", response); // Debug full response
 
-                // ✅ MongoDB se ana wala `id` extract karke usko number format me convert karo
-                const filteredProducts = response.data
+                // Handle both array and object responses
+                const responseData = response.data;
+                const productsArray = Array.isArray(responseData)
+                    ? responseData
+                    : responseData.data || responseData.products || [];
+
+                console.log("🔍 Processed Products:", productsArray); // Debug processed data
+
+                const filteredProducts = productsArray
                     .filter(product => product.id && product.id.startsWith("ap-"))
                     .map(product => ({
                         ...product,
-                        numericId: parseInt(product.id.replace("ap-", ""), 10) // `ap-1` ➝ `1`
+                        numericId: parseInt(product.id.replace("ap-", ""), 10)
                     }))
-                    .sort((a, b) => a.numericId - b.numericId); // ✅ Ascending order me sort karo
+                    .sort((a, b) => a.numericId - b.numericId);
 
                 setProducts(filteredProducts);
             })
@@ -72,11 +79,15 @@ const BestSellingProducts = () => {
                         products.map(product => {
                             const hasDiscount = product.dis_product_price !== undefined;
                             const firstImage = product.images?.[0]?.pi_1 || "default.jpg"; // ✅ Image extract karo
+                            console.log("Image path:", `/images/${firstImage}`);
+                            console.log("Full product:", product);
 
                             return (
                                 <div key={product._id} className="product-card">
                                     <div className="product-image-wrapper">
-                                        <img src={`/images/${firstImage}`}
+                                        <img
+                                            // src={`/images/${firstImage}`}
+                                            src={`${process.env.PUBLIC_URL}/images/${firstImage}`}
                                             className="tp-img"
                                             {...(product.width ? { style: { width: product.width } } : {})}
                                             alt={product.product_name} />
@@ -121,33 +132,3 @@ const BestSellingProducts = () => {
 };
 
 export default BestSellingProducts;
-// cart.jsx investigation , paste line 80
-// const handleColorChange = (productId, newColor) => {
-//         let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-//         cart = cart.map(item =>
-//             item.id === productId ? { ...item, color: newColor } : item
-//         );
-
-//         localStorage.setItem("cart", JSON.stringify(cart));
-//         fetchCartProducts();
-//     };
-
-//     const handleSizeChange = (productId, newSize) => {
-//         let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-//         cart = cart.map(item =>
-//             item.id === productId ? { ...item, size: newSize } : item
-//         );
-
-//         localStorage.setItem("cart", JSON.stringify(cart));
-//         fetchCartProducts();
-//     };
-
-//     const handleEditClick = (product) => {
-//         setEditProductId(product._id);
-//         setTempChanges({
-//             color: product.color || product.images?.[0]?.color_code,
-//             size: product.size || Object.keys(product.sizes || {})[0]
-//         });
-//     };

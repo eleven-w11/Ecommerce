@@ -79,7 +79,9 @@ const BestSellingProducts = () => {
               return (
                 <div key={product._id} className="product-card">
                   <div className="product-image-wrapper">
-                    <img src={`/images/${firstImage}`}
+                    <img
+                      // src={`/images/${firstImage}`}
+                      src={`${process.env.PUBLIC_URL}/images/${firstImage}`}
                       className="bsp-img"
                       {...(product.width ? { style: { width: product.width } } : {})}
                       alt={product.product_name} />

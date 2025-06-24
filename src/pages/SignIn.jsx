@@ -107,7 +107,7 @@ const SignIn = ({ onSignIn }) => {
     const login = useGoogleLogin({
         onSuccess: handleGoogleSuccess,
         onError: handleGoogleFailure,
-        flow: 'implicit'
+        // flow: 'implicit'
     });
 
 

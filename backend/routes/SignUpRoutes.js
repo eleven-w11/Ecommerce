@@ -141,5 +141,4 @@ function setAuthCookie(res, token) {
     });
 }
 
-
 module.exports = router;

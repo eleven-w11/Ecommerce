@@ -5,23 +5,38 @@ const Product = require("../models/Product");
 
 router.get("/search", async (req, res) => {
     const { query } = req.query;
-    const words = query?.toLowerCase().trim().split(/\s+/) || [];
+
+    if (!query || typeof query !== 'string') {
+        return res.status(400).json({
+            success: false,
+            message: "Search query is required and must be a string"
+        });
+    }
+
+    const words = query.toLowerCase().trim().split(/\s+/).filter(Boolean);
 
     try {
         const products = await Product.find({
-            $and: words.map(word => ({
-                $or: [
-                    { product_name: { $regex: word, $options: "i" } },
-                    { p_des: { $regex: word, $options: "i" } },
-                    { tags: { $elemMatch: { $regex: word, $options: "i" } } }
-                ]
-            }))
+            $or: [
+                { product_name: { $regex: words.join('|'), $options: "i" } },
+                { p_des: { $regex: words.join('|'), $options: "i" } },
+                { tags: { $in: words.map(word => new RegExp(word, 'i')) } }
+            ]
+        }).lean();
+
+        res.json({
+            success: true,
+            count: products.length,
+            data: products
         });
 
-        res.json(products);
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Server error" });
+        console.error("🔴 Search Error:", err);
+        res.status(500).json({
+            success: false,
+            error: "Internal server error",
+            details: process.env.NODE_ENV === 'development' ? err.message : undefined
+        });
     }
 });
 

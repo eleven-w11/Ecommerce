@@ -126,7 +126,7 @@ const SignUp = ({ onSignUp }) => {
     };
 
 
-    
+
 
 
 
@@ -138,7 +138,7 @@ const SignUp = ({ onSignUp }) => {
     const login = useGoogleLogin({
         onSuccess: handleGoogleSuccess,
         onError: handleGoogleFailure,
-        flow: 'implicit'
+        // flow: 'implicit'
     });
 
 

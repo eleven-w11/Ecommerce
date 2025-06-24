@@ -31,7 +31,7 @@ router.post("/signin", async (req, res) => {
             res.cookie('token', token, {
                 httpOnly: true,
                 secure: false,
-                domain: 'localhost',
+                domain: 'webverse',
                 path: '/',
                 expires: new Date(Date.now() + 3600000),
             });

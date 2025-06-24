@@ -30,8 +30,8 @@ const server = http.createServer(app);
 // Allowed origins
 const allowedOrigins = [
     "http://localhost:3000",
-    "https://your-web.vercel.app",
-    "https://your-web-*.vercel.app" // Wildcard for Vercel preview URLs
+    "https://webverse.store",
+    "https://yourweb-backend.onrender.com"
 ];
 
 const corsOptions = {
@@ -76,22 +76,6 @@ app.use((req, res, next) => {
     next();
 });
 
-// // JWT Generator
-// const generateJWT = (user) => {
-//     return jwt.sign(
-//         { id: user.id, email: user.email },
-//         process.env.JWT_SECRET,
-//         { expiresIn: '1h' }
-//     );
-// };
-
-
-// // Redirect after Google Auth success
-// app.get('/auth/google/callback-success', (req, res) => {
-//     const token = generateJWT(req.user);
-//     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-//     res.redirect(`${frontendUrl}/oauth-success?token=${token}`);
-// });
 
 // API Routes
 app.use("/api", signupRoutes);
