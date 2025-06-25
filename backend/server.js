@@ -29,11 +29,9 @@ const server = http.createServer(app);
 
 // Allowed origins
 const allowedOrigins = [
-    "https://webverse.store",
-    "https://www.webverse.store",
-    "https://webverse.store/ecommerce",
-    "https://yourweb-backend.onrender.com",
-    "http://localhost:3000" // Keep for development
+    "https://ecommerce-xdv7.onrender.com",
+    "http://localhost:3000"
+
 ];
 
 const corsOptions = {
