@@ -29,9 +29,11 @@ const server = http.createServer(app);
 
 // Allowed origins
 const allowedOrigins = [
-    "http://localhost:3000",
     "https://webverse.store",
-    "https://yourweb-backend.onrender.com"
+    "https://www.webverse.store",
+    "https://webverse.store/ecommerce",
+    "https://yourweb-backend.onrender.com",
+    "http://localhost:3000" // Keep for development
 ];
 
 const corsOptions = {
@@ -67,15 +69,25 @@ mongoose.connect(process.env.MONGO_URI, {
 // Static files
 app.use("/images", express.static("images"));
 
-// Headers for CORS manually
+
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    const origin = req.headers.origin;
+
+    if (allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
+
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+    // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
+    }
+
     next();
 });
-
 
 // API Routes
 app.use("/api", signupRoutes);
