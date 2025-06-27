@@ -9,6 +9,7 @@ const http = require("http");
 const { Server } = require("socket.io");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
+const path = require("path");
 
 const Message = require("./models/Message");
 
@@ -66,26 +67,6 @@ mongoose.connect(process.env.MONGO_URI, {
 // Static files
 app.use("/images", express.static("images"));
 
-
-// app.use((req, res, next) => {
-//     const origin = req.headers.origin;
-
-//     if (allowedOrigins.includes(origin)) {
-//         res.setHeader('Access-Control-Allow-Origin', origin);
-//     }
-
-//     res.setHeader('Access-Control-Allow-Origin', 'https://ecommerce-xdv7.onrender.com');
-//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-//     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-//     res.setHeader('Access-Control-Allow-Credentials', 'true');
-
-//     // Handle preflight requests
-//     if (req.method === 'OPTIONS') {
-//         return res.sendStatus(200);
-//     }
-
-//     next();
-// });
 
 // API Routes
 app.use("/api", signupRoutes);
@@ -184,6 +165,14 @@ io.on("connection", (socket) => {
     });
 });
 
+
+// Serve React frontend build
+app.use(express.static(path.join(__dirname, "../build")));
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../build", "index.html"));
+});
+
 // Test route
 app.get("/", (req, res) => {
     res.send("✅ Server is running!");
@@ -199,25 +188,9 @@ app.use((err, req, res, next) => {
     });
 });
 
+
 // Start Server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, "0.0.0.0", () => {
     console.log(`🚀 Server running on port ${PORT}`);
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
