@@ -30,14 +30,15 @@ const server = http.createServer(app);
 
 // Allowed origins
 const allowedOrigins = [
-    "https://ecommerce-vu3m.onrender.com",
+    new RegExp("^https:\\/\\/ecommerce-vu3m\\.onrender\\.com\\/?$"),
     "http://localhost:3000"
-
 ];
 
 const corsOptions = {
     origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
+        if (!origin || allowedOrigins.some(o =>
+            typeof o === "string" ? o === origin : o.test(origin)
+        )) {
             callback(null, true);
         } else {
             callback(new Error("Not allowed by CORS"));
@@ -47,6 +48,7 @@ const corsOptions = {
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
 };
+
 
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions)); // Enable preflight for all routes
