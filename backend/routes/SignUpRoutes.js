@@ -96,7 +96,7 @@ router.post("/signup/google", async (req, res) => {
         res.cookie('token', jwtToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'none'
+            sameSite: 'lax'
         });
 
         res.status(200).json({
@@ -134,7 +134,7 @@ function setAuthCookie(res, token) {
     res.cookie('token', token, {
         httpOnly: true,
         secure: true,
-        sameSite: 'none',
+        sameSite: 'lax',
         domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined,
         path: '/',
         maxAge: 3600000

@@ -30,7 +30,7 @@ const server = http.createServer(app);
 
 // Allowed origins
 const allowedOrigins = [
-    "https://ecommerce-xdv7.onrender.com",
+    "https://ecommerce-vu3m.onrender.com",
     "http://localhost:3000"
 
 ];
@@ -96,7 +96,7 @@ app.post("/api/signup/google", async (req, res) => {
         res.cookie('token', jwtToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict'
+            sameSite: 'lax'
         });
 
         res.json({ success: true, token: jwtToken });
