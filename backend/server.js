@@ -83,30 +83,6 @@ app.use("/api", cartRoutes);
 app.use("/api/messages", messageRoutes);
 // app.use('/auth/google', googleAuthRoutes);
 
-// Google Signup Fallback (if needed)
-app.post("/api/signup/google", async (req, res) => {
-    try {
-        const { token } = req.body;
-        const user = {
-            id: "google_" + Date.now(),
-            email: "user@example.com",
-            name: "Google User"
-        };
-
-        const jwtToken = generateJWT(user);
-
-        res.cookie('token', jwtToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax'
-        });
-
-        res.json({ success: true, token: jwtToken });
-    } catch (err) {
-        console.error("Google signup error:", err);
-        res.status(500).json({ success: false, message: "Google authentication failed" });
-    }
-});
 
 // Socket.IO
 const io = new Server(server, {
