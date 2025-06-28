@@ -69,24 +69,27 @@ router.post("/signup", async (req, res) => {
 
 router.post("/signup/google", async (req, res) => {
     try {
-        const { email, name, picture, googleId } = req.body;
+        const { access_token } = req.body;
+        const ticket = await client.getTokenInfo(access_token);
 
-        // Check if user exists
+        const email = ticket.email;
+        const name = ticket.name || "Google User";
+        const picture = ticket.picture;
+        const googleId = ticket.sub;
+
         let user = await User.findOne({ email });
 
         if (!user) {
-            // Create new user
             user = new User({
                 name,
                 email,
-                password: googleId, // Using Google ID as password
+                password: googleId,
                 image: picture,
                 googleId
             });
             await user.save();
         }
 
-        // Generate JWT
         const jwtToken = jwt.sign(
             { userId: user._id },
             process.env.JWT_SECRET,
@@ -109,16 +112,12 @@ router.post("/signup/google", async (req, res) => {
                 image: user.image
             }
         });
-
-    } catch (error) {
-        console.error("Google Signup Error:", error);
-        res.status(500).json({
-            success: false,
-            message: "Google authentication failed",
-            error: error.message
-        });
+    } catch (err) {
+        console.error("Google Signup Error:", err);
+        res.status(500).json({ success: false, message: "Google signup failed", error: err.message });
     }
 });
+
 
 // Helper functions
 function createToken(userId) {
