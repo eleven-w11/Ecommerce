@@ -1,6 +1,4 @@
 require('dotenv').config();
-console.log("FRONTEND_URL from server.js:", process.env.FRONTEND_URL);
-
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -13,7 +11,7 @@ const path = require("path");
 
 const Message = require("./models/Message");
 
-// Route imports
+// 🛣️ Route imports
 const signupRoutes = require("./routes/SignUpRoutes");
 const signinRoutes = require("./routes/signinRoutes");
 const signOutRoutes = require("./routes/signoutRoutes");
@@ -28,19 +26,19 @@ const messageRoutes = require("./routes/messageRoutes");
 const app = express();
 const server = http.createServer(app);
 
-// Allowed origins
+// ✅ Allowed origins — use string list only
 const allowedOrigins = [
-    new RegExp("^https:\\/\\/ecommerce-vu3m\\.onrender\\.com\\/?$"),
+    "https://ecommerce-vu3m.onrender.com",
     "http://localhost:3000"
 ];
 
+// ✅ CORS options with custom origin check
 const corsOptions = {
     origin: function (origin, callback) {
-        if (!origin || allowedOrigins.some(o =>
-            typeof o === "string" ? o === origin : o.test(origin)
-        )) {
+        if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
+            console.log("❌ CORS Blocked Origin:", origin);
             callback(new Error("Not allowed by CORS"));
         }
     },
@@ -49,16 +47,15 @@ const corsOptions = {
     allowedHeaders: ["Content-Type", "Authorization"]
 };
 
-
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // Enable preflight for all routes
+app.options('*', cors(corsOptions)); // for preflight requests
 
-// Middleware
+// ✅ Middlewares
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
 
-// MongoDB Connection
+// ✅ MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -66,11 +63,10 @@ mongoose.connect(process.env.MONGO_URI, {
     .then(() => console.log("✅ Connected to MongoDB"))
     .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// Static files
+// ✅ Static image serving
 app.use("/images", express.static("images"));
 
-
-// API Routes
+// ✅ Main API Routes
 app.use("/api", signupRoutes);
 app.use("/api", signinRoutes);
 app.use("/api", signOutRoutes);
@@ -81,10 +77,8 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api", cartRoutes);
 app.use("/api/messages", messageRoutes);
-// app.use('/auth/google', googleAuthRoutes);
 
-
-// Socket.IO
+// ✅ Socket.IO configuration
 const io = new Server(server, {
     cors: {
         origin: allowedOrigins,
@@ -143,31 +137,29 @@ io.on("connection", (socket) => {
     });
 });
 
-
-// Serve React frontend build
+// ✅ Serve frontend build folder
 app.use(express.static(path.join(__dirname, "../build")));
 
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "../build", "index.html"));
 });
 
-// Test route
+// ✅ Root test route
 app.get("/", (req, res) => {
     res.send("✅ Server is running!");
 });
 
-// Global Error Handler
+// ✅ Global error handler
 app.use((err, req, res, next) => {
-    console.error('❌ Global error:', err.stack);
+    console.error("❌ Global error:", err.stack);
     res.status(500).json({
-        error: 'Internal Server Error',
-        message: process.env.NODE_ENV === 'development' ? err.message : undefined,
-        stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+        error: "Internal Server Error",
+        message: process.env.NODE_ENV === "development" ? err.message : undefined,
+        stack: process.env.NODE_ENV === "development" ? err.stack : undefined
     });
 });
 
-
-// Start Server
+// ✅ Start the server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, "0.0.0.0", () => {
     console.log(`🚀 Server running on port ${PORT}`);

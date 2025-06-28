@@ -63,6 +63,8 @@ const SignIn = ({ onSignIn }) => {
     const handleGoogleSuccess = async (tokenResponse) => {
         setGoogleLoading(true);
         setError("");
+        const { access_token } = tokenResponse;
+        console.log("📩 Access token: signin.jsx", access_token);
         try {
             const { data } = await axios.post(
                 `${process.env.REACT_APP_API_BASE_URL}/api/signup/google`,
