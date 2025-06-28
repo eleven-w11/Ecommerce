@@ -133,12 +133,12 @@ function createToken(userId) {
 function setAuthCookie(res, token) {
     res.cookie('token', token, {
         httpOnly: true,
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined,
         path: '/',
         maxAge: 3600000
     });
 }
+
 
 module.exports = router;
