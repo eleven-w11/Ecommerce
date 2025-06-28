@@ -70,6 +70,7 @@ router.post("/signup", async (req, res) => {
 router.post("/signup/google", async (req, res) => {
     try {
         const { access_token } = req.body;
+        console.log("📩 Received access_token:", req.body.access_token);
         const ticket = await client.getTokenInfo(access_token);
 
         const email = ticket.email;
