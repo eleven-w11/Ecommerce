@@ -63,6 +63,7 @@ const SignIn = ({ onSignIn }) => {
     const handleGoogleSuccess = async (tokenResponse) => {
         setGoogleLoading(true);
         setError("");
+        console.log("📩 tokenResponse: signin.jsx", tokenResponse);
         const { access_token } = tokenResponse;
         console.log("📩 Access token: signin.jsx", access_token);
         try {
@@ -81,25 +82,6 @@ const SignIn = ({ onSignIn }) => {
             console.error("Google Signup Error:", error);
         }
     };
-
-
-    // const handleGoogleSuccess = async (tokenResponse) => {
-    //     try {
-    //         const { data } = await axios.post(
-    //             `${process.env.REACT_APP_API_BASE_URL}/api/signup/google`,
-    //             { access_token: tokenResponse.access_token }
-    //             // REMOVE withCredentials: true
-    //         );
-
-    //         // Store token in localStorage
-    //         localStorage.setItem('token', data.token);
-    //         navigate("/userprofile");
-    //     } catch (error) {
-    //         console.error("Google auth failed:", error);
-    //     }
-    // };
-
-
 
 
     const handleGoogleFailure = () => {
