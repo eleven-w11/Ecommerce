@@ -69,9 +69,15 @@ router.post("/signup", async (req, res) => {
 
 router.post("/signup/google", async (req, res) => {
     try {
-        const { access_token } = req.body;
-        console.log("📩 Received access_token:", req.body.access_token);
-        const ticket = await client.getTokenInfo(access_token);
+        console.log("✅ Google Signup Route Hit");
+
+        console.log("📩 Received Token:", req.body.access_token);
+        if (!req.body.access_token) {
+            return res.status(400).json({ success: false, message: "Access token missing" });
+        }
+
+        const ticket = await client.getTokenInfo(req.body.access_token);
+        console.log("🧾 Token Info:", ticket);
 
         const email = ticket.email;
         const name = ticket.name || "Google User";
@@ -79,6 +85,7 @@ router.post("/signup/google", async (req, res) => {
         const googleId = ticket.sub;
 
         let user = await User.findOne({ email });
+        console.log("🧑 Existing user found?", user ? "Yes" : "No");
 
         if (!user) {
             user = new User({
@@ -97,13 +104,13 @@ router.post("/signup/google", async (req, res) => {
             { expiresIn: '1h' }
         );
 
-        res.cookie('token', jwtToken, {
+        res.cookie("token", jwtToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax'
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax"
         });
 
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             token: jwtToken,
             user: {
@@ -114,10 +121,16 @@ router.post("/signup/google", async (req, res) => {
             }
         });
     } catch (err) {
-        console.error("Google Signup Error:", err);
-        res.status(500).json({ success: false, message: "Google signup failed", error: err.message });
+        console.error("❌ Google Signup Error:", err.message);
+        console.error("❌ Stack:", err.stack);
+        return res.status(500).json({
+            success: false,
+            message: "Google signup failed",
+            error: err.message
+        });
     }
 });
+
 
 
 // Helper functions
