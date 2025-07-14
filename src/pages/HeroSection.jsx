@@ -93,7 +93,7 @@ const TestHero = () => {
 
                     <p className="THEPERFECTCHOICE">PERFECT CHOICE</p>
                     <div className="all_button hero-button">
-                        <Link to="UserLocation" className="white">Shop Now</Link>
+                        <Link to="Google" className="white">Shop Now</Link>
                         <Link to="UserLocation" className="gollden">On Sale</Link>
                     </div>
                 </div>
