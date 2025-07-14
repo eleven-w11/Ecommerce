@@ -5,9 +5,13 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const http = require("http");
 const { Server } = require("socket.io");
+const path = require("path");
+const session = require("express-session");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
-const path = require("path");
+
+// 🔁 Passport config
+require("./passport");
 
 const Message = require("./models/Message");
 
@@ -22,6 +26,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const productRoutes = require("./routes/productRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const messageRoutes = require("./routes/messageRoutes");
+const GoogleRoutes = require("./routes/GoogleRoutes");
 
 const app = express();
 const server = http.createServer(app);
@@ -32,7 +37,7 @@ const allowedOrigins = [
     "http://localhost:3000"
 ];
 
-// ✅ CORS options with custom origin check
+// ✅ CORS options
 const corsOptions = {
     origin: function (origin, callback) {
         if (!origin || allowedOrigins.includes(origin)) {
@@ -48,12 +53,20 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // for preflight requests
+app.options('*', cors(corsOptions));
 
-// ✅ Middlewares
+// ✅ Body parser & cookies
 app.use(express.json());
 app.use(cookieParser());
+
+// ✅ Sessions and Passport init
+app.use(session({
+    secret: "yourSecret",
+    resave: false,
+    saveUninitialized: true,
+}));
 app.use(passport.initialize());
+app.use(passport.session());
 
 // ✅ MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
@@ -77,6 +90,9 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api", cartRoutes);
 app.use("/api/messages", messageRoutes);
+
+// ✅ Google OAuth Route
+app.use("/api/auth", GoogleRoutes);
 
 // ✅ Socket.IO configuration
 const io = new Server(server, {

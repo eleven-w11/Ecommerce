@@ -20,6 +20,7 @@ import Cart from './pages/Cart';
 import AllProducts from './pages/AllProducts';
 import ChatBox from './pages/Chat';
 import AdminChat from './pages/AdminChat';
+import Google from './pages/Google';
 // import AnimationTest from './pages/AnimationT';
 // import GoogleSignIn from './pages/GoogleSign';
 
@@ -95,6 +96,7 @@ function App() {
         <Route path="/WomanAccessories" element={<AllProducts />}/>
         <Route path="/Chat" element={<ChatBox />}/>
         <Route path="/AdminChat" element={<AdminChat />}/>
+        <Route path="/Google" element={<Google />}  />
         {/* <Route path="/GoogleSignIn" element={<GoogleSignIn /> } /> */}
 
 
