@@ -11,7 +11,7 @@ router.get("/google", passport.authenticate("google", { scope: ["profile", "emai
 router.get(
     "/google/callback",
     passport.authenticate("google", {
-        successRedirect: "http://localhost:3000", // React home page
+        successRedirect: "https://ecommerce-vu3m.onrender.com", // React home page
         failureRedirect: "/login/failed",
     })
 );
@@ -19,7 +19,7 @@ router.get(
 // @desc   Logout
 router.get("/logout", (req, res) => {
     req.logout(() => {
-        res.redirect("http://localhost:3000/login");
+        res.redirect("https://ecommerce-vu3m.onrender.com/login");
     });
 });
 

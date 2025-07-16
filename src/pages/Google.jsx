@@ -4,12 +4,12 @@ const Google = () => {
     const [user, setUser] = useState(null);
 
     const handleGoogleLogin = () => {
-        window.open("http://localhost:5000/api/auth/google", "_self");
+        window.open("https://ecommerce-vu3m.onrender.com/api/auth/google", "_self");
     };
 
     // ✅ Fetch user after login
     useEffect(() => {
-        fetch("http://localhost:5000/api/auth/user", {
+        fetch("https://ecommerce-vu3m.onrender.com/api/auth/user", {
             method: "GET",
             credentials: "include", // 💡 send session cookie
         })
