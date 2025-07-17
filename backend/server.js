@@ -60,11 +60,22 @@ app.use(express.json());
 app.use(cookieParser());
 
 // ✅ Sessions and Passport init
+// ✅ server.js (yehi sahi jagah hai)
+
+app.set("trust proxy", 1);
+
 app.use(session({
     secret: "yourSecret",
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
+    cookie: {
+        secure: true,
+        sameSite: "none",
+        maxAge: 60 * 60 * 1000  // 1 hour
+    }
 }));
+
+
 app.use(passport.initialize());
 app.use(passport.session());
 

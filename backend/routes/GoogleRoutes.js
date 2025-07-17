@@ -20,10 +20,17 @@ router.get(
 // @desc   Logout
 router.get("/logout", (req, res) => {
     req.logout(() => {
-        // res.redirect("http://localhost:3000/login");
-        res.redirect("https://ecommerce-vu3m.onrender.com/login");
+        req.session.destroy((err) => {
+            res.clearCookie("connect.sid", {
+                path: "/",
+                secure: true,
+                sameSite: "none"
+            });
+            res.redirect("https://ecommerce-vu3m.onrender.com/login");
+        });
     });
 });
+
 
 // @desc   Login Failed
 router.get("/login/failed", (req, res) => {
