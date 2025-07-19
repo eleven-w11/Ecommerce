@@ -3,54 +3,78 @@ import React, { useEffect, useState } from "react";
 const Google = () => {
     const [user, setUser] = useState(null);
 
-    const handleGoogleLogin = () => {
-        window.open("https://ecommerce-vu3m.onrender.com/api/auth/google", "_self");
-    };
-
-    // ✅ Fetch user after login
     useEffect(() => {
-        fetch("https://ecommerce-vu3m.onrender.com/api/auth/user", {
-            method: "GET",
-            credentials: "include", // 💡 send session cookie
-        })
-            .then((res) => res.json())
-            .then((data) => {
+        // Load Google One Tap script
+        const script = document.createElement("script");
+        script.src = "https://accounts.google.com/gsi/client";
+        script.async = true;
+        script.defer = true;
+        document.body.appendChild(script);
+
+        // When token is returned
+        window.handleCredentialResponse = async (response) => {
+            const id_token = response.credential;
+
+            try {
+                const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/signup/google`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    credentials: "include", // 💡 send & receive cookies
+                    body: JSON.stringify({ id_token })
+                });
+
+                const data = await res.json();
+
                 if (data.success) {
                     setUser(data.user);
+                } else {
+                    console.error("Login failed:", data.message);
                 }
-            })
-            .catch((err) => console.log(err));
+            } catch (error) {
+                console.error("❌ Error during login:", error);
+            }
+        };
+
+        // Initialize Google Sign-In
+        window.onload = () => {
+            window.google.accounts.id.initialize({
+                client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
+                callback: window.handleCredentialResponse
+            });
+
+            window.google.accounts.id.renderButton(
+                document.getElementById("google-login-button"),
+                { theme: "outline", size: "large" }
+            );
+        };
     }, []);
+
+    const handleLogout = async () => {
+        await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/logout`, {
+            method: "GET",
+            credentials: "include"
+        });
+        setUser(null);
+    };
 
     return (
         <div style={{ textAlign: "center", marginTop: "100px" }}>
             {!user ? (
                 <>
                     <h2>Login Page</h2>
-                    <button
-                        onClick={handleGoogleLogin}
-                        style={{
-                            padding: "10px 20px",
-                            backgroundColor: "#4285F4",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "5px",
-                            fontSize: "16px",
-                            cursor: "pointer",
-                        }}
-                    >
-                        Continue with Google
-                    </button>
+                    <div id="google-login-button"></div>
                 </>
             ) : (
                 <>
-                    <h2>Welcome, {user.displayName}</h2>
-                    <p>Email: {user.emails[0].value}</p>
-                    <img
-                        src={user.photos[0].value}
-                        alt="Profile"
-                        style={{ borderRadius: "50%", width: "100px", marginTop: "10px" }}
-                    />
+                    <h2>Welcome, {user.name}</h2>
+                    <p>Email: {user.email}</p>
+                    <img src={user.image} alt="Profile" style={{ borderRadius: "50%", width: "100px" }} />
+                    <br />
+                    <button onClick={handleLogout} style={{ marginTop: "20px" }}>
+                        Logout
+                    </button>
                 </>
             )}
         </div>

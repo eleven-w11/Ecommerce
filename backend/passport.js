@@ -8,7 +8,7 @@ passport.use(
             clientID: process.env.REACT_APP_GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
             // callbackURL: "/api/auth/google/callback", for localhost
-            callbackURL: "https://ecommerce-vu3m.onrender.com/api/auth/google/callback",
+            callbackURL: `${process.env.REACT_APP_API_BASE_URL}/api/auth/google/callback`,
         },
         function (accessToken, refreshToken, profile, done) {
             // You can save profile info to DB here

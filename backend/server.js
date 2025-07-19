@@ -103,7 +103,7 @@ app.use("/api", cartRoutes);
 app.use("/api/messages", messageRoutes);
 
 // ✅ Google OAuth Route
-app.use("/api/auth", GoogleRoutes);
+app.use("/api", GoogleRoutes);
 
 // ✅ Socket.IO configuration
 const io = new Server(server, {
