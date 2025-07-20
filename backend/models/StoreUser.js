@@ -23,6 +23,10 @@ const userSchema = new mongoose.Schema(
             type: String,
             unique: true,
             sparse: true // Allows null values but enforces uniqueness for non-null
+        },
+        loginHistory: {
+            type: [String],
+            default: [],
         }
     },
     { collection: "log" }
@@ -30,37 +34,3 @@ const userSchema = new mongoose.Schema(
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// cors issue remain , other code good

@@ -2,17 +2,17 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const { OAuth2Client } = require("google-auth-library");
+const dayjs = require("dayjs"); // ⏰ Imported
 const User = require("../models/StoreUser");
-
 
 const client = new OAuth2Client(process.env.REACT_APP_GOOGLE_CLIENT_ID);
 
-// Helper: Create token
+// 🔐 JWT Token
 function createToken(userId) {
     return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "1h" });
 }
 
-// Helper: Set token cookie
+// 🍪 Set Cookie
 function setAuthCookie(res, token) {
     res.cookie("token", token, {
         httpOnly: true,
@@ -22,7 +22,7 @@ function setAuthCookie(res, token) {
     });
 }
 
-// 👤 Google Signup/Login Route
+// 👤 Google SignUp / Login Route
 router.post("/signup/google", async (req, res) => {
     try {
         const { id_token } = req.body;
@@ -44,14 +44,23 @@ router.post("/signup/google", async (req, res) => {
         }
 
         let user = await User.findOne({ email });
+
+        const currentLoginTime = dayjs().format("DD-MM-YYYY HH:mm:ss");
+
         if (!user) {
+            // ✅ First time login
             user = await User.create({
                 name: name || "Google User",
                 email,
                 password: googleId,
                 image: picture,
-                googleId
+                googleId,
+                loginHistory: [currentLoginTime]
             });
+        } else {
+            // ✅ Existing user: update login history
+            user.loginHistory.push(currentLoginTime);
+            await user.save();
         }
 
         const token = createToken(user._id);
@@ -66,13 +75,14 @@ router.post("/signup/google", async (req, res) => {
                 image: user.image
             }
         });
+
     } catch (err) {
         console.error("❌ Google Signup Error:", err.message);
         return res.status(500).json({ success: false, message: "Google signup failed" });
     }
 });
 
-// 👋 Logout Route
+// 👋 Logout
 router.get("/logout", (req, res) => {
     res.clearCookie("token", {
         httpOnly: true,
