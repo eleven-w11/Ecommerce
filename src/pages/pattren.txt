@@ -17,6 +17,7 @@ backend
         UserProRoutes.js
         user.js
     server.js
+public
 src    
     pages
             images
