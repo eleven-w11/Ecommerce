@@ -11,7 +11,7 @@ const passport = require("passport");
 const jwt = require("jsonwebtoken");
 
 // 🔁 Passport config
-require("./passport");
+// require("./passport");
 
 const Message = require("./models/Message");
 

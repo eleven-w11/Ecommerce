@@ -21,7 +21,7 @@ const Google = () => {
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    credentials: "include", // 💡 send & receive cookies
+                    credentials: "include",
                     body: JSON.stringify({ id_token })
                 });
 
@@ -41,13 +41,31 @@ const Google = () => {
         window.onload = () => {
             window.google.accounts.id.initialize({
                 client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
-                callback: window.handleCredentialResponse
+                callback: window.handleCredentialResponse,
+                // Add this configuration to prevent automatic sign-in
+                auto_select: false,
+                // This prevents the button from showing user info
+                prompt_parent_id: "google-login-button"
             });
 
             window.google.accounts.id.renderButton(
                 document.getElementById("google-login-button"),
-                { theme: "outline", size: "large" }
+                {
+                    theme: "outline",
+                    size: "large",
+                    text: "continue_with", // This ensures it says "Continue with Google"
+                    shape: "rectangular",
+                    width: "300" // Fixed width
+                }
             );
+
+            // Optional: If you want to prevent the One Tap prompt
+            window.google.accounts.id.prompt();
+        };
+
+        return () => {
+            // Clean up
+            document.body.removeChild(script);
         };
     }, []);
 
@@ -64,7 +82,14 @@ const Google = () => {
             {!user ? (
                 <>
                     <h2>Login Page</h2>
-                    <div id="google-login-button"></div>
+                    <div
+                        id="google-login-button"
+                        style={{
+                            width: "300px",
+                            margin: "0 auto",
+                            display: "inline-block"
+                        }}
+                    ></div>
                 </>
             ) : (
                 <>
