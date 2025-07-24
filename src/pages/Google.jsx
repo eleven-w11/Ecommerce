@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
-const Google = () => {
-    const [user, setUser] = useState(null);
-
+const Google = ({ onSuccess }) => {
     useEffect(() => {
-        // Load Google One Tap script
         const script = document.createElement("script");
         script.src = "https://accounts.google.com/gsi/client";
         script.async = true;
         script.defer = true;
+        script.setAttribute("data-auto_prompt", "false");
         document.body.appendChild(script);
 
-        // When token is returned
         window.handleCredentialResponse = async (response) => {
             const id_token = response.credential;
 
@@ -28,24 +25,23 @@ const Google = () => {
                 const data = await res.json();
 
                 if (data.success) {
-                    setUser(data.user);
+                    if (onSuccess) {
+                        onSuccess(data.user); // ✅ Pass user to parent (e.g., SignUp.jsx)
+                    }
                 } else {
-                    console.error("Login failed:", data.message);
+                    console.error("Google login failed:", data.message);
                 }
             } catch (error) {
-                console.error("❌ Error during login:", error);
+                console.error("❌ Error during Google login:", error);
             }
         };
 
-        // Initialize Google Sign-In
-        window.onload = () => {
+        script.onload = () => {
             window.google.accounts.id.initialize({
                 client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
                 callback: window.handleCredentialResponse,
-                // Add this configuration to prevent automatic sign-in
                 auto_select: false,
-                // This prevents the button from showing user info
-                prompt_parent_id: "google-login-button"
+                cancel_on_tap_outside: false
             });
 
             window.google.accounts.id.renderButton(
@@ -53,55 +49,22 @@ const Google = () => {
                 {
                     theme: "outline",
                     size: "large",
-                    text: "continue_with", // This ensures it says "Continue with Google"
+                    type: "standard",
+                    text: "continue_with",
                     shape: "rectangular",
-                    width: "300" // Fixed width
+                    width: "300"
                 }
             );
-
-            // Optional: If you want to prevent the One Tap prompt
-            window.google.accounts.id.prompt();
         };
 
         return () => {
-            // Clean up
             document.body.removeChild(script);
         };
-    }, []);
-
-    const handleLogout = async () => {
-        await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/logout`, {
-            method: "GET",
-            credentials: "include"
-        });
-        setUser(null);
-    };
+    }, [onSuccess]);
 
     return (
-        <div style={{ textAlign: "center", marginTop: "100px" }}>
-            {!user ? (
-                <>
-                    <h2>Login Page</h2>
-                    <div
-                        id="google-login-button"
-                        style={{
-                            width: "300px",
-                            margin: "0 auto",
-                            display: "inline-block"
-                        }}
-                    ></div>
-                </>
-            ) : (
-                <>
-                    <h2>Welcome, {user.name}</h2>
-                    <p>Email: {user.email}</p>
-                    <img src={user.image} alt="Profile" style={{ borderRadius: "50%", width: "100px" }} />
-                    <br />
-                    <button onClick={handleLogout} style={{ marginTop: "20px" }}>
-                        Logout
-                    </button>
-                </>
-            )}
+        <div>
+            <div id="google-login-button" style={{ width: "300px" }}></div>
         </div>
     );
 };

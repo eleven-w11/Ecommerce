@@ -29,7 +29,9 @@ const NavBar = ({ Authentication }) => {
     const [activePath, setActivePath] = useState(location.pathname);
 
 
-
+    console.warn("userData Navbar", userData);
+    console.warn("Authentication Navbar", Authentication);
+    
 
 
 
@@ -175,6 +177,7 @@ const NavBar = ({ Authentication }) => {
         fetchUserData();
     }, [Authentication]);
 
+    
 
     // Animation for dropdown-man
     useEffect(() => {

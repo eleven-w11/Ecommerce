@@ -27,6 +27,8 @@ const productRoutes = require("./routes/productRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 const GoogleRoutes = require("./routes/GoogleRoutes");
+const verifyRoutes = require("./routes/verifyRoutes");
+
 
 const app = express();
 const server = http.createServer(app);
@@ -90,7 +92,7 @@ mongoose.connect(process.env.MONGO_URI, {
 // ✅ Static image serving
 app.use("/images", express.static("images"));
 
-// ✅ Main API Routes
+
 app.use("/api", signupRoutes);
 app.use("/api", signinRoutes);
 app.use("/api", signOutRoutes);
@@ -101,6 +103,8 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api", cartRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api", verifyRoutes);
+
 
 // ✅ Google OAuth Route
 app.use("/api", GoogleRoutes);

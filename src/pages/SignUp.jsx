@@ -6,8 +6,10 @@ import { Link, useNavigate } from "react-router-dom";
 // import { jwtDecode } from 'jwt-decode';
 // import { jwtDecode } from 'jwt-decode';
 
-import { useGoogleLogin } from '@react-oauth/google';
-import google from "./images/google.png";
+// import { useGoogleLogin } from '@react-oauth/google';
+// import google from "./images/google.png";
+import Google from './Google';
+
 
 
 
@@ -20,7 +22,6 @@ const SignUp = ({ onSignUp }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
-
     const navigate = useNavigate();
 
 
@@ -105,41 +106,14 @@ const SignUp = ({ onSignUp }) => {
 
 
 
-    const handleGoogleSuccess = async (tokenResponse) => {
-        setGoogleLoading(true);
-        setError("");
-        try {
-            const { data } = await axios.post(
-                `${process.env.REACT_APP_API_BASE_URL}/api/signup/google`,
-                { access_token: tokenResponse.access_token },
-                { withCredentials: true }
-            );
 
-            // Store token in localStorage as fallback
-            localStorage.setItem('token', data.token);
-            navigate("/userprofile");
-            onSignUp();
-            setSuccess("Google signup successful!");
-        } catch (error) {
-            console.error("Google Signup Error:", error);
-        }
+
+    const handleGoogleSuccess = (userData) => {
+        onSignUp();
+        setSuccess("Google signup successful!");
+        setTimeout(() => navigate("/userprofile"), 1500);
+        console.log("✅ Signed in as:", userData);
     };
-
-
-
-
-
-
-
-    const handleGoogleFailure = () => {
-        setError("Google authentication failed. Please try again.");
-    };
-
-    const login = useGoogleLogin({
-        onSuccess: handleGoogleSuccess,
-        onError: handleGoogleFailure,
-        // flow: 'implicit'
-    });
 
 
     useEffect(() => {
@@ -215,14 +189,9 @@ const SignUp = ({ onSignUp }) => {
                     <div className="hr"></div>
                 </div>
 
-                <button
-                    className="google-btn"
-                    onClick={() => login()}
-                    disabled={googleLoading}
-                >
-                    <img src={google} alt="Google" className="icon" />
-                    <p>{googleLoading ? 'Signing Up...' : 'Sign Up With Google'}</p>
-                </button>
+                <div className="google-button">
+                    <Google onSuccess={handleGoogleSuccess} />
+                </div>
 
             </div>
         </div>

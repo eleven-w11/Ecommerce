@@ -24,6 +24,7 @@ import Google from './pages/Google';
 // import AnimationTest from './pages/AnimationT';
 // import GoogleSignIn from './pages/GoogleSign';
 
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   console.warn("app.js Say's", isAuthenticated);
@@ -36,6 +37,8 @@ function App() {
           { withCredentials: true }
         );
 
+        console.log("✅ Auth Response:", response); 
+
         if (response.data && response.data.success && response.data.userId) {
           setIsAuthenticated(true);
         } else {
@@ -45,7 +48,6 @@ function App() {
         setIsAuthenticated(false);
       }
     };
-
     checkAuth();
   }, []);
 
@@ -106,3 +108,15 @@ function App() {
 }
 
 export default App;
+
+// muja aik flaw nazr aya ka like app.js mn setIsAuthenticated 3 points pr true ho rha ha const handleSignIn = () => {
+//     setIsAuthenticated(true);
+//   };
+
+//   const handleSignUp = () => {
+//     setIsAuthenticated(true);
+//   };
+
+//   const handleSignOut = () => {
+//     setIsAuthenticated(false);
+//   }; 
