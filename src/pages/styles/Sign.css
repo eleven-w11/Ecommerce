@@ -128,16 +128,17 @@ form button {
     background-color: white;
 }
 
-.google-button{
+.google-button {
     width: 100%;
     border-radius: 10px;
     overflow: hidden;
     background-color: white;
     /* padding: 2px 0; */
 }
+
 /* google btn globel */
 .S9gUrf-YoZ4jf,
-.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-MJoBVe{
+.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-MJoBVe {
     width: 100%;
     padding: 1px;
 }
@@ -180,6 +181,31 @@ form button {
 
 .suc {
     background-color: lightgreen;
+}
+
+/* Google Button Container */
+.google-button-container {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+    padding: 8px 0;
+}
+
+/* Customize the Google button */
+.g_id_signin {
+    width: 100% !important;
+}
+
+/* Button hover effects */
+.g_id_signin:hover {
+    opacity: 0.9;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+    .google-button-container {
+        max-width: 100%;
+    }
 }
 
 @media (max-width: 400px) {
