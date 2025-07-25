@@ -55,7 +55,8 @@ const Google = ({ onSuccess }) => {
                     type: "standard",
                     text: "continue_with",
                     shape: "rectangular",
-                    width: "100%"
+                    width: "100%",
+                    background: "green"
                 }
             );
         };
@@ -68,11 +69,12 @@ const Google = ({ onSuccess }) => {
     return (
         <div id="google-login-button" style={{
             width: "100%",
-            minHeight: "50px",
+            // minHeight: "50px",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            padding: "1px 0"
+            // padding: "1px 0",
+            // background: "burlywood"
         }}></div>
     );
 };
