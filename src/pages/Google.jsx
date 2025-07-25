@@ -52,7 +52,7 @@ const Google = ({ onSuccess }) => {
                     type: "standard",
                     text: "continue_with",
                     shape: "rectangular",
-                    width: "300"
+                    width: "100%"
                 }
             );
         };
@@ -63,9 +63,7 @@ const Google = ({ onSuccess }) => {
     }, [onSuccess]);
 
     return (
-        <div>
-            <div id="google-login-button" style={{ width: "300px" }}></div>
-        </div>
+        <div id="google-login-button" style={{ width: "100%", padding: "1px 0" }}></div>
     );
 };
 

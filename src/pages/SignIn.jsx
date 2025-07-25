@@ -4,6 +4,8 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import './styles/Sign.css';
 import { useGoogleLogin } from '@react-oauth/google';
 import google from "./images/google.png";
+import Google from './Google';
+
 
 const SignIn = ({ onSignIn }) => {
     const [email, setEmail] = useState("");
@@ -13,7 +15,7 @@ const SignIn = ({ onSignIn }) => {
     const [showPassword, setShowPassword] = useState(false);
     const location = useLocation();
     const [isLoading, setIsLoading] = useState(false);
-    const [googleLoading, setGoogleLoading] = useState(false);
+    // const [googleLoading, setGoogleLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleUserEmail = (event) => {
@@ -60,40 +62,12 @@ const SignIn = ({ onSignIn }) => {
 
 
 
-    const handleGoogleSuccess = async (tokenResponse) => {
-        setGoogleLoading(true);
-        setError("");
-        console.log("📩 tokenResponse: signin.jsx", tokenResponse);
-        const { access_token } = tokenResponse;
-        console.log("📩 Access token: signin.jsx", access_token);
-        try {
-            const { data } = await axios.post(
-                `${process.env.REACT_APP_API_BASE_URL}/api/signup/google`,
-                { access_token: tokenResponse.access_token },
-                { withCredentials: true }
-            );
-
-            // Store token in localStorage as fallback
-            localStorage.setItem('token', data.token);
-            navigate("/userprofile");
-            onSignIn();
-            setSuccess("Google signup successful!");
-        } catch (error) {
-            console.error("Google Signup Error:", error);
-        }
+    const handleGoogleSuccess = (userData) => {
+        onSignIn();
+        setSuccess("Google signup successful!");
+        setTimeout(() => navigate("/userprofile"), 1500);
+        console.log("✅ Signed in as:", userData);
     };
-
-
-    const handleGoogleFailure = () => {
-        setError("Google authentication failed. Please try again.");
-    };
-
-    const login = useGoogleLogin({
-        onSuccess: handleGoogleSuccess,
-        onError: handleGoogleFailure,
-        // flow: 'implicit'
-    });
-
 
     useEffect(() => {
         const setSignHeight = () => {
@@ -172,14 +146,9 @@ const SignIn = ({ onSignIn }) => {
                     <div className="hr"></div>
                 </div>
 
-                <button
-                    className="google-btn"
-                    onClick={() => login()}
-                    disabled={googleLoading}
-                >
-                    <img src={google} alt="Google" className="icon" />
-                    <p>{googleLoading ? 'Signing Up...' : 'Sign Up With Google'}</p>
-                </button>
+                <div className="google-button">
+                    <Google onSuccess={handleGoogleSuccess} />
+                </div>
 
             </div>
 

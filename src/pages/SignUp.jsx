@@ -21,7 +21,7 @@ const SignUp = ({ onSignUp }) => {
     const [success, setSuccess] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [googleLoading, setGoogleLoading] = useState(false);
+    // const [googleLoading, setGoogleLoading] = useState(false);
     const navigate = useNavigate();
 
 
