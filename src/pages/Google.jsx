@@ -26,7 +26,7 @@ const Google = ({ onSuccess }) => {
 
                 if (data.success) {
                     if (onSuccess) {
-                        onSuccess(data.user); // ✅ Pass user to parent (e.g., SignUp.jsx)
+                        onSuccess(data.user);
                     }
                 } else {
                     console.error("Google login failed:", data.message);
@@ -43,6 +43,9 @@ const Google = ({ onSuccess }) => {
                 auto_select: false,
                 cancel_on_tap_outside: false
             });
+
+            // ⛔ Prevent popup from auto-selecting account
+            window.google.accounts.id.disableAutoSelect();
 
             window.google.accounts.id.renderButton(
                 document.getElementById("google-login-button"),
@@ -63,7 +66,14 @@ const Google = ({ onSuccess }) => {
     }, [onSuccess]);
 
     return (
-        <div id="google-login-button" style={{ width: "100%", padding: "1px 0" }}></div>
+        <div id="google-login-button" style={{
+            width: "100%",
+            minHeight: "50px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "1px 0"
+        }}></div>
     );
 };
 
