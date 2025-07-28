@@ -138,22 +138,17 @@ form button {
 
 .custom-google-button{
     width: 100%;
-    padding: 6px 0;
+    padding: 7px 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: none;
+    cursor: pointer;
 }
 
 .custom-google-button .google-icon{
     margin: 3px 10px 0 0;
 }
-
-/* google btn globel */
-/* .S9gUrf-YoZ4jf,
-.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-MJoBVe {
-    width: 100%;
-    padding: 1px;
-} */
 
 .errorndsucc {
     width: 320px;
@@ -194,21 +189,6 @@ form button {
 .suc {
     background-color: lightgreen;
 }
-
-/* .google-button-container {
-    width: 100%;
-    max-width: 300px;
-    margin: 0 auto;
-    padding: 8px 0;
-}
-
-.g_id_signin {
-    width: 100% !important;
-}
-
-.g_id_signin:hover {
-    opacity: 0.9;
-} */
 
 /* Mobile responsiveness */
 @media (max-width: 480px) {

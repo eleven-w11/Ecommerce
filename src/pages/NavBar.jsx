@@ -31,7 +31,7 @@ const NavBar = ({ Authentication }) => {
 
     console.warn("userData Navbar", userData);
     console.warn("Authentication Navbar", Authentication);
-    
+
 
 
 
@@ -102,7 +102,7 @@ const NavBar = ({ Authentication }) => {
 
         if (!isInsideSlideMenu && !isMenuButton && !isManClick && !isWomanClick) {
             setIsToggle(false);
-            setShowManDropdown(false); 
+            setShowManDropdown(false);
             setShowWomanDropdown(false);
         }
     };
@@ -177,7 +177,7 @@ const NavBar = ({ Authentication }) => {
         fetchUserData();
     }, [Authentication]);
 
-    
+
 
     // Animation for dropdown-man
     useEffect(() => {
@@ -538,9 +538,9 @@ const NavBar = ({ Authentication }) => {
                     <div className="line_hide_box"></div>
                     <li>
                         <Link
-                            to="/Google"
+                            to="/Chat"
                             ref={(el) => (linksRef.current[2] = el)}
-                            className={activePath === "/Google" ? "active-link" : ""}
+                            className={activePath === "/Chat" ? "active-link" : ""}
                         >
                             On Sale
                         </Link>

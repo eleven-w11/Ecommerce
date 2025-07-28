@@ -18,17 +18,18 @@ router.get("/all-chats", async (req, res) => {
     }
 });
 
-// GET chat by user ID
-// router.get("/chat/:userId", async (req, res) => {
-//     try {
-//         const userId = req.params.userId;
-//         const messages = await ChatModel.find({ fromUserId: userId }).sort({ timestamp: 1 }); // oldest first
-//         res.json({ success: true, messages });
-//     } catch (err) {
-//         console.error("❌ Error fetching chat for user:", err.message);
-//         res.status(500).json({ success: false, message: "Server error" });
-//     }
-// });
+// Get user by ID
+router.get("/user/:id", async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id).select("_id name image");
+        if (!user) return res.status(404).json({ success: false, message: "User not found" });
+        res.json(user);
+    } catch (err) {
+        console.error("❌ Error fetching user by ID:", err.message);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+});
+
 
 // GET chat by user ID (both user and admin messages)
 router.get("/chat/:userId", async (req, res) => {
@@ -74,5 +75,6 @@ router.post("/chat/reply", async (req, res) => {
         res.status(500).json({ success: false, message: "Server error" });
     }
 });
+
 
 module.exports = router;

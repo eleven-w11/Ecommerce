@@ -19,7 +19,7 @@ import Cart from './pages/Cart';
 // import TestWeb from './pages/TestWeb';
 import AllProducts from './pages/AllProducts';
 import ChatBox from './pages/Chat';
-import AdminChat from './pages/AdminChat';
+import AdminChat from './pages/AdminChat/AdminChat';
 import Google from './pages/Google';
 // import AnimationTest from './pages/AnimationT';
 // import GoogleSignIn from './pages/GoogleSign';
@@ -37,7 +37,7 @@ function App() {
           { withCredentials: true }
         );
 
-        console.log("✅ Auth Response:", response); 
+        console.log("✅ Auth Response:", response);
 
         if (response.data && response.data.success && response.data.userId) {
           setIsAuthenticated(true);
@@ -88,17 +88,17 @@ function App() {
         <Route path="/BestSelling" element={<BestSellingProducts />} />
         <Route path="/TopProducts" element={<TopProduct />} />
         <Route path="/Cart" element={<Cart />} />
-        <Route path="/ManTop" element={<AllProducts />}/>
-        <Route path="/ManBottom" element={<AllProducts />}/>
-        <Route path="/ManShoes" element={<AllProducts />}/>
-        <Route path="/WomanTop" element={<AllProducts />}/>
-        <Route path="/WomanBottom" element={<AllProducts />}/>
-        <Route path="/WomanShoes" element={<AllProducts />}/>
-        <Route path="/WomanBags" element={<AllProducts />}/>
-        <Route path="/WomanAccessories" element={<AllProducts />}/>
-        <Route path="/Chat" element={<ChatBox />}/>
-        <Route path="/AdminChat" element={<AdminChat />}/>
-        <Route path="/Google" element={<Google />}  />
+        <Route path="/ManTop" element={<AllProducts />} />
+        <Route path="/ManBottom" element={<AllProducts />} />
+        <Route path="/ManShoes" element={<AllProducts />} />
+        <Route path="/WomanTop" element={<AllProducts />} />
+        <Route path="/WomanBottom" element={<AllProducts />} />
+        <Route path="/WomanShoes" element={<AllProducts />} />
+        <Route path="/WomanBags" element={<AllProducts />} />
+        <Route path="/WomanAccessories" element={<AllProducts />} />
+        <Route path="/Chat" element={<ChatBox />} />
+        <Route path="/AdminChat" element={<AdminChat />} />
+        <Route path="/Google" element={<Google />} />
         {/* <Route path="/GoogleSignIn" element={<GoogleSignIn /> } /> */}
 
 
@@ -109,14 +109,31 @@ function App() {
 
 export default App;
 
-// muja aik flaw nazr aya ka like app.js mn setIsAuthenticated 3 points pr true ho rha ha const handleSignIn = () => {
-//     setIsAuthenticated(true);
-//   };
+// in console AdminChat.jsx: 21 users
+// Array(0)
+// length
+// :
+// 0
+// [[Prototype]]
+// :
+// Array(0)
+// AdminChat @AdminChat.jsx: 21 in mongo db 
 
-//   const handleSignUp = () => {
-//     setIsAuthenticated(true);
-//   };
 
-//   const handleSignOut = () => {
-//     setIsAuthenticated(false);
-//   }; 
+
+
+
+// ✅ Result:
+// ✔ Aapko offline users bhi dikhain ge jinhon ne kabhi message kia ho.
+
+// ✔ Jab koi user online aata hai ya naye message karta hai, usersList refresh ho sakti hai.
+
+// Agar aap chahein to getUsers call har new message pe bhi emit kar sakte hain — isse auto refresh feel milegi 👇:
+
+// js
+// Copy
+// Edit
+// socketRef.current.on("receiveMessage", (message) => {
+//     // Save message logic...
+//     socketRef.current.emit("getUsers"); // 🔁 Refresh list
+// });
