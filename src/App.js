@@ -1,26 +1,29 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
-import NavBar from './pages/NavBar';
-import UserLocation from './pages/UserLocationInfo';
-import SignIn from './pages/SignIn';
-import SignUp from './pages/SignUp';
+// import NavBar from './pages/NavBar';
+import NavBar from './files/pages/NavBar/NavBar';
+import UserLocation from './files/pages/UserLocationInfo';
+import SignIn from './files/pages/SignIn';
+import SignUp from './files/pages/SignUp';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import UserProfile from './pages/UserProfilePage';
-import TeSt from './pages/teSt';
-import TestHero from './pages/HeroSection';
-import BestSellingProducts from './pages/BestSelling';
-import TopProduct from './pages/TopProducts';
-import ProductView from './pages/ProductView';
+import UserProfile from './files/pages/UserProfilePage';
+import TeSt from './files/pages/teSt';
+import TestHero from './files/pages/HeroSection';
+import BestSellingProducts from './files/pages/BestSelling';
+import TopProduct from './files/pages/TopProducts';
+import ProductView from './files/pages/ProductView';
 // import CaRt from './pages/Cart';
-import ScrollToTop from "./pages/ScrollToTop";
-import Footer from './pages/Footer';
-import Cart from './pages/Cart';
+import ScrollToTop from "./files/pages/ScrollToTop";
+import Footer from './files/pages/Footer';
+import Cart from './files/pages/Cart';
 // import TestWeb from './pages/TestWeb';
-import AllProducts from './pages/AllProducts';
-import ChatBox from './pages/Chat';
-import AdminChat from './pages/AdminChat/AdminChat';
-import Google from './pages/Google';
+import AllProducts from './files/pages/AllProducts';
+import ChatBox from './files/pages/Chat';
+import AdminChat from './files/AdminChat/AdminChat';
+import Google from './files/pages/Google';
+import DelNavbar from './files/pages/NavBar/delnav';
+import SearchResults from './files/pages/NavBar/SearchResults';
 // import AnimationTest from './pages/AnimationT';
 // import GoogleSignIn from './pages/GoogleSign';
 
@@ -66,6 +69,8 @@ function App() {
   return (
     <div>
       <NavBar Authentication={isAuthenticated} />
+      {/* <DelNavbar /> */}
+
       {/* <TestWeb /> */}
 
 
@@ -99,7 +104,10 @@ function App() {
         <Route path="/Chat" element={<ChatBox />} />
         <Route path="/AdminChat" element={<AdminChat />} />
         <Route path="/Google" element={<Google />} />
+        <Route path="/DelNav" element={<DelNavbar />} />
+        <Route path="/search" element={<SearchResults />} />
         {/* <Route path="/GoogleSignIn" element={<GoogleSignIn /> } /> */}
+
 
 
       </Routes>
@@ -137,3 +145,5 @@ export default App;
 //     // Save message logic...
 //     socketRef.current.emit("getUsers"); // 🔁 Refresh list
 // });
+
+

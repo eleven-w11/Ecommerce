@@ -1,21 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { gsap } from "gsap";
-import "./styles/Hero.css";
+import "../styles/Hero.css";
 
-import heroImage1 from "./images/hero-ecommerce-1.jpg";
-import heroImage2 from "./images/hero-ecommerce-2.jpg";
-import heroImage3 from "./images/hero-ecommerce-3.webp";
-import heroImage4 from "./images/hero-ecommerce-1.jpg";
-import heroImage5 from "./images/hero-ecommerce-2.jpg";
-import heroImage6 from "./images/hero-ecommerce-3.webp";
+import heroImage1 from "../images/hero-ecommerce-1.jpg";
+import heroImage2 from "../images/hero-ecommerce-2.jpg";
+import heroImage3 from "../images/hero-ecommerce-3.webp";
+import heroImage4 from "../images/hero-ecommerce-1.jpg";
+import heroImage5 from "../images/hero-ecommerce-2.jpg";
+import heroImage6 from "../images/hero-ecommerce-3.webp";
 
-import heroMob1 from "./images/hero-ecommerce-mob-1.webp";
-import heroMob2 from "./images/hero-ecommerce-mob-2.webp";
-import heroMob3 from "./images/hero-ecommerce-mob-3.webp";
-import heroMob4 from "./images/hero-ecommerce-mob-1.webp";
-import heroMob5 from "./images/hero-ecommerce-mob-2.webp";
-import heroMob6 from "./images/hero-ecommerce-mob-3.webp";
+import heroMob1 from "../images/hero-ecommerce-mob-1.webp";
+import heroMob2 from "../images/hero-ecommerce-mob-2.webp";
+import heroMob3 from "../images/hero-ecommerce-mob-3.webp";
+import heroMob4 from "../images/hero-ecommerce-mob-1.webp";
+import heroMob5 from "../images/hero-ecommerce-mob-2.webp";
+import heroMob6 from "../images/hero-ecommerce-mob-3.webp";
 
 const seasons = ["WINTER", "SUMMER", "AUTUMN", "SPRING"];
 

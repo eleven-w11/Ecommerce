@@ -6,6 +6,22 @@ const UserList = ({
     selectedUserId,
     fetchUserChat,
 }) => {
+    // ✅ 1. Source-based background color function
+    const getUserColor = (source) => {
+        switch (source) {
+            case "socket-init":
+                return "#d4edda"; // 🟢 green - initial fetch
+            case "socket-update-existing":
+                return "#f8d7da"; // 🔴 red - updated existing
+            case "socket-update-new":
+                return "#fff3cd"; // 🟡 yellow - new user
+            default:
+                return "#ffffff"; // ⚪ default white
+        }
+    };
+
+
+    // ✅ 2. Unique users
     const uniqueUsers = [...new Map(users.map(u => [u._id, u])).values()];
 
     return (
@@ -15,6 +31,7 @@ const UserList = ({
                     key={user._id}
                     className={`user-card ${selectedUserId === user._id ? "active" : ""} fade-in`}
                     onClick={() => fetchUserChat(user._id)}
+                    style={{ backgroundColor: getUserColor(user.source) }} // ✅ 3. Background color
                 >
                     <div className="user-avatar-container">
                         <img

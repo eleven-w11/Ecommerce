@@ -12,14 +12,16 @@
     padding: 4vh 0vw;
     text-align: center;
     font-family: "Roboto", serif;
+    /* background-color: darkblue; */
 }
 
 .best-selling-section .product-container {
     width: 90%;
-    margin: 0 auto;
+    margin: 60px auto 0px auto;
     border-radius: 10px;
     background-color: #f7f7f7;
     padding: 0px 20px 30px 20px;
+    /* background-color: tomato; */
 }
 
 .best-selling-section .product-container h2 {
@@ -27,6 +29,12 @@
     padding: 30px 0 0 0;
     font-weight: 700;
     margin-bottom: 25px;
+    /* background-color: palegreen; */
+}
+
+.SearchResults .product-length{
+    /* background-color: violet; */
+    font-size: 14px;
 }
 
 .best-selling-section .category_type{

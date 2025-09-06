@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import axios from 'axios';
-import addTocart from "./images/add-to-cart.png";
+import addTocart from "../images/add-to-cart.png";
+// import addTocart from "./images/add-to-cart.png";
 
 const AllProducts = () => {
     const location = useLocation();

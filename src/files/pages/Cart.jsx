@@ -1,10 +1,10 @@
 // Gooooooooooooooooooooooooooood
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import "./styles/Cart.css";
-import "./styles/animation.css";
-import left from "./images/left.png";
-import right from "./images/right.png";
+import "../styles/Cart.css";
+import "../styles/animation.css";
+import left from "../images/left.png";
+import right from "../images/right.png";
 import { Link } from "react-router-dom";
 
 const Cart = () => {

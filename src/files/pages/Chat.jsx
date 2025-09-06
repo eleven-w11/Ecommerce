@@ -2,8 +2,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import axios from "axios";
-import "./styles/Chat.css";
-import admin from "./images/admin.png";
+import "../styles/Chat.css";
+import admin from "../images/admin.png";
 import { Link } from "react-router-dom";
 
 
@@ -329,7 +329,10 @@ const Chat = () => {
                                     >
                                         <p className="message-text">{msg.message}</p>
                                         <p className="message-time">
-                                            {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            {new Date(msg.timestamp).toLocaleTimeString([], {
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                            })}
                                         </p>
                                     </div>
                                 ))

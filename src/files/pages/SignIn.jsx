@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import './styles/Sign.css';
+import '../styles/Sign.css';
 import { useGoogleLogin } from '@react-oauth/google';
-import google from "./images/google.png";
+import google from "../images/google.png";
 import Google from './Google';
 
 
@@ -71,7 +71,7 @@ const SignIn = ({ onSignIn }) => {
 
     useEffect(() => {
         const setSignHeight = () => {
-            const height = window.innerHeight - 60;
+            const height = window.innerHeight - 0;
             const signElement = document.querySelector(".sign");
 
             if (signElement) {
@@ -79,13 +79,10 @@ const SignIn = ({ onSignIn }) => {
             }
         };
 
-        // Set on mount
         setSignHeight();
 
-        // Update on window resize
         window.addEventListener("resize", setSignHeight);
 
-        // Cleanup
         return () => window.removeEventListener("resize", setSignHeight);
     }, []);
 

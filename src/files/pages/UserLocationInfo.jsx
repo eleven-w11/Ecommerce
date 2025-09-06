@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie"; // Import js-cookie library
-import "./styles/UserLocation.css"; // Importing CSS file
+import "../styles/UserLocation.css"; // Importing CSS file
 
 const UserLocation = () => {
     const [country, setCountry] = useState(""); // Initial state is an empty string

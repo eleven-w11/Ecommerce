@@ -1,14 +1,14 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import "./styles/ProductView.css";
-import "./styles/BestSelling.css";
+import "../styles/ProductView.css";
+import "../styles/BestSelling.css";
 import { Link } from "react-router-dom";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import left from "./images/left.png";
-import right from "./images/right.png";
-import addTocart from "./images/add-to-cart.png";
+import left from "../images/left.png";
+import right from "../images/right.png";
+import addTocart from "../images/add-to-cart.png";
 import Footer from "./Footer";
 
 

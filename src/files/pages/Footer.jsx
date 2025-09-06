@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import gsap from "gsap";
-import "./styles/Footer.css";
+import "../styles/Footer.css";
 
 const Footer = () => {
     const [openSection, setOpenSection] = useState(null);

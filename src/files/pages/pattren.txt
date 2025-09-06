@@ -1,0 +1,322 @@
+backend
+    middleware
+        verifyPath.js
+        verifyToken.js
+    models
+        Message.js
+        Product.js
+        User.js
+    routes
+        adminRoutes.js
+        cartRoutes.js
+        messageRoutes.js
+        productRoutes.js
+        signinRoutes.js
+        signoutRoutes.js
+        SignUpRoutes.js
+        UserProRoutes.js
+        user.js
+    server.js
+public
+src    
+    pages
+            images
+                    images
+            styles
+                    css files
+            pages files .jsx
+    app.js
+    index.js
+
+
+
+
+todo
+update add to cart in productview , also 
+    update images , remove filter , fully seo images
+    
+
+
+
+
+
+
+
+
+
+
+
+
+best selling home page 
+top products home page 
+best selling page
+top products page
+userprofile page
+cart page
+
+
+
+jb search pr click hoto navbar ko gsap ka through opper ki side pr slide krdo or search ko zysa index ka throught 
+niycha ki janib slide kr do ( means us ki position ki trf) or close pr click krna pr ic ka reverse kro 
+
+
+
+
+
+
+
+
+{
+  "_id": {
+    "$oid": "67b039830825e8bd03d8928a"
+  },
+  "product_name": "Polo Shirt",
+  "product_price": 89,
+  "id": "bsp-2",
+  "p_type": "Men's Casual Wear",
+  "product_details": [
+    "Material: Breathable cotton blend",
+    "Sleeves: Short sleeves",
+    "Fit: Regular fit",
+    "Collar: Classic polo collar with contrast inner lining",
+    "Occasion: Casual, sports, outings"
+  ],
+  "p_des": "A stylish green polo shirt with a classic collar and buttoned placket, perfect for everyday wear.",
+  "images": [
+    {
+      "pi_1": "Bsp-1_green.png",
+      "color_code": "#166d56",
+      "color": "green"
+    },
+    {
+      "pi_2": "Bsp-1_gray.png",
+      "color_code": "#474747",
+      "color": "gray"
+    },
+    {
+      "pi_3": "Bsp-1_blue.png",
+      "color_code": "#00a9f6",
+      "color": "blue"
+    }
+  ],
+  "sizes": {
+    "XS": true,
+    "S": true,
+    "M": false,
+    "L": true,
+    "XL": true,
+    "XXL": true,
+    "XXXL": false
+  },
+  "tags": [
+    "modern polo shirt",
+    "stylish t-shirt",
+    "short sleeve",
+    "stand collar",
+    "buttoned placket",
+    "contrast placket design",
+    "casual wear",
+    "trendy men's fashion",
+    "comfortable fabric",
+    "breathable material",
+    "green polo",
+    "gray polo",
+    "blue polo",
+    "fashionable outfit",
+    "summer wear",
+    "sporty look",
+    "casual elegance"
+  ],
+  "for_page": [
+    {
+      "fp-1": "man top"
+    }
+  ],
+  "width": "190px"
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const renderProductItem = (product) => {
+    const imageObj = product.images?.[0];
+    if (!imageObj) return null;
+
+    const imageKey = Object.keys(imageObj).find((key) =>
+        key.startsWith("pi_")
+    );
+    const imageToShow = imageObj[imageKey];
+
+    // Get match source info (backend se aya hua)
+    const matchInfo = product.matchSource?.length
+        ? `Matched in: ${product.matchSource.join(", ")}`
+        : "";
+
+    return (
+        <Link
+            key={product._id}
+            to={`/product/${product._id}`}
+            className="search-item"
+            onClick={onClose}
+        >
+            <img
+                src={`/images/${imageToShow}`}
+                alt={product.product_name}
+                className="search-item-image"
+                onError={(e) => {
+                    e.target.src = "/images/placeholder.jpg";
+                }}
+            />
+            <div className="search-item-details">
+                <h3>{product.product_name}</h3>
+                <p className="search-item-price">
+                    ${(product.product_price || 0).toFixed(2)}
+                </p>
+                {matchInfo && (
+                    <p className="search-item-match">{matchInfo}</p>
+                )}
+            </div>
+        </Link>
+    );
+};
+
+
+
+
+
+
+
+
+Products (16)
+Polo Shirt image
+Polo Shirt
+$89.00
+
+Matched In: product_name, p_des, tags
+t: product_name, p_des, tags: modern polo shirt
+shirts:
+
+Crew Neck T-Shirt image
+Crew Neck T-Shirt
+$49.00
+
+Matched In: product_name, p_des, tags
+t: product_name, p_des, tags: cotton tshirt
+shirts:
+
+Pullover Hoodie image
+Pullover Hoodie
+$49.00
+
+Matched In: p_des, tags
+t: p_des, tags: winter fashion
+shirts:
+
+Baseball Cap image
+Baseball Cap
+$49.00
+
+Matched In: p_des, tags
+t: p_des, tags: Casual Hat
+shirts:
+
+Sleeve T-Shirt image
+Sleeve T-Shirt
+$49.00
+
+Matched In: product_name, p_des, tags
+t: product_name, p_des, tags: raglan t-shirt
+shirts:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+db.best_selling_product.updateOne(
+  { _id: ObjectId("680e820cd918b61a7bdea30a") },
+  {
+    $set: {
+      for_search: ["t shirt", "shirt", "polo shirt"]
+    }
+  }
+)
+
+db.best_selling_product.updateOne(
+  { _id: ObjectId("67b22a6e05b62b307bf47fa8") },
+  {
+    $set: {
+      for_search: ["Denim Jeans", "Jeans"]
+    }
+  }
+)
+
+db.best_selling_product.updateOne(
+  { _id: ObjectId("67b22bf705b62b307bf47fae") },
+  {
+    $set: {
+      for_search: ["Hoodie", "Winter Wear"]
+    }
+  }
+)
+
+db.best_selling_product.updateOne(
+  { _id: ObjectId("67b229ad05b62b307bf47fa6") },
+  {
+    $set: {
+      for_search: ["Jacket", "Winter Jacket"]
+    }
+  }
+)

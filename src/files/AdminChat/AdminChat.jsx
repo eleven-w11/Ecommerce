@@ -35,10 +35,14 @@ const AdminChat = () => {
         socketRef.current.on("usersList", (data) => {
             console.log("📥 usersList received from backend:", data);
             if (isMounted.current) {
-                setUsers(data);
+                const usersWithSource = data.map(user => ({
+                    ...user,
+                    source: "socket-init"
+                }));
+                setUsers(usersWithSource);
             }
         });
-        
+
 
         const handleReceiveMessage = async (message) => {
             if (!isMounted.current) return;
@@ -62,7 +66,15 @@ const AdminChat = () => {
             setUsers(prev => {
                 const userExists = prev.find(u => u._id === userId);
                 const name = message.user?.name || "New User";
-                const image = message.user?.profileImage || "";
+                const image = message.user?.image || "";
+                console.log("🧾 Message from user:", {
+                    userId,
+                    name,
+                    image,
+                    message: message.message
+                });
+
+
 
                 let updatedUsers;
                 if (userExists) {
@@ -70,15 +82,17 @@ const AdminChat = () => {
                         u._id === userId
                             ? {
                                 ...u,
-                                name: u.name || name,
-                                image: u.image || image,
+                                name: name || u.name,
+                                image: image || u.image,
                                 lastMessage: message.message,
                                 lastMessageTime: message.timestamp,
                                 unreadCount: u._id !== selectedUserId ? (u.unreadCount || 0) + 1 : 0,
                                 isOnline: true,
+                                source: "socket-update-existing" // ✅ existing user
                             }
                             : u
                     );
+                    console.warn("imag adminchat", image);
                 } else {
                     updatedUsers = [
                         {
@@ -89,16 +103,20 @@ const AdminChat = () => {
                             lastMessageTime: message.timestamp,
                             unreadCount: 1,
                             isOnline: true,
+                            source: "socket-update-new", // ✅ new user
                             needsUpdate: false
                         },
                         ...prev
                     ];
                 }
 
-                // 🟢 Sort by latest message timestamp
-                return [...updatedUsers].sort(
-                    (a, b) => new Date(b.lastMessageTime) - new Date(a.lastMessageTime)
-                );
+                // 🔁 Ensure ISO format and fallback to 0 for invalid dates
+                const safeDate = (d) => d ? new Date(d).getTime() : 0;
+
+                return [...updatedUsers].sort((a, b) => {
+                    return safeDate(b.lastMessageTime) - safeDate(a.lastMessageTime);
+                });
+
             });
 
             // 👇 Optional: Fetch full user if not already in state
@@ -148,7 +166,7 @@ const AdminChat = () => {
 
             if (isMounted.current) {
                 setSelectedChat(res.data.messages || []);
-                setSelectedUserId(userId); // ✅ Set here AFTER messages come
+                setSelectedUserId(userId);
                 setShowMobileView(true);
             }
         } catch (err) {
@@ -202,6 +220,9 @@ const AdminChat = () => {
     const handleBackToUsers = () => setShowMobileView(false);
 
     const uniqueUsers = [...new Map(users.map(u => [u._id, u])).values()];
+
+
+
 
     return (
         <div className="admin-chat-app">

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
-import '../index.css';
+// import '../index.css';
 import { Link, useNavigate } from "react-router-dom";
 // import { GoogleLogin } from "@react-oauth/google";
 // import { jwtDecode } from 'jwt-decode';
@@ -118,7 +118,7 @@ const SignUp = ({ onSignUp }) => {
 
     useEffect(() => {
         const setSignHeight = () => {
-            const height = window.innerHeight - 60;
+            const height = window.innerHeight - 0;
             const signElement = document.querySelector(".sign");
 
             if (signElement) {
