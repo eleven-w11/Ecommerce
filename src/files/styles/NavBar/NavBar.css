@@ -61,6 +61,7 @@ nav .nav-logo {
     width: 30%;
     height: 100%;
     transition: transform 0.3s ease;
+    /* background-color: turquoise; */
 }
 
 nav .nav-logo:hover {
@@ -667,7 +668,7 @@ nav .default-user-profile {
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 610px) {
 
     .footer-brand h1,
     nav .nav-logo h1 {
@@ -687,6 +688,14 @@ nav .default-user-profile {
     }
 }
 
+@media (max-width: 522px) {
+
+    .footer-brand h1,
+    nav .nav-logo h1 {
+        font-size: 25px;
+    }
+}
+
 @media (max-width: 450px) {
 
     .slidemenu {
@@ -695,11 +704,17 @@ nav .default-user-profile {
 
 }
 
+@media (max-width: 436px) {
+
+    nav .nav-logo {
+        width: 40%;
+    }
+}
+
 @media (max-width: 380px) {
 
-    .footer-brand h1,
-    nav .nav-logo h1 {
-        font-size: 25px;
+    nav .nav-logo {
+        width: 50%;
     }
 
     nav .location-account-search-cart .search-hide {
@@ -741,3 +756,7 @@ nav .default-user-profile {
 .search-item-debug li {
     list-style-type: disc;
 }
+
+/* nav logo */
+/* 609 */
+/* 522 */
