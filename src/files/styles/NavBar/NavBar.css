@@ -5,7 +5,7 @@ nav {
     position: fixed;
     top: 0;
     background-color: #faf7f2;
-    z-index: 100;
+    z-index: 30;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -383,6 +383,7 @@ nav .default-user-profile {
     left: -450px;
     /* Match negative position with width */
     background-color: whitesmoke;
+    background-color: crimson;
     transition: left 0.3s ease-in-out;
     z-index: 35;
     padding: 14px 20px 20px 20px;
