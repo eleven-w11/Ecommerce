@@ -384,7 +384,7 @@ nav .default-user-profile {
     left: -450px;
     /* Match negative position with width */
     background-color: whitesmoke;
-    background-color: crimson;
+    /* background-color: crimson; */
     transition: left 0.3s ease-in-out;
     z-index: 35;
     padding: 14px 20px 20px 20px;
