@@ -108,7 +108,7 @@ const BestSellingProducts = () => {
                                         ) : (
                                             <p className="product-price">${product.product_price}</p>
                                         )}
-                                        <p>{product.id}</p>
+                                        {/* <p>{product.id}</p> */}
                                         <Link to={`/product/${product._id}`}>
                                             Shop Now
                                         </Link>

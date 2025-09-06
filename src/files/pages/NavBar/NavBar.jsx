@@ -226,9 +226,12 @@ const NavBar = ({ Authentication }) => {
                     <li className='nav-logo'><Link to="/"><h1>WEB<span>V</span>ERSE</h1></Link></li>
                     <li className="location-account-search-cart">
                         <div className='userlocation-hide'>
-                            {country ? <Link to="/UserLocation" className='country'>{country}</Link> : <Link to="/UserLocation">
-                                <img src={LocationIcon} className='locationicon' alt="" />
-                            </Link>}
+                            {country ?
+                                <Link to="/UserLocation" className='country'>{country}</Link>
+                                :
+                                <Link to="/UserLocation">
+                                    <img src={LocationIcon} className='locationicon' alt="" />
+                                </Link>}
                         </div>
                         <div className='userprofile-hide'>
                             {Authentication ? (

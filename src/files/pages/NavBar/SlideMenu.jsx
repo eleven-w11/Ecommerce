@@ -2,6 +2,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import MenuIcon from "../../images/menu.png";
+import SearchIcon from "../../images/search.png";
+import UserIcon from "../../images/userIcon.png";
+import LocationIcon from "../../images/location.png";
 
 
 const SlideMenu = ({
@@ -27,6 +30,7 @@ const SlideMenu = ({
                         {Authentication ? (
                             <Link to="/UserProfile" ref={(el) => (linksRef.current[19] = el)}>
                                 {loading || !userData ? (
+                                    // <img className='default-user-profile' src="./user.png" alt="Default" />
                                     <img className='default-user-profile' src="./user.png" alt="Default" />
                                 ) : (
                                     <img crossOrigin="anonymous" src={userData.image} alt="User" className='userimg' />
@@ -34,7 +38,9 @@ const SlideMenu = ({
                             </Link>
                         ) : (
                             <Link to="/SignIn" ref={(el) => (linksRef.current[19] = el)}>
-                                <span className="material-symbols-outlined">account_circle</span>
+                                {/* <span className="material-symbols-outlined">account_circle</span> */}
+                                <img src={UserIcon} className='icon usericon' alt="" />
+
                             </Link>
                         )}
                     </li>
@@ -45,12 +51,16 @@ const SlideMenu = ({
                             </Link>
                         ) : (
                             <Link to="/UserLocation" ref={(el) => (linksRef.current[18] = el)}>
-                                <span className="material-symbols-outlined">add_location</span>
+                                {/* <span className="material-symbols-outlined">add_location</span> */}
+                                <img src={LocationIcon} className='locationicon' alt="" />
+
                             </Link>
                         )}
                     </li>
                     <li className='search-show' onClick={handleToggle} ref={(el) => (linksRef.current[20] = el)}>
-                        <span className="material-symbols-outlined">search</span>
+                        {/* <span className="material-symbols-outlined">search</span> */}
+                        <img src={SearchIcon} className='icon searchicon' alt="" />
+
                     </li>
                 </div>
             </div>
