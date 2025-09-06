@@ -267,6 +267,7 @@ const NavBar = ({ Authentication }) => {
             <SlideMenu
                 isToggle={isToggle}
                 handleToggle={handleToggle}
+                toggleSearch={toggleSearch}
                 Authentication={Authentication}
                 loading={loading}
                 userData={userData}

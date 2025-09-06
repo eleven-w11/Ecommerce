@@ -431,6 +431,8 @@ nav .default-user-profile {
     justify-content: end;
     /* background-color: lightgray; */
 }
+
+.slidemenu .mob_icons .search-show img,
 .slidemenu .mob_icons a img {
     width: 24px;
     margin: 0 10px 0 0;

@@ -8,7 +8,7 @@ import LocationIcon from "../../images/location.png";
 
 
 const SlideMenu = ({
-    isToggle, handleToggle,
+    isToggle, handleToggle, toggleSearch,
     Authentication, loading, userData,
     country, activePath, linksRef,
     showManDropdown, showWomanDropdown,
@@ -57,11 +57,16 @@ const SlideMenu = ({
                             </Link>
                         )}
                     </li>
-                    <li className='search-show' onClick={handleToggle} ref={(el) => (linksRef.current[20] = el)}>
-                        {/* <span className="material-symbols-outlined">search</span> */}
+                    <li className='search-show'
+                        onClick={() => {
+                            handleToggle();
+                            toggleSearch();
+                        }}
+                        ref={(el) => (linksRef.current[20] = el)}
+                    >
                         <img src={SearchIcon} className='icon searchicon' alt="" />
-
                     </li>
+
                 </div>
             </div>
 
