@@ -541,9 +541,19 @@
     }
 
     .search-container .products-grid-container {
-        max-height: fit-content;
+        max-height: none;
         overflow-y: auto;
-        padding-bottom: 15px;
+    }
+
+    .search-container .search-results-container {
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .search-container .products-grid-container {
+        /* max-height: fit-content; */
+        /* overflow-y: auto; */
+        /* padding-bottom: 15px; */
     }
 
     .search-container .products-grid {
