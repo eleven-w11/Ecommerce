@@ -223,7 +223,7 @@
     position: relative;
     /* Added for loader positioning */
     min-height: 300px;
-    /* background-color: red; */
+    background-color: red;
     /* Ensure there's space for the loader */
 }
 
