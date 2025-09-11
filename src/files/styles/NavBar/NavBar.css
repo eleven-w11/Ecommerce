@@ -209,6 +209,10 @@ nav .location-account-search-cart img.icon:active {
     will-change: transform, opacity;
 }
 
+.cart_count:hover .count {
+    transform: scale(1.2);
+}
+
 /* ===== USER IMAGE STYLES ===== */
 nav .country {
     font-weight: 700;
@@ -304,47 +308,6 @@ nav .default-user-profile {
 
 
 
-/* For the cart count badge */
-/* .cart_count {
-    position: relative;
-    display: inline-block;
-}
-
-.count {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background: #ff4757;
-    color: white;
-    border-radius: 50%;
-    width: 18px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-} */
-
-.cart_count:hover .count {
-    transform: scale(1.2);
-    /* background: #ff6b81; */
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -407,7 +370,6 @@ nav .default-user-profile {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: red;
 }
 
 .slidemenu .close_menu {
@@ -417,7 +379,6 @@ nav .default-user-profile {
     justify-content: start;
     cursor: pointer;
 
-    /* background-color: lightpink; */
 }
 
 .slidemenu .close_menu img {
@@ -430,19 +391,13 @@ nav .default-user-profile {
     display: flex;
     align-items: center;
     justify-content: end;
-    background-color: lightgray;
+    /* background-color: chartreuse; */
 }
 
-/* .slidemenu .mob_icons .search-show img,
-.slidemenu .mob_icons a img {
-    width: 24px;
-    transition: all 0.3s ease;
-    will-change: transform, opacity;
-    background-color: greenyellow;
-} */
+
+
+
 .default-user-profile {
-    /* width: 23px; */
-    /* background-color: fuchsia; */
     width: 23px;
     background-color: palevioletred;
 }
@@ -661,7 +616,6 @@ nav .default-user-profile {
     display: none;
 }
 
-
 @media (max-width: 700px) {
     nav .location-account-search-cart .userlocation-hide {
         display: none;
@@ -669,6 +623,10 @@ nav .default-user-profile {
 
     .slidemenu .userlocation-show {
         display: block;
+    }
+
+    .slidemenu .userlocation-show .locationicon {
+        width: 26px;
     }
 }
 
@@ -685,6 +643,11 @@ nav .default-user-profile {
 
     .slidemenu .userprofile-show {
         display: block;
+        margin-right: 10px;
+    }
+
+    .slidemenu .userprofile-show .usericon {
+        width: 24px;
     }
 
     .slidemenu {
@@ -721,12 +684,21 @@ nav .default-user-profile {
         width: 50%;
     }
 
+    .slidemenu .userprofile-show {
+        margin-right: 0px;
+    }
+
     nav .location-account-search-cart .search-hide {
         display: none;
     }
 
     .slidemenu .search-show {
         display: block;
+    }
+
+    .slidemenu .search-show .searchicon {
+        width: 25px;
+        margin-top: 3px;
     }
 
     .slidemenu .mob_icons {

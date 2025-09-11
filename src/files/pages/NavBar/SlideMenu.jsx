@@ -5,6 +5,8 @@ import MenuIcon from "../../images/menu.png";
 import SearchIcon from "../../images/search.png";
 import UserIcon from "../../images/userIcon.png";
 import LocationIcon from "../../images/location.png";
+import '../../styles/NavBar/NavBar.css';
+
 
 
 const SlideMenu = ({
