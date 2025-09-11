@@ -525,9 +525,25 @@
 }
 
 @media (max-width: 480px) {
+    .search-container .search-results-container {
+        /* width: 100%; */
+        /* height: calc(100vh - 70px); */
+        background: yellow;
+        /* overflow-y: auto; */
+    }
+
+    .search-container .search-results-grid {
+        /* display: flex; */
+        /* max-width: 1200px; */
+        /* margin: 0 auto; */
+        /* padding: 20px; */
+        /* min-height: 100%; */
+    }
+
     .search-container .products-grid-container {
         max-height: fit-content;
-        overflow-y: hidden;
+        overflow-y: auto;
+        padding-bottom: 15px;
     }
 
     .search-container .products-grid {
