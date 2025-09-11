@@ -223,7 +223,7 @@ nav .userimg {
 
 .slidemenu .default-user-profile,
 nav .default-user-profile {
-    width: 35px;
+    /* width: 35px; */
 }
 
 /* ===== ANIMATIONS ===== */
@@ -407,7 +407,7 @@ nav .default-user-profile {
     display: flex;
     align-items: center;
     justify-content: center;
-    /* background-color: red; */
+    background-color: red;
 }
 
 .slidemenu .close_menu {
@@ -430,17 +430,21 @@ nav .default-user-profile {
     display: flex;
     align-items: center;
     justify-content: end;
-    /* background-color: lightgray; */
+    background-color: lightgray;
 }
 
-.slidemenu .mob_icons .search-show img,
+/* .slidemenu .mob_icons .search-show img,
 .slidemenu .mob_icons a img {
     width: 24px;
-    margin: 0 10px 0 0;
-    cursor: pointer;
     transition: all 0.3s ease;
-    transform-origin: center;
     will-change: transform, opacity;
+    background-color: greenyellow;
+} */
+.default-user-profile {
+    /* width: 23px; */
+    /* background-color: fuchsia; */
+    width: 23px;
+    background-color: palevioletred;
 }
 
 .slidemenu ul {

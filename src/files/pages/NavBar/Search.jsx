@@ -13,10 +13,12 @@ const Search = ({ onClose }) => {
     const [activeSuggestion, setActiveSuggestion] = useState(null);
     const [popularList, setPopularList] = useState([
         "T Shirt", "Jeans", "Cap", "Polo", "Jacket",
+        "hoodie", "Sweaters", "Shorts","T Shirt", "Jeans", "Cap", "Polo", "Jacket",
         "hoodie", "Sweaters", "Shorts"
     ]);
     const [originalList] = useState([
         "T Shirt", "Jeans", "Cap", "Polo", "Jacket",
+        "hoodie", "Sweaters", "Shorts","T Shirt", "Jeans", "Cap", "Polo", "Jacket",
         "hoodie", "Sweaters", "Shorts"
     ]);
 
@@ -209,7 +211,7 @@ const Search = ({ onClose }) => {
                         <div className="suggestions-section">
                             <h4 className="section-title">Popular Searches</h4>
                             <div className="suggestions-list">
-                                {popularList.slice(0, 8).map((suggestion, index) => (
+                                {popularList.slice(0, 16).map((suggestion, index) => (
                                     <button
                                         key={index}
                                         className={`suggestion-item ${activeSuggestion === suggestion ? "active-suggestion" : ""}`}

@@ -42,22 +42,8 @@ update add to cart in productview , also
 
 
 
-
-
-
-
-
-best selling home page 
-top products home page 
-best selling page
-top products page
-userprofile page
-cart page
-
-
-
-jb search pr click hoto navbar ko gsap ka through opper ki side pr slide krdo or search ko zysa index ka throught 
-niycha ki janib slide kr do ( means us ki position ki trf) or close pr click krna pr ic ka reverse kro 
+.search-results-container
+ki hight set krni ha js ka through ?px sa upper work kra , ?px sa below css mn height set ha
 
 
 
@@ -66,73 +52,352 @@ niycha ki janib slide kr do ( means us ki position ki trf) or close pr click krn
 
 
 
-{
-  "_id": {
-    "$oid": "67b039830825e8bd03d8928a"
-  },
-  "product_name": "Polo Shirt",
-  "product_price": 89,
-  "id": "bsp-2",
-  "p_type": "Men's Casual Wear",
-  "product_details": [
-    "Material: Breathable cotton blend",
-    "Sleeves: Short sleeves",
-    "Fit: Regular fit",
-    "Collar: Classic polo collar with contrast inner lining",
-    "Occasion: Casual, sports, outings"
-  ],
-  "p_des": "A stylish green polo shirt with a classic collar and buttoned placket, perfect for everyday wear.",
-  "images": [
-    {
-      "pi_1": "Bsp-1_green.png",
-      "color_code": "#166d56",
-      "color": "green"
-    },
-    {
-      "pi_2": "Bsp-1_gray.png",
-      "color_code": "#474747",
-      "color": "gray"
-    },
-    {
-      "pi_3": "Bsp-1_blue.png",
-      "color_code": "#00a9f6",
-      "color": "blue"
-    }
-  ],
-  "sizes": {
-    "XS": true,
-    "S": true,
-    "M": false,
-    "L": true,
-    "XL": true,
-    "XXL": true,
-    "XXXL": false
-  },
-  "tags": [
-    "modern polo shirt",
-    "stylish t-shirt",
-    "short sleeve",
-    "stand collar",
-    "buttoned placket",
-    "contrast placket design",
-    "casual wear",
-    "trendy men's fashion",
-    "comfortable fabric",
-    "breathable material",
-    "green polo",
-    "gray polo",
-    "blue polo",
-    "fashionable outfit",
-    "summer wear",
-    "sporty look",
-    "casual elegance"
-  ],
-  "for_page": [
-    {
-      "fp-1": "man top"
-    }
-  ],
-  "width": "190px"
+
+
+
+
+
+
+
+// src/components/NavBar/Search.jsx
+import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import { gsap } from "gsap";
+
+const Search = ({ onClose }) => {
+    const [query, setQuery] = useState("");
+    const [results, setResults] = useState([]);
+    const [randomProducts, setRandomProducts] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingRandom, setIsLoadingRandom] = useState(true);
+    const [activeSuggestion, setActiveSuggestion] = useState(null);
+    const [popularList, setPopularList] = useState([
+        "T Shirt", "Jeans", "Cap", "Polo", "Jacket",
+        "hoodie", "Sweaters", "Shorts", "T Shirt", "Jeans", "Cap", "Polo", "Jacket",
+        "hoodie", "Sweaters", "Shorts"
+    ]);
+    const [originalList] = useState([...popularList]);
+
+    const searchInputRef = useRef(null);
+    const timeoutRef = useRef(null);
+    const containerRef = useRef(null);
+
+    useEffect(() => { fetchRandomProducts(); }, []);
+    const fetchRandomProducts = async () => {
+        try {
+            setIsLoadingRandom(true);
+            const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/products`);
+            const shuffled = [...res.data].sort(() => 0.5 - Math.random());
+            setRandomProducts(shuffled.slice(0, 6));
+        } catch {
+            setRandomProducts([]);
+        } finally {
+            setIsLoadingRandom(false);
+        }
+    };
+
+    useEffect(() => {
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        if (!query.trim()) {
+            setResults([]); setIsLoading(false); return;
+        }
+        setIsLoading(true);
+        timeoutRef.current = setTimeout(async () => {
+            try {
+                const res = await axios.get(
+                    `${process.env.REACT_APP_API_BASE_URL}/api/products/search?query=${encodeURIComponent(query)}`
+                );
+                setResults(res.data.data || []);
+            } catch {
+                setResults([]);
+            } finally {
+                setIsLoading(false);
+            }
+        }, 300);
+        return () => clearTimeout(timeoutRef.current);
+    }, [query]);
+
+    useEffect(() => { searchInputRef.current?.focus(); }, []);
+    useEffect(() => {
+        if (containerRef.current) {
+            gsap.fromTo(containerRef.current,
+                { y: "-100%", opacity: 0, zIndex: -1 },
+                { y: "0%", opacity: 1, zIndex: 999, duration: 0.5, ease: "power3.out" });
+        }
+        return () => {
+            if (containerRef.current) {
+                gsap.to(containerRef.current, {
+                    y: "-100%", opacity: 0, zIndex: -1,
+                    duration: 0.4, ease: "power3.in",
+                });
+            }
+        };
+    }, []);
+
+    const handleSuggestionClick = s => {
+        setQuery(s);
+        setActiveSuggestion(s);
+        setPopularList(prev => [s, ...prev.filter(x => x !== s)]);
+    };
+    const handleClearActive = () => {
+        setActiveSuggestion(null);
+        setQuery("");
+        setPopularList(originalList);
+        fetchRandomProducts();
+    };
+    const handleKeyDown = e => e.key === "Escape" && onClose?.();
+
+    return (
+        <div className="search-container" ref={containerRef}>
+            <div className="search-bar-container">
+                <div className="search-bar">
+                    <input
+                        ref={searchInputRef}
+                        type="text"
+                        placeholder="Search products..."
+                        value={query}
+                        onChange={e => setQuery(e.target.value)}
+                        className="search-input"
+                        onKeyDown={handleKeyDown}
+                    />
+                    <button className="cancel-btn" onClick={onClose} aria-label="Close search">
+                        <span className="close-search">×</span>
+                    </button>
+                </div>
+
+                <div className="search-results-container">
+                    <div className="search-results-grid">
+                        {/* Popular Searches */}
+                        <div className="suggestions-section">
+                            <h4 className="section-title">Popular Searches</h4>
+                            <div className="suggestions-list">
+                                {popularList.slice(0, 16).map((s, i) => (
+                                    <button
+                                        key={i}
+                                        className={`suggestion-item ${activeSuggestion === s ? "active-suggestion" : ""}`}
+                                        onClick={() => activeSuggestion === s ? handleClearActive() : handleSuggestionClick(s)}
+                                    >
+                                        <div className="suggestion-item-content">
+                                            <span className="suggestion-icon">🔍</span>
+                                            <span className="suggestion-text">
+                                                {i + 1}. {s}
+                                            </span>
+                                        </div>
+                                        {activeSuggestion === s && (
+                                            <div className="parent-clear-suggestion-icon">
+                                                <span
+                                                    className="clear-suggestion-icon"
+                                                    onClick={e => { e.stopPropagation(); handleClearActive(); }}
+                                                >
+                                                    ×
+                                                </span>
+                                            </div>
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+
+                        {/* Products Section */}
+                        <div className="search-products-section">
+                            {isLoading ? (
+                                <div className="fp-loader-container">
+                                    <div className="loader">
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                    </div>
+                                    <p>Searching products...</p>
+                                </div>
+                            ) : results.length > 0 ? (
+                                <>
+                                    <h4 className="section-title">Products ({results.length})</h4>
+                                    <div className="search-products-grid-container">
+                                        <div className="search-products-grid">
+                                            {results.slice(0, 6).map(p => {
+                                                const imgObj = p.images?.[0];
+                                                const imgKey = imgObj && Object.keys(imgObj).find(k => k.startsWith("pi_"));
+                                                const img = imgObj?.[imgKey];
+                                                return (
+                                                    <Link key={p._id} to={`/product/${p._id}`} className="search-item" onClick={onClose}>
+                                                        <img src={`/images/${img}`} alt={p.product_name}
+                                                            onError={e => e.target.src = "/images/placeholder.jpg"}
+                                                            className="search-item-image" />
+                                                        <div className="search-item-details">
+                                                            <h3>{p.product_name}</h3>
+                                                            <p className="search-item-price">${(p.product_price || 0).toFixed(2)}</p>
+                                                        </div>
+                                                    </Link>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                    {results.length > 6 && (
+                                        <div className="search-view-all-results">
+                                            <Link to={`/search?q=${encodeURIComponent(query)}`} onClick={onClose}>
+                                                View all {results.length} results
+                                            </Link>
+                                        </div>
+                                    )}
+                                </>
+                            ) : query ? (
+                                <div className="search-no-results">
+                                    <p>No products found for "{query}"</p>
+                                    <p className="try-different">Try a different search term</p>
+                                </div>
+                            ) : isLoadingRandom ? (
+                                <div className="fp-loader-container">
+                                    <div className="loader">
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                    </div>
+                                </div>
+                            ) : randomProducts.length > 0 ? (
+                                <>
+                                    <h4 className="section-title">Featured Products</h4>
+                                    <div className="search-products-grid-container">
+                                        <div className="search-products-grid">
+                                            {randomProducts.map(p => {
+                                                const imgObj = p.images?.[0];
+                                                const imgKey = imgObj && Object.keys(imgObj).find(k => k.startsWith("pi_"));
+                                                const img = imgObj?.[imgKey];
+                                                return (
+                                                    <Link key={p._id} to={`/product/${p._id}`} className="search-item" onClick={onClose}>
+                                                        <img src={`/images/${img}`} alt={p.product_name}
+                                                            onError={e => e.target.src = "/images/placeholder.jpg"}
+                                                            className="search-item-image" />
+                                                        <div className="search-item-details">
+                                                            <h3>{p.product_name}</h3>
+                                                            <p className="search-item-price">${(p.product_price || 0).toFixed(2)}</p>
+                                                        </div>
+                                                    </Link>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="search-welcome">
+                                    <p>Start typing to search for products</p>
+                                    <p className="try-examples">Try: T-Shirts, Jeans, Shoes</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Search;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.search-bar-container {
+    width: 100%;
+    /* height: ; */
+    background-color: whitesmoke;
+}
+
+.search-bar {
+    width: 100%;
+    height: 70px;
+    /* background-color: lightcoral; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-bar input {
+    width: 85%;
+    /* height: 40px; */
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    padding: 10px 15px;
+    font-size: 16px;
+}
+
+.search-bar button {
+    /* padding: 10px 20px; */
+    /* background-color: tomato; */
+    /* border-radius: 50%; */
+    font-size: 40px;
+    font-weight: 400;
+    background-color: transparent;
+    border: none;
+    margin: 0 0 10px 10px;
+}
+
+.search-results-container {
+    width: 100%;
+    /* height: calc(100vh - 70px); */
+    /* background-color: lightgreen; */
+    /* overflow-y: auto; */
+}
+
+.search-bar-container .search-results-grid {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
 }
 
 
@@ -159,112 +424,53 @@ niycha ki janib slide kr do ( means us ki position ki trf) or close pr click krn
 
 
 
+.search-bar-container .suggestions-section {
+    width: 25%;
+    height: 500px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    overflow: hidden;
+    padding: 10px;
+}
 
+.suggestions-section .section-title {
+    width: 100%;
+    padding: 0px 0 5px 0;
+    border-bottom: 2px solid blue;
+}
 
+.suggestions-section .suggestions-list {
+    width: 100%;
+    flex: 1;
+    /* display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start; */
+    overflow-y: auto;
+    /* background-color: red; */
+    margin: 10px 0 0 0;
+    scrollbar-width: thin;
+    scrollbar-color: #888 transparent;
+}
 
+.suggestions-section .suggestions-list button {
+    width: 98%;
+    height: 40px;
+    /* display: flex;
+    align-items: center;
+    justify-content: flex-start; */
+    margin: 5px 0;
+    padding: 0 10px;
+    /* box-sizing: border-box; */
+    text-align: left;
 
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-const renderProductItem = (product) => {
-    const imageObj = product.images?.[0];
-    if (!imageObj) return null;
-
-    const imageKey = Object.keys(imageObj).find((key) =>
-        key.startsWith("pi_")
-    );
-    const imageToShow = imageObj[imageKey];
-
-    // Get match source info (backend se aya hua)
-    const matchInfo = product.matchSource?.length
-        ? `Matched in: ${product.matchSource.join(", ")}`
-        : "";
-
-    return (
-        <Link
-            key={product._id}
-            to={`/product/${product._id}`}
-            className="search-item"
-            onClick={onClose}
-        >
-            <img
-                src={`/images/${imageToShow}`}
-                alt={product.product_name}
-                className="search-item-image"
-                onError={(e) => {
-                    e.target.src = "/images/placeholder.jpg";
-                }}
-            />
-            <div className="search-item-details">
-                <h3>{product.product_name}</h3>
-                <p className="search-item-price">
-                    ${(product.product_price || 0).toFixed(2)}
-                </p>
-                {matchInfo && (
-                    <p className="search-item-match">{matchInfo}</p>
-                )}
-            </div>
-        </Link>
-    );
-};
-
-
-
-
-
-
-
-
-Products (16)
-Polo Shirt image
-Polo Shirt
-$89.00
-
-Matched In: product_name, p_des, tags
-t: product_name, p_des, tags: modern polo shirt
-shirts:
-
-Crew Neck T-Shirt image
-Crew Neck T-Shirt
-$49.00
-
-Matched In: product_name, p_des, tags
-t: product_name, p_des, tags: cotton tshirt
-shirts:
-
-Pullover Hoodie image
-Pullover Hoodie
-$49.00
-
-Matched In: p_des, tags
-t: p_des, tags: winter fashion
-shirts:
-
-Baseball Cap image
-Baseball Cap
-$49.00
-
-Matched In: p_des, tags
-t: p_des, tags: Casual Hat
-shirts:
-
-Sleeve T-Shirt image
-Sleeve T-Shirt
-$49.00
-
-Matched In: product_name, p_des, tags
-t: product_name, p_des, tags: raglan t-shirt
-shirts:
+/* ✅ Firefox */
+.suggestions-section .suggestions-list {}
 
 
 
@@ -285,38 +491,77 @@ shirts:
 
 
 
-db.best_selling_product.updateOne(
-  { _id: ObjectId("680e820cd918b61a7bdea30a") },
-  {
-    $set: {
-      for_search: ["t shirt", "shirt", "polo shirt"]
-    }
-  }
-)
 
-db.best_selling_product.updateOne(
-  { _id: ObjectId("67b22a6e05b62b307bf47fa8") },
-  {
-    $set: {
-      for_search: ["Denim Jeans", "Jeans"]
-    }
-  }
-)
 
-db.best_selling_product.updateOne(
-  { _id: ObjectId("67b22bf705b62b307bf47fae") },
-  {
-    $set: {
-      for_search: ["Hoodie", "Winter Wear"]
-    }
-  }
-)
 
-db.best_selling_product.updateOne(
-  { _id: ObjectId("67b229ad05b62b307bf47fa6") },
-  {
-    $set: {
-      for_search: ["Jacket", "Winter Jacket"]
-    }
-  }
-)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.search-bar-container .search-products-section {
+    width: 80%;
+    /* background-color: red; */
+    padding: 0px 20px;
+
+}
+
+.search-bar-container .search-products-grid-container {
+    width: 100%;
+    /* display: flex; */
+    /* align-items: center; */
+    /* justify-content: center; */
+    /* padding: 20px; */
+
+}
+
+.search-bar-container .search-products-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+
+    /* ✅ Center cards horizontally */
+    justify-content: center;
+
+    /* ✅ Center cards vertically (agar parent ki fixed height ho) */
+    align-content: start;
+    /* align-items: end;
+    al
+    justify-content: center; */
+    /* gap: 30px; */
+    /* margin: 10px; */
+    /* background-color: lightseagreen; */
+}
+
+.search-bar-container .search-products-section h4 {
+    width: 95%;
+    padding: 0 0 5px 0;
+    border-bottom: 1.9px solid blue;
+}
+
+.search-products-grid .search-item {
+    width: 240px;
+    height: 220px;
+    margin: 10px;
+    background-color: lightgray;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.search-bar-container img {
+    width: 100px;
+}
