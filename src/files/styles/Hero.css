@@ -6,13 +6,26 @@
 }
 
 .hero-image {
+    width: 100%;
+    height: 100%;
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
     object-fit: cover;
-    transition: transform 1s ease-in-out;
+    transition: transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 1.5s ease;
+    opacity: 0;
+    transform: translateX(100%);
+    will-change: transform, opacity;
+}
+
+.hero-image.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.hero-image.exit {
+    transform: translateX(-100%);
+    opacity: 0;
 }
 
 .hero-data-style-2 {
@@ -22,23 +35,28 @@
     align-items: center;
     justify-content: center;
     position: absolute;
-    top: 50%;
+    top: 45%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
     border-radius: 20px;
-    background-color: rgba(0, 0, 0, 0.459);
     color: white;
+    backdrop-filter: blur(5px);
+    background-color: #00000061;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.18);
 }
 
 .LOOKBEAUTIFUL {
     font-size: 40px;
     font-family: "Goldman", serif;
+    opacity: 0.9;
+    animation: fadeIn 1s ease-out;
 
 }
 
 .THISSEASON {
-    width: 550px;
+    width: 540px;
     position: relative;
     display: flex;
     align-items: center;
@@ -48,10 +66,24 @@
     margin: -2px 0 -5px 0;
     font-weight: 400;
     font-style: normal;
-    /* font-family: "Roboto", serif; */
-    /* font-family: "Kablammo", serif; */
     font-family: "Monoton", serif;
 }
+
+
+
+.animated-season {
+    position: relative;
+    background: linear-gradient(to left bottom, #d16ba5, #c777b9, #ba83ca, #aa8fd8, #9a9ae1, #90a8e8, #8ab5eb, #8bc1ec, #9cd2ec, #b6e1ed, #d3eef1, #f2fbfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-left: 30px;
+}
+
+.season-icon {
+    width: 50px;
+    margin-left: 20px;
+}
+
 
 .THEPERFECTCHOICE {
     font-size: 40px;
@@ -59,78 +91,37 @@
     font-family: "Goldman", serif;
 }
 
-.animated-season {
-    position: absolute;
-    /* top: 0px; */
-    left: 200px;
-    /* transform: translate(-50%, -50%); */
-}
 
-
-
-.all_button a {
+.hero-button a {
+    width: 150px;
+    padding: 10px 0;
     display: inline-block;
-    padding: 10px 30px;
     font-size: 15px;
     color: black;
     cursor: pointer;
-    position: relative;
     background-color: #c8e5ff;
     text-decoration: none;
-    overflow: hidden;
-    z-index: 1;
-    font-family: inherit;
     border-radius: 5px;
-    /* font-family: "Monoton", serif; */
-    /* font-family: "Goldman", serif; */
     font-family: "Roboto", serif;
 }
 
-.all_button a::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: white;
-    transform: translateX(-100%);
-    transition: all .3s;
-    z-index: -1;
-}
 
-.all_button a:hover {
-    color: black;
-}
-
-.all_button a:hover::before {
-    transform: translateX(0);
-}
-
-.all_button .gollden {
+.hero-button .gollden {
     background-color: rgb(240, 218, 179);
 }
 
-.all_button .gollden::before {
+.hero-button .gollden::before {
     background-color: white;
 }
 
-.all_button .gollden:hover {
+.hero-button .gollden:hover {
     color: black;
-    /* color: #aec5c4; */
-    /* color: #d3c0a7; */
-    /* color: #574d45; */
 }
 
 .hero-button .gollden {
     margin: 0 0 0 30px;
 }
 
-.animated-season {
-    background: linear-gradient(to left bottom, #d16ba5, #c777b9, #ba83ca, #aa8fd8, #9a9ae1, #90a8e8, #8ab5eb, #8bc1ec, #9cd2ec, #b6e1ed, #d3eef1, #f2fbfa);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
 
 @media (max-width: 800px) {
     .hero-data-style-2 {
@@ -143,16 +134,12 @@
         width: 420px;
     }
 
-    .animated-season {
-        left: 150px;
-    }
-
 }
 
 
 @media (max-width: 600px) {
     .hero {
-        height: 370px;
+        height: 470px;
     }
 
     .hero-image {
@@ -162,7 +149,8 @@
 
     .hero-data-style-2 {
         width: 85%;
-        height: 80%;
+        height: 60%;
+        top: 55%;
     }
 
     .LOOKBEAUTIFUL {
@@ -170,50 +158,71 @@
     }
 
     .THISSEASON {
-        width: 330px;
+        width: 350px;
         font-size: 40px;
         margin: 3px 0;
     }
 
-    .animated-season {
-        left: 120px;
+    .season-icon {
+        width: 30px;
+        margin-left: 20px;
     }
+
 
     .THEPERFECTCHOICE {
         font-size: 25px;
     }
 
-    .all_button a {
+    .hero-button a {
         font-size: 13px;
-        padding: 10px 20px;
+        width: 110px;
     }
 
 
 }
 
-@media (max-width: 420px) {
+@media (max-width: 440px) {
 
     .LOOKBEAUTIFUL {
         font-size: 22px;
     }
 
     .THISSEASON {
-        width: 240px;
+        width: 260px;
         font-size: 30px;
-        margin: 25px 0;
-    }
-
-    .static-this {
-        position: absolute;
-        left: 2px;
+        margin: 10px 0;
     }
 
     .animated-season {
-        left: 90px;
+        margin-left: 12px;
+        letter-spacing: 0.1em;
+    }
+
+    .season-icon {
+        width: 25px;
+        margin-left: 10px;
     }
 
     .THEPERFECTCHOICE {
         font-size: 22px;
         flex-direction: column;
+    }
+
+    .hero-button a {
+        width: 90px;
+        padding: 7px 0;
+    }
+}
+
+@media (max-width: 340px) {
+    .THISSEASON {
+        width: 240px;
+    }
+    .animated-season {
+        margin-left: 10px;
+        letter-spacing: 0em;
+    }
+    .season-icon {
+        margin-left: 8px;
     }
 }

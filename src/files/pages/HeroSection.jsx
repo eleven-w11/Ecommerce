@@ -17,13 +17,29 @@ import heroMob4 from "../images/hero-ecommerce-mob-1.webp";
 import heroMob5 from "../images/hero-ecommerce-mob-2.webp";
 import heroMob6 from "../images/hero-ecommerce-mob-3.webp";
 
+// 👇 Season icons import karo
+import winterIcon from "../images/WINTER.png";
+import summerIcon from "../images/SUMMER.png";
+import autumnIcon from "../images/AUTUMN.png";
+import springIcon from "../images/SPRING.png";
+
 const seasons = ["WINTER", "SUMMER", "AUTUMN", "SPRING"];
+
+// 👇 Season images map
+const seasonImages = {
+    WINTER: winterIcon,
+    SUMMER: summerIcon,
+    AUTUMN: autumnIcon,
+    SPRING: springIcon,
+};
 
 const TestHero = () => {
     const [activeIndex, setActiveIndex] = useState(0);
     const [activeSeason, setActiveSeason] = useState(0);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
     const seasonRef = useRef(null);
+    const iconRef = useRef(null);
+
 
     const desktopImages = [heroImage1, heroImage2, heroImage3, heroImage4, heroImage5, heroImage6];
     const mobileImages = [heroMob1, heroMob2, heroMob3, heroMob4, heroMob5, heroMob6];
@@ -49,7 +65,8 @@ const TestHero = () => {
 
     useEffect(() => {
         const seasonInterval = setInterval(() => {
-            gsap.to(seasonRef.current, {
+            // Dono refs ek sath animate karna
+            gsap.to([seasonRef.current, iconRef.current], {
                 y: -20,
                 opacity: 0,
                 duration: 0.8,
@@ -57,7 +74,7 @@ const TestHero = () => {
                 onComplete: () => {
                     setActiveSeason((prev) => (prev + 1) % seasons.length);
                     gsap.fromTo(
-                        seasonRef.current,
+                        [seasonRef.current, iconRef.current],
                         { y: 20, opacity: 0 },
                         { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }
                     );
@@ -67,6 +84,7 @@ const TestHero = () => {
 
         return () => clearInterval(seasonInterval);
     }, []);
+
 
     return (
         <div className="hero">
@@ -88,11 +106,18 @@ const TestHero = () => {
 
                     <p className="THISSEASON">
                         <span className="static-this">THIS</span>
-                        <span className="animated-season" ref={seasonRef}>{seasons[activeSeason]}</span>
+                        <span className="animated-season" ref={seasonRef}>
+                            {seasons[activeSeason]}
+                            <img
+                                src={seasonImages[seasons[activeSeason]]}
+                                alt={seasons[activeSeason]}
+                                className="season-icon"
+                            />
+                        </span>
                     </p>
 
                     <p className="THEPERFECTCHOICE">PERFECT CHOICE</p>
-                    <div className="all_button hero-button">
+                    <div className="hero-button">
                         <Link to="Google" className="white">Shop Now</Link>
                         <Link to="UserLocation" className="gollden">On Sale</Link>
                     </div>
