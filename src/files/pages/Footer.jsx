@@ -34,7 +34,7 @@ const Footer = () => {
         <div className="site-footer">
             <div className="footer-brand">
                 <Link to="/">
-                    <h1>YOUR<span>W</span>EB</h1>
+                    <h1>WEB<span>V</span>ERSE</h1>
                 </Link>
             </div>
             <div className="footer-social-media">

@@ -1,4 +1,3 @@
-/* ===== NAVBAR STYLES ===== */
 nav {
     width: 100%;
     height: 60px;
@@ -29,7 +28,6 @@ nav ul li {
     justify-content: center;
 }
 
-/* ===== MENU ICON ===== */
 nav .menu {
     width: 35%;
     height: 100%;
@@ -56,12 +54,10 @@ nav .menuicon:active {
     transition: transform 0.1s ease;
 }
 
-/* ===== LOGO STYLES ===== */
 nav .nav-logo {
     width: 30%;
     height: 100%;
     transition: transform 0.3s ease;
-    /* background-color: turquoise; */
 }
 
 nav .nav-logo:hover {
@@ -117,7 +113,6 @@ nav .nav-logo:active h1 {
     transition: transform 0.1s ease;
 }
 
-/* ===== RIGHT SIDE ICONS CONTAINER ===== */
 nav .location-account-search-cart {
     width: 35%;
     height: 100%;
@@ -137,7 +132,6 @@ nav .location-account-search-cart div .carticon {
     margin: 0 20px 0 0;
 }
 
-/* ===== INDIVIDUAL ICON STYLES ===== */
 nav .location-account-search-cart .locationicon,
 nav .location-account-search-cart .usericon,
 nav .location-account-search-cart .searchicon,
@@ -194,7 +188,6 @@ nav .location-account-search-cart img.icon:active {
     animation: iconPulse 0.3s ease;
 }
 
-/* ===== CART COUNT STYLES ===== */
 .cart_count {
     position: relative;
 }
@@ -213,7 +206,6 @@ nav .location-account-search-cart img.icon:active {
     transform: scale(1.2);
 }
 
-/* ===== USER IMAGE STYLES ===== */
 nav .country {
     font-weight: 700;
     font-family: sans-serif;
@@ -225,12 +217,6 @@ nav .userimg {
     border-radius: 50%;
 }
 
-.slidemenu .default-user-profile,
-nav .default-user-profile {
-    /* width: 35px; */
-}
-
-/* ===== ANIMATIONS ===== */
 @keyframes cartBounce {
 
     0%,
@@ -266,31 +252,6 @@ nav .default-user-profile {
     100% {
         transform: scale(1);
     }
-}
-
-/* ===== FOOTER BRAND (KEPT FOR REFERENCE) ===== */
-.footer-brand h1 {
-    font-size: 35px;
-    font-family: "Cherry Bomb One", system-ui;
-    font-weight: 400;
-    color: black;
-    margin-bottom: 6px;
-    transition: all 0.3s ease;
-}
-
-.footer-brand:hover h1 {
-    transform: scale(1.03);
-}
-
-.footer-brand h1 span {
-    color: red;
-    font-weight: 900;
-    transition: all 0.3s ease;
-}
-
-.footer-brand:hover h1 span {
-    color: #ff0000;
-    transform: scale(1.1);
 }
 
 
@@ -345,19 +306,15 @@ nav .default-user-profile {
     position: fixed;
     top: 0;
     left: -450px;
-    /* Match negative position with width */
     background-color: whitesmoke;
-    /* background-color: crimson; */
     transition: left 0.3s ease-in-out;
     z-index: 35;
     padding: 14px 20px 20px 20px;
     overflow-y: auto;
     font-family: "Roboto", serif;
-    /* Hardware acceleration for smoother animation */
     transform: translateZ(0);
     backface-visibility: hidden;
     will-change: transform;
-    /* Prevent horizontal scrollbar during animation */
     overflow-x: hidden;
 }
 
@@ -378,7 +335,6 @@ nav .default-user-profile {
     align-items: center;
     justify-content: start;
     cursor: pointer;
-
 }
 
 .slidemenu .close_menu img {
@@ -391,11 +347,7 @@ nav .default-user-profile {
     display: flex;
     align-items: center;
     justify-content: end;
-    /* background-color: chartreuse; */
 }
-
-
-
 
 .default-user-profile {
     width: 23px;
@@ -409,7 +361,6 @@ nav .default-user-profile {
     position: relative;
     display: flex;
     justify-content: center;
-    /* background-color: lightcoral; */
 }
 
 .slidemenu a {
@@ -434,7 +385,6 @@ nav .default-user-profile {
     display: flex;
     align-items: center;
     justify-content: start;
-    /* background-color: red; */
 }
 
 .slidemenu li .man_woman,
@@ -445,21 +395,9 @@ nav .default-user-profile {
 }
 
 .active-link {
-    /* font-weight: bold; */
     color: rgb(85, 85, 255);
-    /* tomato or any highlight color */
-    /* border-bottom: 2px solid currentColor; */
 }
 
-
-/* .slidemenu li{
-    background-color: blueviolet;
-} */
-
-/* .slidemenu li:hover{
-    background-color: gray;
-    border-radius: 20px;
-} */
 .slidemenu li .man_woman {
     cursor: pointer;
 }
@@ -507,24 +445,23 @@ nav .default-user-profile {
 .black-screen {
     width: 100%;
     height: 100vh;
-    position: absolute;
+    position: fixed;
+    top: 0;
+    left: 0;
     background-color: rgba(0, 0, 0, 0.443);
     transition: opacity 0.3s ease;
     z-index: 30;
 }
 
 .black-screen.hidden {
-    width: 0;
-    height: 0;
     opacity: 0;
     pointer-events: none;
 }
 
 .black-screen.visible {
-    /* width: 100%;
-    height: 100vh; */
     opacity: 1;
 }
+
 
 .navline {
     width: 95%;
@@ -535,7 +472,6 @@ nav .default-user-profile {
 
 .navline_1st {
     margin-top: 12px;
-    /* background-color: red; */
 }
 
 .navline_dropdown {
@@ -570,9 +506,6 @@ nav .default-user-profile {
 
 
 
-/* 👇 Responsive Breakpoints 👇 */
-
-/* Rest of your existing styles stay the same */
 
 
 
@@ -732,7 +665,3 @@ nav .default-user-profile {
 .search-item-debug li {
     list-style-type: disc;
 }
-
-/* nav logo */
-/* 609 */
-/* 522 */

@@ -85,6 +85,25 @@ const TestHero = () => {
         return () => clearInterval(seasonInterval);
     }, []);
 
+    const [size, setSize] = useState({
+        width: window.innerWidth,
+        height: window.innerHeight,
+    });
+
+    useEffect(() => {
+        const handleResize = () => {
+            setSize({
+                width: window.innerWidth,
+                height: window.innerHeight,
+            });
+        };
+
+        // resize listener
+        window.addEventListener("resize", handleResize);
+
+        // cleanup
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     return (
         <div className="hero">
@@ -119,7 +138,7 @@ const TestHero = () => {
                     <p className="THEPERFECTCHOICE">PERFECT CHOICE</p>
                     <div className="hero-button">
                         <Link to="Google" className="white">Shop Now</Link>
-                        <Link to="UserLocation" className="gollden">On Sale</Link>
+                        <Link to="UserLocation" className="gollden">{size.width} X {size.height}</Link>
                     </div>
                 </div>
             </div>

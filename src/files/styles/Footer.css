@@ -3,7 +3,6 @@
 .site-footer .footer-social-media ul li,
 .site-footer .footer-social-media ul li a,
 .site-footer .footer-column h4 {
-
     display: flex;
     align-items: center;
     justify-content: center;
@@ -14,11 +13,30 @@
     flex-direction: column;
     background-color: #f7f7f7;
     border-radius: 20px 20px 0 0;
-    /* background-color: ; */
 }
 
-.site-footer .footer-brand {
-    margin: 15px 0 7px 0;
+.footer-brand h1 {
+    font-size: 35px;
+    font-family: "Cherry Bomb One", system-ui;
+    font-weight: 400;
+    color: black;
+    margin-bottom: 6px;
+    transition: all 0.3s ease;
+}
+
+.footer-brand:hover h1 {
+    transform: scale(1.03);
+}
+
+.footer-brand h1 span {
+    color: red;
+    font-weight: 900;
+    transition: all 0.3s ease;
+}
+
+.footer-brand:hover h1 span {
+    color: #ff0000;
+    transform: scale(1.1);
 }
 
 .site-footer .footer-social-media {
@@ -193,6 +211,7 @@
         width: 24px;
         height: 24px;
     }
+
     .site-footer .footer-social-media ul li {
         margin: 0 3px;
     }
