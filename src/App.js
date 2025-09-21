@@ -79,8 +79,8 @@ function App() {
         <Route path="/" element={
           <>
             <TestHero />
-            <BestSellingProducts />
-            <TopProduct />
+            <BestSellingProducts isBestSellingPage={false} />
+            <TopProduct isTopProductsPage={false} />
             <Footer />
           </>
         } />
@@ -90,8 +90,8 @@ function App() {
         <Route path="/UserProfile" element={<UserProfile onSignOut={handleSignOut} />} />
         <Route path='/test' element={<TeSt />} />
         <Route path="/product/:id" element={<ProductView />} />
-        <Route path="/BestSelling" element={<BestSellingProducts />} />
-        <Route path="/TopProducts" element={<TopProduct />} />
+        <Route path="/BestSelling" element={<BestSellingProducts isBestSellingPage={true} />} />
+        <Route path="/TopProducts" element={<TopProduct isTopProductsPage={true} />} />
         <Route path="/Cart" element={<Cart />} />
         <Route path="/ManTop" element={<AllProducts />} />
         <Route path="/ManBottom" element={<AllProducts />} />

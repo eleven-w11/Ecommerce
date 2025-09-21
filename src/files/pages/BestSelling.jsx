@@ -1,10 +1,10 @@
- import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import "../styles/BestSelling.css";
 import { Link } from "react-router-dom";
 import addTocart from "../images/add-to-cart.png";
 
-const BestSellingProducts = () => {
+const BestSellingProducts = ({ isBestSellingPage = false }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -66,13 +66,17 @@ const BestSellingProducts = () => {
   }, []);
 
   return (
-    <div className="best-selling-section">
+    <div
+      className={
+        `best-selling-section
+        ${isBestSellingPage ? "best-selling-section-page" : ""
+        }`}
+    >
       <div className="product-container">
         <h2>Best Selling</h2>
         <div className={products.length > 0 ? "products-grid" : "products-flex"}>
-
           {products.length > 0 ? (
-            products.map(product => {
+            products.map((product) => {
               const hasDiscount = product.dis_product_price !== undefined;
               const firstImage = product.images?.[0]?.pi_1 || "default.jpg";
 
@@ -80,11 +84,11 @@ const BestSellingProducts = () => {
                 <div key={product._id} className="product-card">
                   <div className="product-image-wrapper">
                     <img
-                      // src={`/images/${firstImage}`}
                       src={`${process.env.PUBLIC_URL}/images/${firstImage}`}
                       className="bsp-img"
                       {...(product.width ? { style: { width: product.width } } : {})}
-                      alt={product.product_name} />
+                      alt={product.product_name}
+                    />
                     <img
                       src={addTocart}
                       className="add-to-cart-icon"
@@ -96,22 +100,23 @@ const BestSellingProducts = () => {
                     <h3>{product.product_name}</h3>
                     {hasDiscount ? (
                       <p className="product-price dual-price">
-                        <span className="original-price">${product.product_price}</span>
-                        <span className="discount-price">${product.dis_product_price}</span>
+                        <span className="original-price">
+                          ${product.product_price}
+                        </span>
+                        <span className="discount-price">
+                          ${product.dis_product_price}
+                        </span>
                       </p>
                     ) : (
                       <p className="product-price">${product.product_price}</p>
                     )}
-                    {/* <p>{product.id}</p> */}
-                    <Link to={`/product/${product._id}`}>
-                      Shop Now
-                    </Link>
+                    <Link to={`/product/${product._id}`}>Shop Now</Link>
                   </div>
                 </div>
               );
             })
           ) : (
-            <div className="fp-loader-container">
+            <div className="home-loader-container">
               <div className="loader">
                 <span></span>
                 <span></span>
@@ -122,6 +127,7 @@ const BestSellingProducts = () => {
         </div>
       </div>
     </div>
+
   );
 };
 

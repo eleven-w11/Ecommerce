@@ -303,35 +303,11 @@ const Cart = () => {
         };
     }, [activeId]);
 
-    // useEffect(() => {
-    //     const setSignHeight = () => {
-    //         const totalHeight = window.innerHeight - 60;
-    //         const verticalMargin = window.innerWidth * 0.03; // 10% of width for top/bottom margin
-    //         const horizontalMargin = window.innerWidth * 0.03; // 10% of width for left/right
-
-    //         const adjustedHeight = totalHeight - verticalMargin * 2; // subtract top + bottom margin
-
-    //         const signElement = document.querySelector(".empty-cart-page");
-
-    //         if (signElement) {
-    //             signElement.style.width = `calc(100% - ${horizontalMargin * 2}px)`;
-    //             signElement.style.height = `${adjustedHeight}px`;
-    //             signElement.style.margin = `${verticalMargin}px ${horizontalMargin}px`;
-    //         }
-    //     };
-
-    //     setSignHeight();
-    //     window.addEventListener("resize", setSignHeight);
-
-    //     return () => window.removeEventListener("resize", setSignHeight);
-    // }, []);
-
-
     return (
         <>
             <div className="cart-page">
                 {loading ? (
-                    <div className="fp-cart-loader-container">
+                    <div className="cart-loader-container">
                         <div className="loader">
                             <span></span>
                             <span></span>
@@ -379,7 +355,7 @@ const Cart = () => {
                                         </>
                                     )}
                                     {updatingId === product.uniqueId ? (
-                                        <div className="inline-loader">
+                                        <div className="">
                                             <div className="loader">
                                                 <span></span>
                                                 <span></span>
@@ -402,22 +378,6 @@ const Cart = () => {
                                                         </div>
                                                     </>
                                                 )}
-
-                                                {/* <img
-                                                    src={
-                                                        editProductId === product.uniqueId
-                                                            ? `/images/${tempChanges.image
-                                                            || (() => {
-                                                                const imgObj = product.images?.[imageIndexMap[product.uniqueId] || 0];
-                                                                const key = Object.keys(imgObj || {}).find(k => k.startsWith('pi_'));
-                                                                return imgObj?.[key];
-                                                            })()
-                                                            || product.image
-                                                            }`
-                                                            : `/images/${product.image}`
-                                                    }
-                                                    alt={product.product_name}
-                                                /> */}
                                                 <img
                                                     src={
                                                         editProductId === product.uniqueId

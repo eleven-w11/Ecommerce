@@ -15,6 +15,11 @@
     font-family: "Roboto", serif;
 }
 
+.best-selling-section-page{
+    margin-top: 70px;
+    /* background-color: goldenrod; */
+}
+
 .best-selling-section .product-container {
     width: 90%;
     margin: 30px auto;
@@ -45,10 +50,10 @@
 }
 
 .best-selling-section .products-flex {
-    height: 60vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    /* height: 60vh; */
+    /* display: flex; */
+    /* align-items: center; */
+    /* justify-content: center; */
 }
 
 .best-selling-section .product-card {

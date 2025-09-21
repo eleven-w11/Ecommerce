@@ -237,14 +237,14 @@ const ProductView = () => {
     if (!product || !product.images || product.images.length === 0) {
         return (
 
-            <div className="fp-chat">
-                <div className="fp-loader-container">
-                    <div className="loader">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
+            // <div className="fp-chat">
+            <div className="product-view-loader">
+                <div className="loader">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </div>
+                {/* </div> */}
             </div>
         );
     }
@@ -413,7 +413,10 @@ const ProductView = () => {
                                         return (
                                             <div key={p._id} className="product-card">
                                                 <div className="product-image-wrapper">
-                                                    <img src={`/images/${firstImage}`} className="bsp-img" alt={p.product_name} />
+                                                    <img src={`/images/${firstImage}`}
+                                                        className="bsp-img"
+                                                        {...(product.width ? { style: { width: p.width } } : {})}
+                                                        alt={p.product_name} />
                                                     <img
                                                         src={addTocart}
                                                         className="add-to-cart-icon"
@@ -431,16 +434,16 @@ const ProductView = () => {
                                                     ) : (
                                                         <p className="product-price">${p.product_price}</p>
                                                     )}
-                                                    {/* <p>{product._id}</p> */}
+                                                    {/* <p>{product.id}</p> */}
                                                     <Link to={`/product/${p._id}`} className="shop-now">
-                                                        Buy Now
+                                                        Shop Now
                                                     </Link>
                                                 </div>
                                             </div>
                                         );
                                     })
                                 ) : (
-                                    <div className="loader-container">
+                                    <div className="home-loader-container">
                                         <div className="loader">
                                             <span></span>
                                             <span></span>
@@ -453,7 +456,7 @@ const ProductView = () => {
                     </div>
                 </div>
             </div>
-            
+
             <Footer />
 
         </>

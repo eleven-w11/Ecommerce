@@ -4,7 +4,7 @@ import "../styles/BestSelling.css";
 import { Link } from "react-router-dom";
 import addTocart from "../images/add-to-cart.png";
 
-const BestSellingProducts = () => {
+const BestSellingProducts = ({ isTopProductsPage = false }) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -71,7 +71,12 @@ const BestSellingProducts = () => {
 
 
     return (
-        <div className="best-selling-section top-product-section">
+        <div
+            className={
+                `best-selling-section
+        ${isTopProductsPage ? "best-selling-section-page" : ""
+                }`}
+        >
             <div className="product-container">
                 <h2>Top Products</h2>
                 <div className={products.length > 0 ? "products-grid" : "products-flex"}>
@@ -117,7 +122,7 @@ const BestSellingProducts = () => {
                             );
                         })
                     ) : (
-                        <div className="loader-container">
+                        <div className="home-loader-container">
                             <div className="loader">
                                 <span></span>
                                 <span></span>

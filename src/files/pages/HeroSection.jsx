@@ -39,6 +39,7 @@ const TestHero = () => {
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
     const seasonRef = useRef(null);
     const iconRef = useRef(null);
+    const heroRef = useRef(null);
 
 
     const desktopImages = [heroImage1, heroImage2, heroImage3, heroImage4, heroImage5, heroImage6];
@@ -105,8 +106,30 @@ const TestHero = () => {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+
+    // 👉 Page load par sirf ek baar animation
+    // 👉 Page load par sirf ek baar animation
+    useEffect(() => {
+        // thoda delay taake active image DOM me aa jaye
+        const timer = setTimeout(() => {
+            const tl = gsap.timeline({ defaults: { ease: "power3.out", duration: 1 } });
+
+            tl.from(".hero-image.active", { scale: 1.1, opacity: 0, duration: 1.2 }) // background hero image
+                .from(".hero-data-style-2", { y: 50, opacity: 0 }, "-=0.8") // blur box
+                .from(".LOOKBEAUTIFUL", { y: 30, opacity: 0 }, "-=0.6") // text
+                .from(".static-this", { x: -40, opacity: 0 }, "-=0.6") // THIS
+                .from(".animated-season", { x: 40, opacity: 0 }, "-=0.6") // season text
+                .from(".THEPERFECTCHOICE", { y: 30, opacity: 0 }, "-=0.5") // perfect choice
+                .from(".hero-button .white", { y: 20, opacity: 0 }, "-=0.4") // shop now btn
+                .from(".hero-button .gollden", { y: 20, opacity: 0 }, "-=0.3"); // location btn
+        }, 100); // 100ms delay
+
+        return () => clearTimeout(timer);
+    }, []);
+
+
     return (
-        <div className="hero">
+        <div className="hero" ref={heroRef}>
             {images.map((image, index) => (
                 <img
                     key={index}
@@ -128,6 +151,7 @@ const TestHero = () => {
                         <span className="animated-season" ref={seasonRef}>
                             {seasons[activeSeason]}
                             <img
+                                ref={iconRef}
                                 src={seasonImages[seasons[activeSeason]]}
                                 alt={seasons[activeSeason]}
                                 className="season-icon"
