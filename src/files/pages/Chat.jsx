@@ -183,6 +183,7 @@ const Chat = () => {
 
         const tempId = Date.now();
         const timestamp = new Date().toISOString();
+        const currentMessage = message.trim();
 
         if (isAdmin) {
             if (!selectedUserId) {
@@ -192,7 +193,7 @@ const Chat = () => {
 
             const optimisticMsg = {
                 _id: tempId,
-                message,
+                message: currentMessage,
                 fromAdmin: true,
                 timestamp,
                 toUserId: selectedUserId
@@ -200,19 +201,19 @@ const Chat = () => {
 
             pendingMessages.current.set(timestamp, {
                 tempId,
-                message
+                message: currentMessage
             });
 
             setChat(prev => [...prev, optimisticMsg]);
             socketRef.current.emit("adminMessage", {
                 toUserId: selectedUserId,
-                message,
+                message: currentMessage,
                 timestamp
             });
         } else {
             const optimisticMsg = {
                 _id: tempId,
-                message,
+                message: currentMessage,
                 fromAdmin: false,
                 timestamp,
                 fromUserId: userId
@@ -220,18 +221,29 @@ const Chat = () => {
 
             pendingMessages.current.set(timestamp, {
                 tempId,
-                message
+                message: currentMessage
             });
 
             setChat(prev => [...prev, optimisticMsg]);
             socketRef.current.emit("userMessage", {
                 fromUserId: userId,
-                message,
+                message: currentMessage,
                 timestamp
             });
         }
 
         setMessage("");
+
+        // ✅ Fix: Maintain keyboard visibility on mobile
+        setTimeout(() => {
+            const input = document.querySelector('.message-input');
+            if (input) {
+                input.focus();
+                // For iOS devices, additional focus might be needed
+                input.blur();
+                input.focus();
+            }
+        }, 100);
     };
 
 
