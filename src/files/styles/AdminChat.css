@@ -1,5 +1,5 @@
 /* AdminChat.css - Modern Responsive UI - Final Version */
-:root {
+/* :root {
     --primary-color: #4361ee;
     --secondary-color: #3f37c9;
     --accent-color: #4895ef;
@@ -10,13 +10,14 @@
     --warning-color: #f8961e;
     --gray-color: #adb5bd;
     --dark-gray: #495057;
-}
+} */
 
 /* Base Styles */
 .admin-chat-app {
     display: flex;
     width: 100%;
-    height: 100vh;
+    height: calc(100vh - 60px);
+    margin-top: 60px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f5f7fa;
     flex-direction: column;

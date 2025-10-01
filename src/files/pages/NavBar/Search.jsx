@@ -150,7 +150,11 @@ const Search = ({ onClose }) => {
                         <div className="products-section">
                             {isLoading ? (
                                 <div className="fp-loader-container">
-                                    <div className="loader"><span></span><span></span><span></span></div>
+                                    <div className="loader">
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                    </div>
                                     <p>Searching products...</p>
                                 </div>
                             ) : results.length > 0 ? (

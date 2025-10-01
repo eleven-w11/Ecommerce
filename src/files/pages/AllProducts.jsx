@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import axios from 'axios';
+import "../styles/BestSelling.css";
+
 import addTocart from "../images/add-to-cart.png";
 // import addTocart from "./images/add-to-cart.png";
 
@@ -48,20 +50,20 @@ const AllProducts = () => {
     }, [category, type]);
 
     return (
-        <div className="best-selling-section top-product-section">
-            <div className="product-container">
-                <h2 className='category_type'>{category} {type}</h2>
-                <div className={products.length > 0 ? "products-grid" : "products-flex"}>
-                    {loading ? (
-                        <div className="loader-container">
-                            <div className="loader">
-                                <span></span>
-                                <span></span>
-                                <span></span>
+        products.length > 0 ? (
+            <div className="best-selling-section best-selling-section-page">
+                <div className="product-container">
+                    <h2 className='category_type'>{category} {type}</h2>
+                    <div className={products.length > 0 ? "products-grid" : "products-flex"}>
+                        {loading ? (
+                            <div className="home-loader-container">
+                                <div className="loader">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
                             </div>
-                        </div>
-                    ) : (
-                        products.length > 0 ? (
+                        ) : (
                             products.map(product => {
                                 const hasDiscount = product.dis_product_price !== undefined;
                                 const firstImage = product.images?.[0]?.pi_1 || "default.jpg";
@@ -69,10 +71,12 @@ const AllProducts = () => {
                                 return (
                                     <div key={product._id} className="product-card">
                                         <div className="product-image-wrapper">
-                                            <img src={`/images/${firstImage}`}
+                                            <img
+                                                src={`/images/${firstImage}`}
                                                 {...(product.width ? { style: { width: product.width } } : {})}
-
-                                                className="tp-img" alt={product.product_name} />
+                                                className="tp-img"
+                                                alt={product.product_name}
+                                            />
                                             <img
                                                 src={addTocart}
                                                 className="add-to-cart-icon"
@@ -90,7 +94,6 @@ const AllProducts = () => {
                                             ) : (
                                                 <p className="product-price">${product.product_price}</p>
                                             )}
-                                            {/* <p>{product.id}</p> */}
                                             <Link to={`/product/${product._id}`}>
                                                 Shop Now
                                             </Link>
@@ -98,25 +101,25 @@ const AllProducts = () => {
                                     </div>
                                 );
                             })
-                        ) : (
-                            <div className="no-products-wrapper">
-                                <div className="no-products-animation">
-                                    <span>😕</span>
-                                    <h3>No Products Found</h3>
-                                    <p>
-                                        We couldn't find anything for
-                                        <strong> "{category}"</strong> or
-                                        <strong> "{type}"</strong>.
-                                    </p>
-                                </div>
-                            </div>
-
-                        )
-                    )}
+                        )}
+                    </div>
                 </div>
             </div>
-        </div>
+        ) : (
+            <div className="no-products-wrapper">
+                <div className="no-products-animation">
+                    <span>😕</span>
+                    <h3>No Products Found</h3>
+                    <p>
+                        We couldn't find anything for
+                        <strong> "{category}"</strong> or
+                        <strong> "{type}"</strong>.
+                    </p>
+                </div>
+            </div>
+        )
     );
+
 };
 
 export default AllProducts;

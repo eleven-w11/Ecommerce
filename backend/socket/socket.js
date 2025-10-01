@@ -40,7 +40,7 @@ const initSocket = (server, allowedOrigins) => {
                             { fromUserId: user._id },
                             { toUserId: user._id }
                         ]
-                    }).sort({ createdAt: -1 });
+                    }).sort({ timestamp: -1 });
 
                     if (!lastMsg) {
                         // 🚫 Skip users with no messages at all
@@ -52,7 +52,7 @@ const initSocket = (server, allowedOrigins) => {
                         name: user.name,
                         image: user.image,
                         lastMessage: lastMsg.message,
-                        lastMessageTime: lastMsg.createdAt?.toISOString() || "",
+                        lastMessageTime: lastMsg.timestamp || lastMsg.createdAt,
                     });
                 }
 

@@ -80,17 +80,18 @@ body {
 /* Chat App Container */
 .chat-app {
     max-width: 900px;
-    height: 90vh;
+    height: calc(100vh - 60px);
     /* Fixed viewport height */
     margin: 0 auto;
     border-radius: 16px;
+    margin-top: 60px;
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     background-color: red;
     /* Ensure the container isn't growing beyond viewport */
-    max-height: 90vh;
+    /* max-height: 100vh; */
 }
 
 /* Header Styles */

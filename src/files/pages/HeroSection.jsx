@@ -110,22 +110,22 @@ const TestHero = () => {
     // 👉 Page load par sirf ek baar animation
     // 👉 Page load par sirf ek baar animation
     useEffect(() => {
-        // thoda delay taake active image DOM me aa jaye
         const timer = setTimeout(() => {
-            const tl = gsap.timeline({ defaults: { ease: "power3.out", duration: 1 } });
+            const tl = gsap.timeline({ defaults: { ease: "power2.out", duration: 0.6 } });
 
-            tl.from(".hero-image.active", { scale: 1.1, opacity: 0, duration: 1.2 }) // background hero image
-                .from(".hero-data-style-2", { y: 50, opacity: 0 }, "-=0.8") // blur box
-                .from(".LOOKBEAUTIFUL", { y: 30, opacity: 0 }, "-=0.6") // text
-                .from(".static-this", { x: -40, opacity: 0 }, "-=0.6") // THIS
-                .from(".animated-season", { x: 40, opacity: 0 }, "-=0.6") // season text
-                .from(".THEPERFECTCHOICE", { y: 30, opacity: 0 }, "-=0.5") // perfect choice
-                .from(".hero-button .white", { y: 20, opacity: 0 }, "-=0.4") // shop now btn
-                .from(".hero-button .gollden", { y: 20, opacity: 0 }, "-=0.3"); // location btn
-        }, 100); // 100ms delay
+            tl.from(".hero-image.active", { scale: 1.05, opacity: 0, duration: 0.8 }) // background hero image
+                .from(".hero-data-style-2", { y: 40, opacity: 0 }, "-=0.5") // blur box
+                .from(".LOOKBEAUTIFUL", { y: 25, opacity: 0 }, "-=0.4") // text
+                .from(".static-this", { x: -30, opacity: 0 }, "-=0.4") // THIS
+                .from(".animated-season", { x: 30, opacity: 0 }, "-=0.4") // season text
+                .from(".THEPERFECTCHOICE", { y: 25, opacity: 0 }, "-=0.3") // perfect choice
+                .from(".hero-button .white", { y: 15, opacity: 0 }, "-=0.3") // shop now btn
+                .from(".hero-button .gollden", { y: 15, opacity: 0 }, "-=0.25"); // location btn
+        }, 50); // kam delay for instant start
 
         return () => clearTimeout(timer);
     }, []);
+
 
 
     return (

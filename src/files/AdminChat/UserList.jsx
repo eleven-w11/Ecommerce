@@ -49,9 +49,12 @@ const UserList = ({
                         <div className="message-meta">
                             <span className="message-time">
                                 {user.lastMessageTime
-                                    ? new Date(user.lastMessageTime).toLocaleTimeString([], {
+                                    ? new Date(user.lastMessageTime).toLocaleString([], {
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: 'numeric',
                                         hour: '2-digit',
-                                        minute: '2-digit',
+                                        minute: '2-digit'
                                     })
                                     : ''}
                             </span>

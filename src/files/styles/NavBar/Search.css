@@ -287,8 +287,9 @@
     font-weight: 600;
 }
 
-/* .search-container .fp-cart-loader-container,
 .search-container .fp-loader-container {
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -297,11 +298,10 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 100%;
-    height: 100%;
+    /* background-color: red; */
 }
 
-.search-container .loader {
+/* .search-container .loader {
     display: flex;
     justify-content: space-between;
     width: 80px;
