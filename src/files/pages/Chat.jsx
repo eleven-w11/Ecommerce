@@ -61,7 +61,9 @@ const Chat = () => {
 
     // Socket connection
     useEffect(() => {
-        socketRef.current = io("http://localhost:5000", {
+        const backendURL = process.env.REACT_APP_BACKEND_URL;
+
+        socketRef.current = io(backendURL, {
             withCredentials: true,
         });
 
@@ -71,6 +73,8 @@ const Chat = () => {
             }
         };
     }, []);
+
+
 
     // Fetch user data and register socket
     useEffect(() => {
@@ -183,7 +187,6 @@ const Chat = () => {
 
         const tempId = Date.now();
         const timestamp = new Date().toISOString();
-        const currentMessage = message.trim();
 
         if (isAdmin) {
             if (!selectedUserId) {
@@ -193,7 +196,7 @@ const Chat = () => {
 
             const optimisticMsg = {
                 _id: tempId,
-                message: currentMessage,
+                message,
                 fromAdmin: true,
                 timestamp,
                 toUserId: selectedUserId
@@ -201,19 +204,19 @@ const Chat = () => {
 
             pendingMessages.current.set(timestamp, {
                 tempId,
-                message: currentMessage
+                message
             });
 
             setChat(prev => [...prev, optimisticMsg]);
             socketRef.current.emit("adminMessage", {
                 toUserId: selectedUserId,
-                message: currentMessage,
+                message,
                 timestamp
             });
         } else {
             const optimisticMsg = {
                 _id: tempId,
-                message: currentMessage,
+                message,
                 fromAdmin: false,
                 timestamp,
                 fromUserId: userId
@@ -221,29 +224,18 @@ const Chat = () => {
 
             pendingMessages.current.set(timestamp, {
                 tempId,
-                message: currentMessage
+                message
             });
 
             setChat(prev => [...prev, optimisticMsg]);
             socketRef.current.emit("userMessage", {
                 fromUserId: userId,
-                message: currentMessage,
+                message,
                 timestamp
             });
         }
 
         setMessage("");
-
-        // ✅ Fix: Maintain keyboard visibility on mobile
-        setTimeout(() => {
-            const input = document.querySelector('.message-input');
-            if (input) {
-                input.focus();
-                // For iOS devices, additional focus might be needed
-                input.blur();
-                input.focus();
-            }
-        }, 100);
     };
 
 
