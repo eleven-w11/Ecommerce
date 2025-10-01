@@ -61,7 +61,10 @@ const Chat = () => {
 
     // Socket connection
     useEffect(() => {
-        const backendURL = process.env.REACT_APP_BACKEND_URL;
+        const backendURL =
+            process.env.NODE_ENV === "production"
+                ? "https://ecommerce-vu3m.onrender.com"  // yahan Render backend ka live link
+                : "http://localhost:5000"; // local testing ke liye
 
         socketRef.current = io(backendURL, {
             withCredentials: true,
@@ -73,7 +76,6 @@ const Chat = () => {
             }
         };
     }, []);
-
 
 
     // Fetch user data and register socket
