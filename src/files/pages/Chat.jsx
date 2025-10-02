@@ -181,7 +181,8 @@ const Chat = () => {
         }
     }, [chat, isLoading]);
 
-    const sendMessage = () => {
+    const sendMessage = (e) => {
+        if (e) e.preventDefault();
         if (!message.trim() || !socketRef.current) return;
 
         const tempId = Date.now();
@@ -238,13 +239,12 @@ const Chat = () => {
         // Clear message
         setMessage("");
 
-        // ✅ Smooth focus restoration using ref
-        if (inputRef.current) {
-            // Force focus without any visible blink
-            setTimeout(() => {
+        // Immediate focus without any delay
+        requestAnimationFrame(() => {
+            if (inputRef.current) {
                 inputRef.current.focus();
-            }, 0);
-        }
+            }
+        });
     };
 
 
@@ -285,6 +285,8 @@ const Chat = () => {
             <div className="chat-app">
                 <div className="chat-header glassmorphism">
                     <div className="header-content">
+                        <span className="material-symbols-outlined">arrow_back</span>
+
                         <div className="admin-profile">
                             <div className="profile-image-container">
                                 <img src={admin} alt="Admin" className="profile-image" />
@@ -296,9 +298,9 @@ const Chat = () => {
                             </div>
                         </div>
 
-                        <h2 className="chat-title">Chat Support</h2>
+                        {/* <h2 className="chat-title">WebVerse</h2> */}
 
-                        <div className="user-profile">
+                        {/* <div className="user-profile">
                             <div className="profile-info">
                                 <p className="profile-name">{userProfile?.name || "User"}</p>
                                 <p className="profile-status">Active now</p>
@@ -313,7 +315,7 @@ const Chat = () => {
                                 )}
                                 <span className="online-indicator"></span>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 
@@ -355,24 +357,23 @@ const Chat = () => {
                     )}
 
                     <div className="message-input-container slide-up">
-                        <div className="input-wrapper">
+                        <form onSubmit={sendMessage} className="input-wrapper">
                             <input
                                 ref={inputRef}
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
-                                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                                 placeholder="Type your message..."
                                 className="message-input"
                             />
                             <button
-                                onClick={sendMessage}
+                                type="submit"
                                 className="send-button hover-effect"
                                 disabled={!message.trim()}
                             >
                                 <span className="send-icon">✈️</span>
                                 <span className="send-text">Send</span>
                             </button>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
