@@ -181,16 +181,6 @@ const Chat = () => {
         }
     }, [chat, isLoading]);
 
-    // Add this useEffect for initial focus
-    useEffect(() => {
-        if (inputRef.current && !isLoading) {
-            setTimeout(() => {
-                inputRef.current?.focus();
-            }, 100);
-        }
-    }, [isLoading]);
-
-    // Enhanced sendMessage function
     const sendMessage = () => {
         if (!message.trim() || !socketRef.current) return;
 
@@ -198,10 +188,8 @@ const Chat = () => {
         const timestamp = new Date().toISOString();
         const currentMessage = message.trim();
 
-        // Prevent any default behavior that might hide keyboard
-        if (inputRef.current) {
-            inputRef.current.focus();
-        }
+        // Store the current message before clearing
+        const messageToSend = currentMessage;
 
         if (isAdmin) {
             if (!selectedUserId) {
@@ -211,7 +199,7 @@ const Chat = () => {
 
             const optimisticMsg = {
                 _id: tempId,
-                message: currentMessage,
+                message: messageToSend,
                 fromAdmin: true,
                 timestamp,
                 toUserId: selectedUserId
@@ -219,19 +207,19 @@ const Chat = () => {
 
             pendingMessages.current.set(timestamp, {
                 tempId,
-                message: currentMessage
+                message: messageToSend
             });
 
             setChat(prev => [...prev, optimisticMsg]);
             socketRef.current.emit("adminMessage", {
                 toUserId: selectedUserId,
-                message: currentMessage,
+                message: messageToSend,
                 timestamp
             });
         } else {
             const optimisticMsg = {
                 _id: tempId,
-                message: currentMessage,
+                message: messageToSend,
                 fromAdmin: false,
                 timestamp,
                 fromUserId: userId
@@ -239,21 +227,26 @@ const Chat = () => {
 
             pendingMessages.current.set(timestamp, {
                 tempId,
-                message: currentMessage
+                message: messageToSend
             });
 
             setChat(prev => [...prev, optimisticMsg]);
             socketRef.current.emit("userMessage", {
                 fromUserId: userId,
-                message: currentMessage,
+                message: messageToSend,
                 timestamp
             });
         }
 
-        // Batch the state update and focus
-        ReactDOM.unstable_batchedUpdates(() => {
-            setMessage("");
+        // Clear message without losing focus
+        setMessage("");
+
+        // Use microtask for immediate focus restoration
+        Promise.resolve().then(() => {
             if (inputRef.current) {
+                inputRef.current.focus();
+                // Force iOS keyboard to stay open
+                inputRef.current.blur();
                 inputRef.current.focus();
             }
         });
