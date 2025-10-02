@@ -59,14 +59,9 @@ const Chat = () => {
         };
     }, [isLoading, userProfile]);
 
-    // Socket connection
-    useEffect(() => {
-        const backendURL =
-            process.env.NODE_ENV === "production"
-                ? "https://ecommerce-vu3m.onrender.com"  // yahan Render backend ka live link
-                : "http://localhost:5000"; // local testing ke liye
 
-        socketRef.current = io(backendURL, {
+    useEffect(() => {
+        socketRef.current = io("/", {
             withCredentials: true,
         });
 
@@ -77,6 +72,36 @@ const Chat = () => {
         };
     }, []);
 
+
+    // Socket connection
+    // useEffect(() => {
+    //     socketRef.current = io("http://localhost:5000", {
+    //         withCredentials: true,
+    //     });
+
+    //     return () => {
+    //         if (socketRef.current) {
+    //             socketRef.current.disconnect();
+    //         }
+    //     };
+    // }, []);
+
+    // useEffect(() => {
+    //     const backendURL =
+    //         process.env.NODE_ENV === "production"
+    //             ? "https://ecommerce-vu3m.onrender.com"
+    //             : "http://localhost:5000";
+
+    //     socketRef.current = io(backendURL, {
+    //         withCredentials: true,
+    //     });
+
+    //     return () => {
+    //         if (socketRef.current) {
+    //             socketRef.current.disconnect();
+    //         }
+    //     };
+    // }, []);
 
     // Fetch user data and register socket
     useEffect(() => {
