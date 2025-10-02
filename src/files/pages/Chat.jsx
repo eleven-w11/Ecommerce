@@ -181,13 +181,27 @@ const Chat = () => {
         }
     }, [chat, isLoading]);
 
-    const sendMessage = (e) => {
-        if (e) e.preventDefault();
+    // Add this useEffect for initial focus
+    useEffect(() => {
+        if (inputRef.current && !isLoading) {
+            setTimeout(() => {
+                inputRef.current?.focus();
+            }, 100);
+        }
+    }, [isLoading]);
+
+    // Enhanced sendMessage function
+    const sendMessage = () => {
         if (!message.trim() || !socketRef.current) return;
 
         const tempId = Date.now();
         const timestamp = new Date().toISOString();
         const currentMessage = message.trim();
+
+        // Prevent any default behavior that might hide keyboard
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
 
         if (isAdmin) {
             if (!selectedUserId) {
@@ -236,11 +250,9 @@ const Chat = () => {
             });
         }
 
-        // Clear message
-        setMessage("");
-
-        // Immediate focus without any delay
-        requestAnimationFrame(() => {
+        // Batch the state update and focus
+        ReactDOM.unstable_batchedUpdates(() => {
+            setMessage("");
             if (inputRef.current) {
                 inputRef.current.focus();
             }
@@ -357,23 +369,24 @@ const Chat = () => {
                     )}
 
                     <div className="message-input-container slide-up">
-                        <form onSubmit={sendMessage} className="input-wrapper">
+                        <div className="input-wrapper">
                             <input
                                 ref={inputRef}
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
+                                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                                 placeholder="Type your message..."
                                 className="message-input"
                             />
                             <button
-                                type="submit"
+                                onClick={sendMessage}
                                 className="send-button hover-effect"
                                 disabled={!message.trim()}
                             >
                                 <span className="send-icon">✈️</span>
                                 <span className="send-text">Send</span>
                             </button>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
