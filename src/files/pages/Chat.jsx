@@ -1,12 +1,9 @@
-// OOK Code Mob testing 367 line
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { io } from "socket.io-client";
 import axios from "axios";
 import "../styles/Chat.css";
 import admin from "../images/admin.png";
 import { Link } from "react-router-dom";
-
-
 
 const Chat = () => {
     const [message, setMessage] = useState("");
@@ -22,8 +19,6 @@ const Chat = () => {
     const isMounted = useRef(true);
     const pendingMessages = useRef(new Map());
     const inputRef = useRef(null);
-    // const navigate = useNavigate();
-
 
     useEffect(() => {
         const setSignHeight = () => {
@@ -36,7 +31,6 @@ const Chat = () => {
         };
 
         setSignHeight();
-
         window.addEventListener("resize", setSignHeight);
 
         return () => window.removeEventListener("resize", setSignHeight);
@@ -46,12 +40,11 @@ const Chat = () => {
     useEffect(() => {
         isMounted.current = true;
 
-        // Set timeout for showing auth error if loading takes too long
         const authTimeout = setTimeout(() => {
             if (isLoading && !userProfile && isMounted.current) {
                 setAuthError("Please sign in to access the chat");
             }
-        }, 5000); // Show error after 5 seconds
+        }, 5000);
 
         return () => {
             isMounted.current = false;
@@ -60,10 +53,9 @@ const Chat = () => {
         };
     }, [isLoading, userProfile]);
 
-    // code c
+    // Socket connection
     useEffect(() => {
         const backendURL = process.env.REACT_APP_API_BASE_URL;
-
         socketRef.current = io(backendURL, {
             withCredentials: true,
         });
@@ -107,6 +99,40 @@ const Chat = () => {
         fetchUserData();
     }, []);
 
+    // Handle received messages - moved outside useEffect
+    const handleReceiveMessage = useCallback((data) => {
+        if (!isMounted.current) return;
+
+        setChat(prev => {
+            // Check if this is a response to our own message
+            const isOwnMessage = data.fromUserId === userId && !data.fromAdmin;
+            const isOwnAdminMessage = data.fromAdmin && data.toUserId === selectedUserId;
+
+            if (isOwnMessage || isOwnAdminMessage) {
+                // Find and replace the optimistic update
+                const existingIndex = prev.findIndex(msg =>
+                    pendingMessages.current.has(msg.timestamp) &&
+                    pendingMessages.current.get(msg.timestamp).message === data.message
+                );
+
+                if (existingIndex !== -1) {
+                    pendingMessages.current.delete(prev[existingIndex].timestamp);
+                    const newChat = [...prev];
+                    newChat[existingIndex] = data;
+                    return newChat;
+                }
+            }
+
+            // Check for duplicates using database _id
+            const exists = prev.some(msg =>
+                (msg._id && msg._id === data._id) ||
+                (msg.timestamp === data.timestamp && msg.message === data.message)
+            );
+
+            return exists ? prev : [...prev, data];
+        });
+    }, [userId, selectedUserId]);
+
     // Fetch chat history and setup socket listener
     useEffect(() => {
         if (!userId || !socketRef.current) return;
@@ -131,39 +157,6 @@ const Chat = () => {
             }
         };
 
-        const handleReceiveMessage = (data) => {
-            if (!isMounted.current) return;
-
-            setChat(prev => {
-                // Check if this is a response to our own message
-                const isOwnMessage = data.fromUserId === userId && !data.fromAdmin;
-                const isOwnAdminMessage = data.fromAdmin && data.toUserId === selectedUserId;
-
-                if (isOwnMessage || isOwnAdminMessage) {
-                    // Find and replace the optimistic update
-                    const existingIndex = prev.findIndex(msg =>
-                        pendingMessages.current.has(msg.timestamp) &&
-                        pendingMessages.current.get(msg.timestamp).message === data.message
-                    );
-
-                    if (existingIndex !== -1) {
-                        pendingMessages.current.delete(prev[existingIndex].timestamp);
-                        const newChat = [...prev];
-                        newChat[existingIndex] = data;
-                        return newChat;
-                    }
-                }
-
-                // Check for duplicates using database _id
-                const exists = prev.some(msg =>
-                    (msg._id && msg._id === data._id) ||
-                    (msg.timestamp === data.timestamp && msg.message === data.message)
-                );
-
-                return exists ? prev : [...prev, data];
-            });
-        };
-
         fetchChatHistory();
         socketRef.current.on("receiveMessage", handleReceiveMessage);
 
@@ -172,7 +165,7 @@ const Chat = () => {
                 socketRef.current.off("receiveMessage", handleReceiveMessage);
             }
         };
-    }, [userId, selectedUserId]);
+    }, [userId, selectedUserId, handleReceiveMessage]);
 
     // Scroll to bottom on new messages
     useEffect(() => {
@@ -181,14 +174,12 @@ const Chat = () => {
         }
     }, [chat, isLoading]);
 
-    const sendMessage = () => {
+    const sendMessage = useCallback(() => {
         if (!message.trim() || !socketRef.current) return;
 
         const tempId = Date.now();
         const timestamp = new Date().toISOString();
         const currentMessage = message.trim();
-
-        // Store the current message before clearing
         const messageToSend = currentMessage;
 
         if (isAdmin) {
@@ -238,22 +229,16 @@ const Chat = () => {
             });
         }
 
-        // Clear message without losing focus
         setMessage("");
 
-        // Use microtask for immediate focus restoration
         Promise.resolve().then(() => {
             if (inputRef.current) {
                 inputRef.current.focus();
-                // Force iOS keyboard to stay open
                 inputRef.current.blur();
                 inputRef.current.focus();
             }
         });
-    };
-
-
-
+    }, [message, isAdmin, selectedUserId, userId]);
 
     if (authError) {
         return (
@@ -283,7 +268,6 @@ const Chat = () => {
             </div>
         );
     }
-
 
     return (
         <div className="user-chat-app">
@@ -367,6 +351,5 @@ const Chat = () => {
         </div>
     );
 };
-
 
 export default Chat;

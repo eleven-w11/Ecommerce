@@ -73,7 +73,8 @@ body {
         opacity: 1;
     }
 }
-.user-chat-app{
+
+.user-chat-app {
     background-color: tan;
 }
 
@@ -273,7 +274,11 @@ body {
     padding: 15px 20px;
     background-color: lightskyblue;
     border-top: 1px solid #e9ecef;
-    animation: slideUp 0.3s ease-out;
+    /* animation: slideUp 0.3s ease-out; */
+    position: sticky;
+    bottom: 0;
+    z-index: 100;
+    transition: none !important;
 }
 
 .chat-app .input-wrapper {
@@ -384,7 +389,7 @@ body {
 } */
 
 
-.fp-chat{
+.fp-chat {
     width: 80%;
     height: 80vh;
     margin: 0 auto;
