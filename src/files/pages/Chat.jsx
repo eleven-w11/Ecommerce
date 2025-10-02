@@ -74,41 +74,6 @@ const Chat = () => {
         };
     }, []);
 
-
-    // code a 
-
-    // Socket connection
-    // useEffect(() => {
-    //     socketRef.current = io("http://localhost:5000", {
-    //         withCredentials: true,
-    //     });
-
-    //     return () => {
-    //         if (socketRef.current) {
-    //             socketRef.current.disconnect();
-    //         }
-    //     };
-    // }, []);
-
-    // code b
-
-    // useEffect(() => {
-    //     const backendURL =
-    //         process.env.NODE_ENV === "production"
-    //             ? "https://ecommerce-vu3m.onrender.com"
-    //             : "http://localhost:5000";
-
-    //     socketRef.current = io(backendURL, {
-    //         withCredentials: true,
-    //     });
-
-    //     return () => {
-    //         if (socketRef.current) {
-    //             socketRef.current.disconnect();
-    //         }
-    //     };
-    // }, []);
-
     // Fetch user data and register socket
     useEffect(() => {
         const fetchUserData = async () => {
@@ -220,6 +185,10 @@ const Chat = () => {
 
         const tempId = Date.now();
         const timestamp = new Date().toISOString();
+        const currentMessage = message.trim();
+
+        // Store the input element reference before any state changes
+        const inputElement = document.querySelector('.message-input');
 
         if (isAdmin) {
             if (!selectedUserId) {
@@ -229,7 +198,7 @@ const Chat = () => {
 
             const optimisticMsg = {
                 _id: tempId,
-                message,
+                message: currentMessage,
                 fromAdmin: true,
                 timestamp,
                 toUserId: selectedUserId
@@ -237,19 +206,19 @@ const Chat = () => {
 
             pendingMessages.current.set(timestamp, {
                 tempId,
-                message
+                message: currentMessage
             });
 
             setChat(prev => [...prev, optimisticMsg]);
             socketRef.current.emit("adminMessage", {
                 toUserId: selectedUserId,
-                message,
+                message: currentMessage,
                 timestamp
             });
         } else {
             const optimisticMsg = {
                 _id: tempId,
-                message,
+                message: currentMessage,
                 fromAdmin: false,
                 timestamp,
                 fromUserId: userId
@@ -257,18 +226,27 @@ const Chat = () => {
 
             pendingMessages.current.set(timestamp, {
                 tempId,
-                message
+                message: currentMessage
             });
 
             setChat(prev => [...prev, optimisticMsg]);
             socketRef.current.emit("userMessage", {
                 fromUserId: userId,
-                message,
+                message: currentMessage,
                 timestamp
             });
         }
 
+        // Clear message but maintain focus without delay
         setMessage("");
+
+        // Immediate focus restoration
+        if (inputElement) {
+            // Use requestAnimationFrame for smoother focus
+            requestAnimationFrame(() => {
+                inputElement.focus();
+            });
+        }
     };
 
 
