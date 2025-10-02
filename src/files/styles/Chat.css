@@ -271,7 +271,7 @@ body {
 /* Input Area */
 .chat-app .message-input-container {
     padding: 15px 20px;
-    background-color: white;
+    background-color: lightskyblue;
     border-top: 1px solid #e9ecef;
     animation: slideUp 0.3s ease-out;
 }

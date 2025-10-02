@@ -291,7 +291,6 @@ const Chat = () => {
                 <div className="chat-header glassmorphism">
                     <div className="header-content">
                         <span className="material-symbols-outlined">arrow_back</span>
-
                         <div className="admin-profile">
                             <div className="profile-image-container">
                                 <img src={admin} alt="Admin" className="profile-image" />
@@ -302,25 +301,6 @@ const Chat = () => {
                                 <p className="profile-status">Online</p>
                             </div>
                         </div>
-
-                        {/* <h2 className="chat-title">WebVerse</h2> */}
-
-                        {/* <div className="user-profile">
-                            <div className="profile-info">
-                                <p className="profile-name">{userProfile?.name || "User"}</p>
-                                <p className="profile-status">Active now</p>
-                            </div>
-                            <div className="profile-image-container">
-                                {userProfile?.image ? (
-                                    <img src={userProfile.image} alt="Profile" className="profile-image" />
-                                ) : (
-                                    <div className="avatar-placeholder">
-                                        {userProfile?.name?.charAt(0) || "U"}
-                                    </div>
-                                )}
-                                <span className="online-indicator"></span>
-                            </div>
-                        </div> */}
                     </div>
                 </div>
 
@@ -360,26 +340,27 @@ const Chat = () => {
                             <div ref={messagesEndRef}></div>
                         </div>
                     )}
+                </div>
 
-                    <div className="message-input-container slide-up">
-                        <div className="input-wrapper">
-                            <input
-                                ref={inputRef}
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
-                                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                                placeholder="Type your message..."
-                                className="message-input"
-                            />
-                            <button
-                                onClick={sendMessage}
-                                className="send-button hover-effect"
-                                disabled={!message.trim()}
-                            >
-                                <span className="send-icon">✈️</span>
-                                <span className="send-text">Send</span>
-                            </button>
-                        </div>
+                {/* Move input container outside chat-body to prevent re-render blinks */}
+                <div className="message-input-container slide-up">
+                    <div className="input-wrapper">
+                        <input
+                            ref={inputRef}
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                            placeholder="Type your message..."
+                            className="message-input"
+                        />
+                        <button
+                            onClick={sendMessage}
+                            className="send-button hover-effect"
+                            disabled={!message.trim()}
+                        >
+                            <span className="send-icon">✈️</span>
+                            <span className="send-text">Send</span>
+                        </button>
                     </div>
                 </div>
             </div>
