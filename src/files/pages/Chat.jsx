@@ -59,9 +59,11 @@ const Chat = () => {
         };
     }, [isLoading, userProfile]);
 
-
+    // code c
     useEffect(() => {
-        socketRef.current = io("/", {
+        const backendURL = process.env.REACT_APP_API_BASE_URL;
+
+        socketRef.current = io(backendURL, {
             withCredentials: true,
         });
 
@@ -72,6 +74,8 @@ const Chat = () => {
         };
     }, []);
 
+
+    // code a 
 
     // Socket connection
     // useEffect(() => {
@@ -85,6 +89,8 @@ const Chat = () => {
     //         }
     //     };
     // }, []);
+
+    // code b
 
     // useEffect(() => {
     //     const backendURL =

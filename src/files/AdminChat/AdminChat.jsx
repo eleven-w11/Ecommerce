@@ -24,7 +24,9 @@ const AdminChat = () => {
     useEffect(() => {
         isMounted.current = true;
 
-        socketRef.current = io("http://localhost:5000", {
+        const backendURL = process.env.REACT_APP_API_BASE_URL;
+
+        socketRef.current = io(backendURL, {
             withCredentials: true,
         });
 
@@ -43,11 +45,9 @@ const AdminChat = () => {
             }
         });
 
-
         const handleReceiveMessage = async (message) => {
             if (!isMounted.current) return;
 
-            // Determine the userId to associate with this chat (other than admin)
             const userId = message.fromAdmin ? message.toUserId : message.fromUserId;
             if (!userId) return;
 
@@ -74,8 +74,6 @@ const AdminChat = () => {
                     message: message.message
                 });
 
-
-
                 let updatedUsers;
                 if (userExists) {
                     updatedUsers = prev.map(u =>
@@ -88,11 +86,10 @@ const AdminChat = () => {
                                 lastMessageTime: message.timestamp,
                                 unreadCount: u._id !== selectedUserId ? (u.unreadCount || 0) + 1 : 0,
                                 isOnline: true,
-                                source: "socket-update-existing" // ✅ existing user
+                                source: "socket-update-existing"
                             }
                             : u
                     );
-                    console.warn("imag adminchat", image);
                 } else {
                     updatedUsers = [
                         {
@@ -103,27 +100,21 @@ const AdminChat = () => {
                             lastMessageTime: message.timestamp,
                             unreadCount: 1,
                             isOnline: true,
-                            source: "socket-update-new", // ✅ new user
+                            source: "socket-update-new",
                             needsUpdate: false
                         },
                         ...prev
                     ];
                 }
 
-                // 🔁 Ensure ISO format and fallback to 0 for invalid dates
                 const safeDate = (d) => d ? new Date(d).getTime() : 0;
-
-                return [...updatedUsers].sort((a, b) => {
-                    return safeDate(b.lastMessageTime) - safeDate(a.lastMessageTime);
-                });
-
+                return [...updatedUsers].sort((a, b) => safeDate(b.lastMessageTime) - safeDate(a.lastMessageTime));
             });
 
-            // 👇 Optional: Fetch full user if not already in state
             const userInState = users.find(u => u._id === userId);
             if (!userInState || !userInState.name) {
                 try {
-                    const res = await axios.get(`${API_BASE}/api/user/${userId}`, {
+                    const res = await axios.get(`${backendURL}/api/user/${userId}`, {
                         withCredentials: true,
                     });
                     const user = res.data;
@@ -154,6 +145,7 @@ const AdminChat = () => {
             socketRef.current?.disconnect();
         };
     }, [selectedUserId]);
+
 
 
     const fetchUserChat = async (userId) => {
