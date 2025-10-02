@@ -21,6 +21,7 @@ const Chat = () => {
     const socketRef = useRef(null);
     const isMounted = useRef(true);
     const pendingMessages = useRef(new Map());
+    const inputRef = useRef(null);
     // const navigate = useNavigate();
 
 
@@ -187,9 +188,6 @@ const Chat = () => {
         const timestamp = new Date().toISOString();
         const currentMessage = message.trim();
 
-        // Store the input element reference before any state changes
-        const inputElement = document.querySelector('.message-input');
-
         if (isAdmin) {
             if (!selectedUserId) {
                 alert("Please select a user to chat with");
@@ -237,15 +235,15 @@ const Chat = () => {
             });
         }
 
-        // Clear message but maintain focus without delay
+        // Clear message
         setMessage("");
 
-        // Immediate focus restoration
-        if (inputElement) {
-            // Use requestAnimationFrame for smoother focus
-            requestAnimationFrame(() => {
-                inputElement.focus();
-            });
+        // ✅ Smooth focus restoration using ref
+        if (inputRef.current) {
+            // Force focus without any visible blink
+            setTimeout(() => {
+                inputRef.current.focus();
+            }, 0);
         }
     };
 
@@ -359,6 +357,7 @@ const Chat = () => {
                     <div className="message-input-container slide-up">
                         <div className="input-wrapper">
                             <input
+                                ref={inputRef}
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
                                 onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
