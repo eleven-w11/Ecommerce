@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
-// import '../index.css';
 import { Link, useNavigate } from "react-router-dom";
-// import { GoogleLogin } from "@react-oauth/google";
-// import { jwtDecode } from 'jwt-decode';
-// import { jwtDecode } from 'jwt-decode';
-
-// import { useGoogleLogin } from '@react-oauth/google';
-// import google from "./images/google.png";
 import Google from './Google';
 
 
@@ -21,7 +14,6 @@ const SignUp = ({ onSignUp }) => {
     const [success, setSuccess] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    // const [googleLoading, setGoogleLoading] = useState(false);
     const navigate = useNavigate();
 
 
@@ -87,7 +79,16 @@ const SignUp = ({ onSignUp }) => {
 
             onSignUp();
             setSuccess("Account created successfully!");
-            setTimeout(() => navigate("/userprofile"), 1500);
+
+            const isAdmin = response.data?.user?.isAdmin;
+            setTimeout(() => {
+                if (isAdmin) {
+                    navigate("/AdminChat");
+                } else {
+                    navigate("/UserProfile");
+                }
+            }, 1500);
+
         } catch (error) {
             console.error("Signup Error:", error);
             setError(error.response?.data?.message || "Failed to create account. Please try again.");
@@ -110,10 +111,16 @@ const SignUp = ({ onSignUp }) => {
 
     const handleGoogleSuccess = (userData) => {
         onSignUp();
-        setSuccess("Google signup successful!");
-        setTimeout(() => navigate("/userprofile"), 1500);
+        if (userData.isAdmin) {
+            setSuccess("Welcome Admin! Redirecting to admin panel...");
+            setTimeout(() => navigate("/AdminChat"), 1500);
+        } else {
+            setSuccess("Google signup successful!");
+            setTimeout(() => navigate("/UserProfile"), 1500);
+        }
         console.log("✅ Signed in as:", userData);
     };
+
 
 
     useEffect(() => {
@@ -181,7 +188,6 @@ const SignUp = ({ onSignUp }) => {
                 </form>
                 <div className="signup-link">
                     <p>Already have an account? <Link to="/SignIn">Sign In</Link></p>
-                    {/* <Link */}
                 </div>
                 <div className="hr_or_hr">
                     <div className="hr"></div>

@@ -13,9 +13,7 @@ const SignIn = ({ onSignIn }) => {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const location = useLocation();
     const [isLoading, setIsLoading] = useState(false);
-    // const [googleLoading, setGoogleLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleUserEmail = (event) => {
@@ -39,22 +37,32 @@ const SignIn = ({ onSignIn }) => {
             const response = await axios.post(
                 `${process.env.REACT_APP_API_BASE_URL}/api/signin`,
                 { email, password },
-                { withCredentials: true });
+                { withCredentials: true }
+            );
 
             onSignIn();
             setError("");
-            setSuccess("Sign in SuccessFully");
-            setTimeout(() => navigate("/userprofile"), 1500);
+            setSuccess("Sign in successfully!");
+
+            const isAdmin = response.data?.user?.isAdmin; // 🟢 check backend se aaya flag
+
+            setTimeout(() => {
+                if (isAdmin) {
+                    navigate("/AdminChat");   // 🟢 admin ko admin chat pe bhejna
+                } else {
+                    navigate("/UserProfile"); // normal user ko profile pe bhejna
+                }
+            }, 1500);
 
             setEmail("");
             setPassword("");
 
         } catch (error) {
-            // console.warn("Error during Sign In:", error);
             setError(error.response?.data?.message || "Failed to sign in. Please try again.");
             setSuccess("");
         }
     };
+
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -64,8 +72,13 @@ const SignIn = ({ onSignIn }) => {
 
     const handleGoogleSuccess = (userData) => {
         onSignIn();
-        setSuccess("Google signup successful!");
-        setTimeout(() => navigate("/userprofile"), 1500);
+        if (userData.isAdmin) {
+            setSuccess("Welcome Admin! Redirecting to admin panel...");
+            setTimeout(() => navigate("/AdminChat"), 1500);
+        } else {
+            setSuccess("Google signup successful!");
+            setTimeout(() => navigate("/UserProfile"), 1500);
+        }
         console.log("✅ Signed in as:", userData);
     };
 

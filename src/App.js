@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
-// import NavBar from './pages/NavBar';
 import NavBar from './files/pages/NavBar/NavBar';
 import UserLocation from './files/pages/UserLocationInfo';
 import SignIn from './files/pages/SignIn';
@@ -13,24 +12,27 @@ import TestHero from './files/pages/HeroSection';
 import BestSellingProducts from './files/pages/BestSelling';
 import TopProduct from './files/pages/TopProducts';
 import ProductView from './files/pages/ProductView';
-// import CaRt from './pages/Cart';
 import ScrollToTop from "./files/pages/ScrollToTop";
 import Footer from './files/pages/Footer';
 import Cart from './files/pages/Cart';
-// import TestWeb from './pages/TestWeb';
 import AllProducts from './files/pages/AllProducts';
 import ChatBox from './files/pages/Chat';
 import AdminChat from './files/AdminChat/AdminChat';
 import Google from './files/pages/Google';
 import DelNavbar from './files/pages/NavBar/delnav';
 import SearchResults from './files/pages/NavBar/SearchResults';
-// import AnimationTest from './pages/AnimationT';
-// import GoogleSignIn from './pages/GoogleSign';
+import { useLocation } from "react-router-dom";
+import AdminPanel from './files/pages/AdminPanel';
 
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   console.warn("app.js Say's", isAuthenticated);
+  // const location = useLocation();
+
+  // const hideNavBarRoutes = ["/Chat", "/AdminChat"];
+
+  // const shouldShowNavBar = !hideNavBarRoutes.includes(location.pathname);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -68,12 +70,8 @@ function App() {
 
   return (
     <div>
+      {/* {shouldShowNavBar && <NavBar Authentication={isAuthenticated} />} */}
       <NavBar Authentication={isAuthenticated} />
-      {/* <DelNavbar /> */}
-
-      {/* <TestWeb /> */}
-
-
       <ScrollToTop />
       <Routes>
         <Route path="/" element={
@@ -88,7 +86,7 @@ function App() {
         <Route path="/SignIn" element={<SignIn onSignIn={handleSignIn} />} />
         <Route path="/SignUp" element={<SignUp onSignUp={handleSignUp} />} />
         <Route path="/UserProfile" element={<UserProfile onSignOut={handleSignOut} />} />
-        <Route path='/test' element={<TeSt />} />
+        <Route path="/test" element={<TeSt />} />
         <Route path="/product/:id" element={<ProductView />} />
         <Route path="/BestSelling" element={<BestSellingProducts isBestSellingPage={true} />} />
         <Route path="/TopProducts" element={<TopProduct isTopProductsPage={true} />} />
@@ -106,44 +104,10 @@ function App() {
         <Route path="/Google" element={<Google />} />
         <Route path="/DelNav" element={<DelNavbar />} />
         <Route path="/search" element={<SearchResults />} />
-        {/* <Route path="/GoogleSignIn" element={<GoogleSignIn /> } /> */}
-
-
-
+        <Route path="/AdminPanel" element={<AdminPanel />} />
       </Routes>
     </div>
   );
 }
 
 export default App;
-
-// in console AdminChat.jsx: 21 users
-// Array(0)
-// length
-// :
-// 0
-// [[Prototype]]
-// :
-// Array(0)
-// AdminChat @AdminChat.jsx: 21 in mongo db 
-
-
-
-
-
-// ✅ Result:
-// ✔ Aapko offline users bhi dikhain ge jinhon ne kabhi message kia ho.
-
-// ✔ Jab koi user online aata hai ya naye message karta hai, usersList refresh ho sakti hai.
-
-// Agar aap chahein to getUsers call har new message pe bhi emit kar sakte hain — isse auto refresh feel milegi 👇:
-
-// js
-// Copy
-// Edit
-// socketRef.current.on("receiveMessage", (message) => {
-//     // Save message logic...
-//     socketRef.current.emit("getUsers"); // 🔁 Refresh list
-// });
-
-

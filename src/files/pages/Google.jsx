@@ -1,21 +1,34 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-const Google = ({ onSuccess }) => {
+const Google = ({ onSuccess, onError }) => {
     const googleButtonRef = useRef(null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const handleCredentialResponse = async (response) => {
+            setLoading(true);
             try {
-                const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/signup/google`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    credentials: "include",
-                    body: JSON.stringify({ id_token: response.credential })
-                });
+                const res = await fetch(
+                    `${process.env.REACT_APP_API_BASE_URL}/api/signup/google`,
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        credentials: "include", // 👈 token cookie store hoga
+                        body: JSON.stringify({ id_token: response.credential }),
+                    }
+                );
+
                 const data = await res.json();
-                if (data.success && onSuccess) onSuccess(data.user);
+                if (data.success) {
+                    if (onSuccess) onSuccess(data.user);
+                } else {
+                    if (onError) onError(data.message || "Google sign-in failed");
+                }
             } catch (error) {
                 console.error("Google login error:", error);
+                if (onError) onError("Google login error, please try again.");
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -24,23 +37,20 @@ const Google = ({ onSuccess }) => {
                 window.google.accounts.id.initialize({
                     client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
                     callback: handleCredentialResponse,
-                    auto_select: false
+                    auto_select: false,
                 });
 
-                // Render the invisible button
-                window.google.accounts.id.renderButton(
-                    googleButtonRef.current,
-                    {
-                        type: "icon",
-                        size: "large",
-                        theme: "filled_blue",
-                        width: "0" // Make it invisible
-                    }
-                );
+                // Render invisible button
+                window.google.accounts.id.renderButton(googleButtonRef.current, {
+                    type: "icon",
+                    size: "large",
+                    theme: "outline",
+                    width: "0", // invisible
+                });
             }
         };
 
-        // Load the Google script if not already loaded
+        // Load Google script
         if (!window.google) {
             const script = document.createElement("script");
             script.src = "https://accounts.google.com/gsi/client";
@@ -55,25 +65,25 @@ const Google = ({ onSuccess }) => {
         } else {
             loadGoogleAuth();
         }
-
-    }, [onSuccess]);
+    }, [onSuccess, onError]);
 
     const handleCustomButtonClick = () => {
         if (window.google && googleButtonRef.current) {
-            // Trigger click on the invisible Google button
-            googleButtonRef.current.querySelector('div[role=button]').click();
+            const btn = googleButtonRef.current.querySelector("div[role=button]");
+            if (btn) btn.click();
         }
     };
 
     return (
         <>
             {/* Invisible Google button */}
-            <div ref={googleButtonRef} style={{ display: 'none' }}></div>
+            <div ref={googleButtonRef} style={{ display: "none" }}></div>
 
-            {/* Your custom styled button */}
+            {/* Custom Google button */}
             <button
                 onClick={handleCustomButtonClick}
                 className="custom-google-button"
+                disabled={loading}
             >
                 <span className="google-icon">
                     <svg width="22" height="22" viewBox="0 0 24 24">
@@ -83,7 +93,7 @@ const Google = ({ onSuccess }) => {
                         <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
                     </svg>
                 </span>
-                Continue with Google
+                {loading ? "Signing in..." : "Continue with Google"}
             </button>
         </>
     );

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const { OAuth2Client } = require("google-auth-library");
-const dayjs = require("dayjs"); // ⏰ Imported
+const dayjs = require("dayjs");
 const User = require("../models/StoreUser");
 
 const client = new OAuth2Client(process.env.REACT_APP_GOOGLE_CLIENT_ID);
@@ -66,13 +66,17 @@ router.post("/signup/google", async (req, res) => {
         const token = createToken(user._id);
         setAuthCookie(res, token);
 
+        // 🟢 admin check
+        const isAdmin = user.email === process.env.ADMIN_EMAIL;
+
         return res.status(200).json({
             success: true,
             user: {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                image: user.image
+                image: user.image,
+                isAdmin   // 🟢 ab frontend pe flag mil jayega
             }
         });
 

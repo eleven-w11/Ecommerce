@@ -21,30 +21,35 @@ router.post("/signin", async (req, res) => {
         }
 
         if (isPasswordMatch) {
-
             const token = jwt.sign(
                 { userId: existingUser._id },
                 process.env.JWT_SECRET,
                 { expiresIn: "1h" }
             );
 
-            res.cookie('token', token, {
+            res.cookie("token", token, {
                 httpOnly: true,
-                secure: false,
-                // domain: 'webverse',
-                path: '/',
-                expires: new Date(Date.now() + 3600000),
+                secure: process.env.NODE_ENV === "production",
+                path: "/",
+                maxAge: 3600000, // 1 hour
             });
-            console.log("Set Cookie: ", req.cookies);
-            console.log("Generated JWT Token:", token);
+
+            // 🟢 yahan admin check kar rahe hain
+            const isAdmin = existingUser.email === process.env.ADMIN_EMAIL;
+
             return res.status(200).json({
                 success: true,
-                message: "Sign In successful.911",
+                message: "Sign In successful!",
                 token,
-                cookie: req.cookies
+                user: {
+                    _id: existingUser._id,
+                    name: existingUser.name,
+                    email: existingUser.email,
+                    image: existingUser.image,
+                    isAdmin, // 🟢 frontend ke liye flag
+                },
             });
         }
-
     } catch (error) {
         console.error("Error in signinRoutes.js during sign in:", error);
         res.status(500).json({ success: false, message: "Failed to sign in. Please try again.", error });

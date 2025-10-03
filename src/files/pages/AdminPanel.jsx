@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Navigate, useNavigate } from 'react-router-dom';
 
-const DataPage = () => {
+const AdminPanel = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -81,4 +81,4 @@ const DataPage = () => {
     );
 };
 
-export default DataPage;
+export default AdminPanel;

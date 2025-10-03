@@ -73,9 +73,8 @@ body {
         opacity: 1;
     }
 }
-
-.user-chat-app {
-    background-color: tan;
+.user-chat-app{
+    background-color: rgb(234, 234, 234);
 }
 
 /* Chat App Container */
@@ -97,22 +96,22 @@ body {
 
 /* Header Styles */
 .chat-header {
-    padding: 15px 25px;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    padding: 12px 25px;
+    background: linear-gradient(135deg, rgb(0, 0, 156), rgb(111, 111, 227));
     color: white;
     position: relative;
     z-index: 8;
 }
 
 .chat-app .glassmorphism {
-    background: rgba(67, 97, 238, 0.8);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    /* background: rgba(67, 97, 238, 0.8); */
+    backdrop-filter: blur(100px);
+    -webkit-backdrop-filter: blur(100px);
 }
 
 .header-content {
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     align-items: center;
     width: 100%;
     /* Ensure it takes full width */
@@ -272,13 +271,9 @@ body {
 /* Input Area */
 .chat-app .message-input-container {
     padding: 15px 20px;
-    background-color: lightskyblue;
+    background-color: white;
     border-top: 1px solid #e9ecef;
-    /* animation: slideUp 0.3s ease-out; */
-    position: sticky;
-    bottom: 0;
-    z-index: 100;
-    transition: none !important;
+    animation: slideUp 0.3s ease-out;
 }
 
 .chat-app .input-wrapper {
@@ -389,7 +384,7 @@ body {
 } */
 
 
-.fp-chat {
+.fp-chat{
     width: 80%;
     height: 80vh;
     margin: 0 auto;
@@ -542,8 +537,8 @@ body {
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     .chat-app {
-        height: 100vh;
-        margin: 0;
+        /* height: 100vh; */
+        /* margin: 0; */
         border-radius: 0;
     }
 
