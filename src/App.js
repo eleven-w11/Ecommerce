@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import './App.css';
 import NavBar from './files/pages/NavBar/NavBar';
 import UserLocation from './files/pages/UserLocationInfo';
@@ -21,18 +21,26 @@ import AdminChat from './files/AdminChat/AdminChat';
 import Google from './files/pages/Google';
 import DelNavbar from './files/pages/NavBar/delnav';
 import SearchResults from './files/pages/NavBar/SearchResults';
-import { useLocation } from "react-router-dom";
 import AdminPanel from './files/pages/AdminPanel';
-
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [width, setWidth] = useState(window.innerWidth);  // 👈 screen width state
+  const location = useLocation();
+
   console.warn("app.js Say's", isAuthenticated);
-  // const location = useLocation();
 
-  // const hideNavBarRoutes = ["/Chat", "/AdminChat"];
+  // 👇 screen resize listener
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
 
-  // const shouldShowNavBar = !hideNavBarRoutes.includes(location.pathname);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // 👇 specific routes jahan NavBar hide karna hai
+  const hideNavBarRoutes = ["/Chat", "/AdminChat"];
+  const shouldShowNavBar = !(width < 600 && hideNavBarRoutes.includes(location.pathname));
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -56,22 +64,13 @@ function App() {
     checkAuth();
   }, []);
 
-  const handleSignIn = () => {
-    setIsAuthenticated(true);
-  };
-
-  const handleSignUp = () => {
-    setIsAuthenticated(true);
-  };
-
-  const handleSignOut = () => {
-    setIsAuthenticated(false);
-  };
+  const handleSignIn = () => setIsAuthenticated(true);
+  const handleSignUp = () => setIsAuthenticated(true);
+  const handleSignOut = () => setIsAuthenticated(false);
 
   return (
     <div>
-      {/* {shouldShowNavBar && <NavBar Authentication={isAuthenticated} />} */}
-      <NavBar Authentication={isAuthenticated} />
+      {shouldShowNavBar && <NavBar Authentication={isAuthenticated} />}
       <ScrollToTop />
       <Routes>
         <Route path="/" element={

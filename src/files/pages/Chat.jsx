@@ -274,9 +274,9 @@ const Chat = () => {
             <div className="chat-app">
                 <div className="chat-header glassmorphism">
                     <div className="header-content">
-                        {/* <div className="back-arrow">
+                        <div className="back-arrow">
                             <span className="material-symbols-outlined">arrow_back</span>
-                        </div> */}
+                        </div>
                         <div className="admin-profile">
                             <div className="profile-image-container">
                                 <img src={admin} alt="Admin" className="profile-image" />
