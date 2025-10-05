@@ -22,8 +22,10 @@ const AdminChat = () => {
         const backendURL = process.env.REACT_APP_API_BASE_URL;
         socketRef.current = io(backendURL, { withCredentials: true });
 
-        const adminId = "681edcb10cadbac1be3540aa"; // fixed admin id (can be dynamic later)
-        socketRef.current.emit("register", { userId: adminId });
+
+        // ✅ Emit register with admin role
+        const adminId = "681edcb10cadbac1be3540aa"; // can be dynamic later
+        socketRef.current.emit("register", { userId: adminId, role: "admin" });
 
         socketRef.current.emit("getUsers");
         socketRef.current.on("usersList", (data) => {
@@ -277,8 +279,8 @@ const AdminChat = () => {
                                         <div
                                             key={msg._id || idx}
                                             className={`message-bubble ${msg.senderRole === "admin"
-                                                    ? "outgoing"
-                                                    : "incoming"
+                                                ? "outgoing"
+                                                : "incoming"
                                                 } fade-in`}
                                         >
                                             <div className="message-content">

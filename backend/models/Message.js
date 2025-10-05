@@ -16,16 +16,16 @@ const messageSchema = new mongoose.Schema({
     fromUserId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: false
     },
     toUserId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: false   // ← 🔥 ye line change ki gayi (pehle true tha)
     },
-    senderRole: {   // 👈 Hybrid approach (replace fromAdmin)
+    senderRole: {
         type: String,
-        enum: ["admin", "user"],
+        enum: ['user', 'admin'],
         required: true
     },
     message: {

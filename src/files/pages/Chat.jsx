@@ -77,14 +77,18 @@ const Chat = () => {
                 );
 
                 if (response.data._id && isMounted.current) {
-                    setUserId(response.data._id);
-                    setIsAdmin(response.data.isAdmin || false);
+                    const fetchedUserId = response.data._id;
+                    const adminStatus = response.data.isAdmin || false;
+
+                    setUserId(fetchedUserId);
+                    setIsAdmin(adminStatus);
                     setUserProfile(response.data);
                     setAuthError(null);
 
+                    // ✅ Register user/admin to socket
                     socketRef.current.emit("register", {
-                        userId: response.data._id,
-                        isAdmin: response.data.isAdmin
+                        userId: fetchedUserId,
+                        role: adminStatus ? "admin" : "user", // 🔥 Role defined properly
                     });
                 }
             } catch (error) {
@@ -203,10 +207,13 @@ const Chat = () => {
 
             setChat(prev => [...prev, optimisticMsg]);
             socketRef.current.emit("adminMessage", {
+                fromUserId: userId,   // ✅ admin ka ID
+                senderRole: "admin",  // ✅ add this
                 toUserId: selectedUserId,
                 message: messageToSend,
                 timestamp
             });
+
         } else {
             const optimisticMsg = {
                 _id: tempId,
@@ -224,9 +231,11 @@ const Chat = () => {
             setChat(prev => [...prev, optimisticMsg]);
             socketRef.current.emit("userMessage", {
                 fromUserId: userId,
+                senderRole: "user",   // ✅ add this
                 message: messageToSend,
                 timestamp
             });
+
         }
 
         setMessage("");
@@ -311,7 +320,13 @@ const Chat = () => {
                                 chat.map((msg) => (
                                     <div
                                         key={msg._id || msg.timestamp}
-                                        className={`message-bubble ${msg.fromAdmin ? "admin-message" : "user-message"} fade-in`}
+                                        className={`message-bubble ${msg.senderRole === "admin"
+                                            ? "admin-message"
+                                            : msg.fromUserId === userId
+                                                ? "user-message self"
+                                                : "user-message"
+                                            } fade-in`}
+
                                     >
                                         <p className="message-text">{msg.message}</p>
                                         <p className="message-time">

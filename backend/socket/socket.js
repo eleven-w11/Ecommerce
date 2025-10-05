@@ -7,19 +7,22 @@ const initSocket = (server, allowedOrigins) => {
         cors: {
             origin: allowedOrigins,
             credentials: true,
-            methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-        }
+            methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        },
     });
 
     io.on("connection", (socket) => {
         console.log("🟢 New client connected:", socket.id);
 
-        socket.on("register", ({ userId }) => {
+        // ✅ Register admin or user
+        socket.on("register", ({ userId, role }) => {
+            socket.userId = userId;
+            socket.userRole = role;
             socket.join(userId);
-            console.log(`🔐 Socket ${socket.id} joined room ${userId}`);
+            console.log(`🔐 ${role} (${userId}) connected with socket ID ${socket.id}`);
         });
 
-        // ✅ Admin fetches users with last message
+        // ✅ Admin fetches all users with last message
         socket.on("getUsers", async () => {
             try {
                 const users = await User.find({}, "name image");
@@ -27,13 +30,10 @@ const initSocket = (server, allowedOrigins) => {
 
                 for (const user of users) {
                     const lastMsg = await Message.findOne({
-                        $or: [
-                            { fromUserId: user._id },
-                            { toUserId: user._id }
-                        ]
+                        $or: [{ fromUserId: user._id }, { toUserId: user._id }],
                     }).sort({ timestamp: -1 });
 
-                    if (!lastMsg) continue; // 🚫 skip if no messages
+                    if (!lastMsg) continue;
 
                     usersWithLastMessage.push({
                         _id: user._id,
@@ -44,6 +44,7 @@ const initSocket = (server, allowedOrigins) => {
                     });
                 }
 
+                // Sort by recent message
                 usersWithLastMessage.sort((a, b) => {
                     const dateA = a.lastMessageTime ? new Date(a.lastMessageTime).getTime() : 0;
                     const dateB = b.lastMessageTime ? new Date(b.lastMessageTime).getTime() : 0;
@@ -56,42 +57,47 @@ const initSocket = (server, allowedOrigins) => {
             }
         });
 
-        // ✅ User sends message
+        // ✅ When user sends message to admin
         socket.on("userMessage", async ({ fromUserId, message, timestamp }) => {
             try {
+                const adminId = process.env.ADMIN_ID || "681edcb10cadbac1be3540aa";
+
                 const saved = await Message.create({
                     fromUserId,
-                    toUserId: process.env.ADMIN_ID || "681edcb10cadbac1be3540aa", // ✅ admin ko jaa rahi hai
+                    toUserId: adminId,
                     senderRole: "user",
                     message,
                     timestamp: timestamp || new Date(),
                 });
 
                 const response = saved.toObject();
-
-                // Add user info for frontend
                 const user = await User.findById(fromUserId).select("name image");
-                response.user = user ? {
-                    name: user.name,
-                    image: user.image
-                } : {
-                    name: "New User",
-                    image: null
-                };
+                response.user = user
+                    ? { name: user.name, image: user.image }
+                    : { name: "New User", image: null };
 
                 console.log("📥 User message saved:", response);
 
-                // Send to admin
-                io.to(process.env.ADMIN_ID || "681edcb10cadbac1be3540aa").emit("receiveMessage", response);
+                // 🔎 Send to connected admin
+                const adminSocket = Array.from(io.sockets.sockets.values()).find(
+                    (s) => s.userRole === "admin"
+                );
+
+                if (adminSocket) {
+                    io.to(adminSocket.userId).emit("receiveMessage", response);
+                    console.log("📤 Message sent to admin");
+                } else {
+                    console.log("⚠️ No admin currently connected.");
+                }
             } catch (err) {
                 console.error("❌ userMessage error:", err);
             }
         });
 
-        // ✅ Admin sends message
+        // ✅ When admin sends message to user
         socket.on("adminMessage", async ({ toUserId, message, timestamp }) => {
             try {
-                const adminId = process.env.ADMIN_ID || "681edcb10cadbac1be3540aa";
+                const adminId = socket.userId || process.env.ADMIN_ID || "681edcb10cadbac1be3540aa";
 
                 const saved = await Message.create({
                     fromUserId: adminId,
@@ -102,17 +108,16 @@ const initSocket = (server, allowedOrigins) => {
                 });
 
                 const response = saved.toObject();
-                console.log("📤 Admin message saved:", response);
-
-                // Send to that user
                 io.to(toUserId).emit("receiveMessage", response);
+
+                console.log("📤 Admin message sent to user:", toUserId);
             } catch (err) {
                 console.error("❌ adminMessage error:", err);
             }
         });
 
         socket.on("disconnect", () => {
-            console.log("🔴 Client disconnected:", socket.id);
+            console.log(`🔴 ${socket.userRole || "Unknown"} disconnected: ${socket.id}`);
         });
     });
 };
