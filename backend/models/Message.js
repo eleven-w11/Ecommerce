@@ -15,15 +15,18 @@ function getFormattedDate() {
 const messageSchema = new mongoose.Schema({
     fromUserId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     },
     toUserId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     },
-    fromAdmin: {
-        type: Boolean,
-        default: false
+    senderRole: {   // 👈 Hybrid approach (replace fromAdmin)
+        type: String,
+        enum: ["admin", "user"],
+        required: true
     },
     message: {
         type: String,
@@ -33,8 +36,6 @@ const messageSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
-
 }, { collection: "chat_box" });
-
 
 module.exports = mongoose.model("Message", messageSchema);

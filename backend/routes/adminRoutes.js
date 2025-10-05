@@ -3,10 +3,20 @@ const router = express.Router();
 const ChatModel = require("../models/Message");
 const User = require("../models/StoreUser");
 
+// Get all chats (unique users who messaged)
 router.get("/all-chats", async (req, res) => {
     try {
         const messages = await ChatModel.find();
-        const userIds = [...new Set(messages.map(msg => msg.fromUserId).filter(Boolean))];
+
+        // Extract unique user IDs (ignore admin IDs)
+        const userIds = [
+            ...new Set(
+                messages
+                    .filter(msg => msg.senderRole === "user") // sirf users ke messages
+                    .map(msg => msg.fromUserId?.toString())
+                    .filter(Boolean)
+            )
+        ];
 
         const users = await User.find({ _id: { $in: userIds } })
             .select("_id name email image");
@@ -30,7 +40,6 @@ router.get("/user/:id", async (req, res) => {
     }
 });
 
-
 // GET chat by user ID (both user and admin messages)
 router.get("/chat/:userId", async (req, res) => {
     try {
@@ -38,10 +47,10 @@ router.get("/chat/:userId", async (req, res) => {
 
         const messages = await ChatModel.find({
             $or: [
-                { fromUserId: userId },                 // messages sent by user
-                { toUserId: userId, fromAdmin: true }   // messages sent by admin to this user
+                { fromUserId: userId },      // user ke messages
+                { toUserId: userId }         // admin ke messages
             ]
-        }).sort({ timestamp: 1 }); // oldest first
+        }).sort({ timestamp: 1 });
 
         res.json({ success: true, messages });
     } catch (err) {
@@ -50,7 +59,7 @@ router.get("/chat/:userId", async (req, res) => {
     }
 });
 
-
+// Admin sends a message to a user
 // Admin sends a message to a user
 router.post("/chat/reply", async (req, res) => {
     try {
@@ -60,9 +69,13 @@ router.post("/chat/reply", async (req, res) => {
             return res.status(400).json({ success: false, message: "User ID and message are required." });
         }
 
+        // yahan admin ka ek fixed ID ya env variable use kar lo
+        const adminId = process.env.ADMIN_ID || "681edcb10cadbac1be3540aa";
+
         const newMessage = new ChatModel({
-            fromAdmin: true,
+            fromUserId: adminId,   // ✅ required
             toUserId,
+            senderRole: "admin",   // ✅ required
             message,
             timestamp: new Date(),
         });

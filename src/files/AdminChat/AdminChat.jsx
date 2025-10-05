@@ -2,9 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
 import "../styles/AdminChat.css";
-import { FiArrowLeft } from "react-icons/fi";
 import UserList from "./UserList";
-
 
 const AdminChat = () => {
     const API_BASE = process.env.REACT_APP_API_BASE_URL;
@@ -18,44 +16,39 @@ const AdminChat = () => {
     const messagesEndRef = useRef(null);
     const [showMobileView, setShowMobileView] = useState(false);
 
-    console.warn("users", users);
-
-
     useEffect(() => {
         isMounted.current = true;
 
         const backendURL = process.env.REACT_APP_API_BASE_URL;
+        socketRef.current = io(backendURL, { withCredentials: true });
 
-        socketRef.current = io(backendURL, {
-            withCredentials: true,
-        });
-
-        const adminId = "681edcb10cadbac1be3540aa";
+        const adminId = "681edcb10cadbac1be3540aa"; // fixed admin id (can be dynamic later)
         socketRef.current.emit("register", { userId: adminId });
 
         socketRef.current.emit("getUsers");
         socketRef.current.on("usersList", (data) => {
-            console.log("📥 usersList received from backend:", data);
             if (isMounted.current) {
-                const usersWithSource = data.map(user => ({
-                    ...user,
-                    source: "socket-init"
-                }));
-                setUsers(usersWithSource);
+                setUsers(data);
             }
         });
 
         const handleReceiveMessage = async (message) => {
             if (!isMounted.current) return;
 
-            const userId = message.fromAdmin ? message.toUserId : message.fromUserId;
+            const userId =
+                message.senderRole === "admin"
+                    ? message.toUserId
+                    : message.fromUserId;
+
             if (!userId) return;
 
-            setSelectedChat(prev => {
-                const isDuplicate = prev.some(msg =>
-                    msg._id === message._id ||
-                    (msg.message === message.message &&
-                        new Date(msg.timestamp).getTime() === new Date(message.timestamp).getTime())
+            setSelectedChat((prev) => {
+                const isDuplicate = prev.some(
+                    (msg) =>
+                        msg._id === message._id ||
+                        (msg.message === message.message &&
+                            new Date(msg.timestamp).getTime() ===
+                            new Date(message.timestamp).getTime())
                 );
                 if (!isDuplicate && userId === selectedUserId) {
                     return [...prev, message];
@@ -63,20 +56,15 @@ const AdminChat = () => {
                 return prev;
             });
 
-            setUsers(prev => {
-                const userExists = prev.find(u => u._id === userId);
+            // update users sidebar
+            setUsers((prev) => {
+                const userExists = prev.find((u) => u._id === userId);
                 const name = message.user?.name || "New User";
                 const image = message.user?.image || "";
-                console.log("🧾 Message from user:", {
-                    userId,
-                    name,
-                    image,
-                    message: message.message
-                });
 
                 let updatedUsers;
                 if (userExists) {
-                    updatedUsers = prev.map(u =>
+                    updatedUsers = prev.map((u) =>
                         u._id === userId
                             ? {
                                 ...u,
@@ -84,9 +72,11 @@ const AdminChat = () => {
                                 image: image || u.image,
                                 lastMessage: message.message,
                                 lastMessageTime: message.timestamp,
-                                unreadCount: u._id !== selectedUserId ? (u.unreadCount || 0) + 1 : 0,
+                                unreadCount:
+                                    u._id !== selectedUserId
+                                        ? (u.unreadCount || 0) + 1
+                                        : 0,
                                 isOnline: true,
-                                source: "socket-update-existing"
                             }
                             : u
                     );
@@ -100,33 +90,35 @@ const AdminChat = () => {
                             lastMessageTime: message.timestamp,
                             unreadCount: 1,
                             isOnline: true,
-                            source: "socket-update-new",
-                            needsUpdate: false
                         },
-                        ...prev
+                        ...prev,
                     ];
                 }
 
-                const safeDate = (d) => d ? new Date(d).getTime() : 0;
-                return [...updatedUsers].sort((a, b) => safeDate(b.lastMessageTime) - safeDate(a.lastMessageTime));
+                return updatedUsers.sort(
+                    (a, b) =>
+                        new Date(b.lastMessageTime) -
+                        new Date(a.lastMessageTime)
+                );
             });
 
-            const userInState = users.find(u => u._id === userId);
+            // fetch missing user details
+            const userInState = users.find((u) => u._id === userId);
             if (!userInState || !userInState.name) {
                 try {
-                    const res = await axios.get(`${backendURL}/api/user/${userId}`, {
-                        withCredentials: true,
-                    });
+                    const res = await axios.get(
+                        `${backendURL}/api/user/${userId}`,
+                        { withCredentials: true }
+                    );
                     const user = res.data;
 
-                    setUsers(prev =>
-                        prev.map(u =>
+                    setUsers((prev) =>
+                        prev.map((u) =>
                             u._id === user._id
                                 ? {
                                     ...u,
                                     name: user.name,
                                     image: user.profileImage,
-                                    needsUpdate: false
                                 }
                                 : u
                         )
@@ -145,8 +137,6 @@ const AdminChat = () => {
             socketRef.current?.disconnect();
         };
     }, [selectedUserId]);
-
-
 
     const fetchUserChat = async (userId) => {
         if (!isMounted.current) return;
@@ -169,26 +159,26 @@ const AdminChat = () => {
         }
     };
 
-
     const handleAdminReply = () => {
         if (!adminMessage.trim() || !selectedUserId || !isMounted.current) return;
 
         const tempId = Date.now();
         const timestamp = new Date().toISOString();
+
         const newMessage = {
             _id: tempId,
             message: adminMessage,
-            fromAdmin: true,
+            senderRole: "admin", // ✅ hybrid approach
             timestamp,
-            toUserId: selectedUserId
+            toUserId: selectedUserId,
         };
 
-        setSelectedChat(prev => [...prev, newMessage]);
+        setSelectedChat((prev) => [...prev, newMessage]);
         setAdminMessage("");
 
         socketRef.current.emit("adminMessage", {
             toUserId: selectedUserId,
-            message: adminMessage
+            message: adminMessage,
         });
     };
 
@@ -196,29 +186,14 @@ const AdminChat = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [selectedChat]);
 
-    useEffect(() => {
-        const setSignHeight = () => {
-            const height = window.innerHeight - 60;
-            const signElement = document.querySelector(".admin-chat-app");
-            if (signElement) {
-                signElement.style.height = `${height}px`;
-            }
-        };
-        setSignHeight();
-        window.addEventListener("resize", setSignHeight);
-        return () => window.removeEventListener("resize", setSignHeight);
-    }, []);
-
     const handleBackToUsers = () => setShowMobileView(false);
-
-    const uniqueUsers = [...new Map(users.map(u => [u._id, u])).values()];
-
-
-
 
     return (
         <div className="admin-chat-app">
-            <div className={`admin-sidebar glassmorphism ${showMobileView ? 'hidden-mobile' : ''}`}>
+            <div
+                className={`admin-sidebar glassmorphism ${showMobileView ? "hidden-mobile" : ""
+                    }`}
+            >
                 <div className="sidebar-header">
                     <h2 className="sidebar-title">Customer Chats</h2>
                     <div className="online-indicator">
@@ -228,54 +203,94 @@ const AdminChat = () => {
                 </div>
                 {error && <div className="error-message slide-in">{error}</div>}
 
-                {/* ✅ Replaced user list block with UserList component */}
                 <UserList
                     users={users}
                     selectedUserId={selectedUserId}
                     fetchUserChat={fetchUserChat}
                 />
             </div>
-            {/* 🟢 Keep the remaining part of chat area, message input, and rest as-is */}
-            <div className={`admin-chat-area ${showMobileView ? 'visible-mobile' : ''}`}>
+
+            <div
+                className={`admin-chat-area ${showMobileView ? "visible-mobile" : ""
+                    }`}
+            >
                 {selectedUserId ? (
                     <>
                         <div className="chat-header">
-                            <button className="back-button" onClick={handleBackToUsers}>
-                                <span className="material-symbols-outlined">arrow_back</span>
+                            <button
+                                className="back-button"
+                                onClick={handleBackToUsers}
+                            >
+                                <span className="material-symbols-outlined">
+                                    arrow_back
+                                </span>
                             </button>
                             <div className="chat-partner-info">
                                 <img
-                                    src={users.find(u => u._id === selectedUserId)?.image || `https://ui-avatars.com/api/?name=${users.find(u => u._id === selectedUserId)?.name}&background=random`}
+                                    src={
+                                        users.find(
+                                            (u) => u._id === selectedUserId
+                                        )?.image ||
+                                        `https://ui-avatars.com/api/?name=${users.find(
+                                            (u) => u._id === selectedUserId
+                                        )?.name
+                                        }&background=random`
+                                    }
                                     alt="User"
                                     className="chat-avatar"
                                 />
                                 <div>
-                                    <h2 className="partner-name">{users.find(u => u._id === selectedUserId)?.name}</h2>
+                                    <h2 className="partner-name">
+                                        {
+                                            users.find(
+                                                (u) => u._id === selectedUserId
+                                            )?.name
+                                        }
+                                    </h2>
                                     <p className="partner-status">Active now</p>
                                 </div>
                             </div>
                         </div>
+
                         <div className="messages-container">
                             {selectedChat.length === 0 ? (
                                 <div className="empty-chat">
                                     <div className="empty-icon">💬</div>
                                     <h3>No messages found</h3>
-                                    <p>Try refreshing or wait for new messages from {users.find(u => u._id === selectedUserId)?.name || "user"}.</p>
+                                    <p>
+                                        Try refreshing or wait for new messages
+                                        from{" "}
+                                        {users.find(
+                                            (u) => u._id === selectedUserId
+                                        )?.name || "user"}
+                                        .
+                                    </p>
                                 </div>
                             ) : (
                                 selectedChat
-                                    .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+                                    .sort(
+                                        (a, b) =>
+                                            new Date(a.timestamp) -
+                                            new Date(b.timestamp)
+                                    )
                                     .map((msg, idx) => (
                                         <div
                                             key={msg._id || idx}
-                                            className={`message-bubble ${msg.fromAdmin ? "outgoing" : "incoming"} fade-in`}
+                                            className={`message-bubble ${msg.senderRole === "admin"
+                                                    ? "outgoing"
+                                                    : "incoming"
+                                                } fade-in`}
                                         >
                                             <div className="message-content">
-                                                <p className="message-text">{msg.message}</p>
+                                                <p className="message-text">
+                                                    {msg.message}
+                                                </p>
                                                 <p className="message-time">
-                                                    {new Date(msg.timestamp).toLocaleTimeString([], {
-                                                        hour: '2-digit',
-                                                        minute: '2-digit'
+                                                    {new Date(
+                                                        msg.timestamp
+                                                    ).toLocaleTimeString([], {
+                                                        hour: "2-digit",
+                                                        minute: "2-digit",
                                                     })}
                                                 </p>
                                             </div>
@@ -284,20 +299,32 @@ const AdminChat = () => {
                             )}
                             <div ref={messagesEndRef}></div>
                         </div>
+
                         <div className="message-input-container slide-up">
                             <div className="input-wrapper">
                                 <textarea
                                     rows="1"
                                     className="message-input"
-                                    placeholder={`Message ${users.find(u => u._id === selectedUserId)?.name}...`}
+                                    placeholder={`Message ${users.find(
+                                        (u) => u._id === selectedUserId
+                                    )?.name
+                                        }...`}
                                     value={adminMessage}
-                                    onChange={(e) => setAdminMessage(e.target.value)}
-                                    onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleAdminReply()}
+                                    onChange={(e) =>
+                                        setAdminMessage(e.target.value)
+                                    }
+                                    onKeyPress={(e) =>
+                                        e.key === "Enter" &&
+                                        !e.shiftKey &&
+                                        handleAdminReply()
+                                    }
                                 ></textarea>
                                 <button
                                     className="send-button hover-effect"
                                     onClick={handleAdminReply}
-                                    disabled={!adminMessage.trim() || !selectedUserId}
+                                    disabled={
+                                        !adminMessage.trim() || !selectedUserId
+                                    }
                                 >
                                     <span className="send-icon">✈️</span>
                                     <span className="send-text">Send</span>
