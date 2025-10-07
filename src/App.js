@@ -70,6 +70,7 @@ function App() {
 
   return (
     <div>
+      {/* <NavBar Authentication={isAuthenticated} /> */}
       {shouldShowNavBar && <NavBar Authentication={isAuthenticated} />}
       <ScrollToTop />
       <Routes>
