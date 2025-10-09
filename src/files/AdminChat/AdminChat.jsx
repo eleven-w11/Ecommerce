@@ -192,16 +192,14 @@ const AdminChat = () => {
 
     return (
         <div className="admin-chat-app">
-            <div
-                className={`admin-sidebar glassmorphism ${showMobileView ? "hidden-mobile" : ""
-                    }`}
-            >
+            <div className={`admin-sidebar ${showMobileView ? "hidden-mobile" : ""}`}>
                 <div className="sidebar-header">
-                    <h2 className="sidebar-title">Customer Chats</h2>
-                    <div className="online-indicator">
-                        <span className="pulse-dot"></span>
-                        <span>Online</span>
+                    <div className="back-arrow">
+                        <span className="material-symbols-outlined">arrow_back</span>
                     </div>
+                    <h2 className="sidebar-title">Customer Chats</h2>
+                    
+
                 </div>
                 {error && <div className="error-message slide-in">{error}</div>}
 
