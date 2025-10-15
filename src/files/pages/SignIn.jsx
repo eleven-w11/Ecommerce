@@ -74,7 +74,7 @@ const SignIn = ({ onSignIn }) => {
         onSignIn();
         if (userData.isAdmin) {
             setSuccess("Welcome Admin! Redirecting to admin panel...");
-            setTimeout(() => navigate("/AdminChat"), 1500);
+            setTimeout(() => navigate("/UserList"), 1500);
         } else {
             setSuccess("Google signup successful!");
             setTimeout(() => navigate("/UserProfile"), 1500);

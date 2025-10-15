@@ -566,7 +566,7 @@ body {
 }
 @media (max-width: 600px) {
     .user-chat-app .chat-app {
-        height: 100vh;
+        height: 100dvh;
         /* background-color: red; */
         margin-top: 0;
         border-radius: 0;

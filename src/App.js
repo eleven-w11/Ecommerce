@@ -18,6 +18,7 @@ import Cart from './files/pages/Cart';
 import AllProducts from './files/pages/AllProducts';
 import ChatBox from './files/pages/Chat';
 import AdminChat from './files/AdminChat/AdminChat';
+import UserList from './files/AdminChat/UserList';
 import Google from './files/pages/Google';
 import DelNavbar from './files/pages/NavBar/delnav';
 import SearchResults from './files/pages/NavBar/SearchResults';
@@ -25,22 +26,21 @@ import AdminPanel from './files/pages/AdminPanel';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [width, setWidth] = useState(window.innerWidth);  // 👈 screen width state
+  const [width, setWidth] = useState(window.innerWidth);
   const location = useLocation();
 
   console.warn("app.js Say's", isAuthenticated);
 
-  // 👇 screen resize listener
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
-
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // 👇 specific routes jahan NavBar hide karna hai
-  const hideNavBarRoutes = ["/Chat", "/AdminChat"];
-  const shouldShowNavBar = !(width < 600 && hideNavBarRoutes.includes(location.pathname));
+  const hideNavBarRoutes = ["/Chat", "/AdminChat", "/AdminChat/:userId"];
+  const shouldShowNavBar = !(width < 600 && hideNavBarRoutes.some(route =>
+    location.pathname.startsWith(route.replace(':userId', ''))
+  ));
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -70,7 +70,6 @@ function App() {
 
   return (
     <div>
-      {/* <NavBar Authentication={isAuthenticated} /> */}
       {shouldShowNavBar && <NavBar Authentication={isAuthenticated} />}
       <ScrollToTop />
       <Routes>
@@ -100,11 +99,17 @@ function App() {
         <Route path="/WomanBags" element={<AllProducts />} />
         <Route path="/WomanAccessories" element={<AllProducts />} />
         <Route path="/Chat" element={<ChatBox />} />
-        <Route path="/AdminChat" element={<AdminChat />} />
+
+        {/* ✅ Fixed Admin Chat Routes */}
+        <Route path="/UserList" element={<UserList />} />
+        {/* <Route path="/AdminChat" element={<UserLis } /> */}
+        <Route path="/AdminChat/:userId" element={<AdminChat />} />
+
         <Route path="/Google" element={<Google />} />
         <Route path="/DelNav" element={<DelNavbar />} />
         <Route path="/search" element={<SearchResults />} />
         <Route path="/AdminPanel" element={<AdminPanel />} />
+        {/* <Route path="/UserListPage" element={<UserListPage />} /> */}
       </Routes>
     </div>
   );
