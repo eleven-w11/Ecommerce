@@ -139,7 +139,7 @@ const SlideMenu = ({
                 <div className="navline" ref={(el) => (linksRef.current[15] = el)}></div>
                 <li><Link to="/Cart" className={activePath === "/Cart" ? "active-link" : ""} ref={(el) => (linksRef.current[16] = el)}>Contact Us</Link></li>
                 <div className="navline" ref={(el) => (linksRef.current[17] = el)}></div>
-                <li><Link to="/UserList" className={activePath === "/UserList" ? "active-link" : ""} ref={(el) => (linksRef.current[16] = el)}>Admin Chat</Link></li>
+                <li><Link to="/AdminChat" className={activePath === "/AdminChat" ? "active-link" : ""} ref={(el) => (linksRef.current[16] = el)}>Admin Chat</Link></li>
                 <div className="navline" ref={(el) => (linksRef.current[17] = el)}></div>
             </ul>
         </div>

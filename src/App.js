@@ -100,10 +100,8 @@ function App() {
         <Route path="/WomanAccessories" element={<AllProducts />} />
         <Route path="/Chat" element={<ChatBox />} />
 
-        {/* ✅ Fixed Admin Chat Routes */}
         <Route path="/UserList" element={<UserList />} />
-        {/* <Route path="/AdminChat" element={<UserLis } /> */}
-        <Route path="/AdminChat/:userId" element={<AdminChat />} />
+        <Route path="/AdminChat" element={<AdminChat />} />
 
         <Route path="/Google" element={<Google />} />
         <Route path="/DelNav" element={<DelNavbar />} />

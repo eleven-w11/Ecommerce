@@ -118,7 +118,7 @@ body {
     align-items: center;
     width: 100%;
     /* Ensure it takes full width */
-    /* padding: 0 15px; */
+    padding: 12px 15px;
     /* Add some padding */
 }
 
@@ -344,48 +344,6 @@ body {
     }
 }
 
-/* Loading States */
-/* .loader-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: red;
-}
-
-.loader-animation {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
-    background-color: rgb(0, 255, 0);
-}
-
-.loader-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background-color: var(--primary-color);
-    animation: float 1.5s infinite ease-in-out;
-}
-
-.loader-dot:nth-child(1) {
-    animation-delay: 0s;
-}
-
-.loader-dot:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.loader-dot:nth-child(3) {
-    animation-delay: 0.4s;
-}
-
-.loader-text {
-    color: var(--dark-gray);
-    font-size: 1rem;
-    margin-top: 15px;
-} */
-
 
 .fp-chat {
     width: 80%;
@@ -466,16 +424,16 @@ body {
 }
 
 /* Auth Error */
-.auth-error-container {
+/* .auth-error-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     background-color: #f8f9fa;
     padding: 20px;
-}
+} */
 
-.auth-error-card {
+/* .auth-error-card {
     background: white;
     border-radius: 16px;
     padding: 30px;
@@ -484,40 +442,53 @@ body {
     text-align: center;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     animation: slideUp 0.4s ease-out;
+} */
+.auth-error-message{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    /* background-color: lightgreen; */
 }
 
+.auth-error-content{
+    background-color: lightgray;
+    padding: 10px 30px 20px 30px;
+    border-radius: 20px;
+}
 .error-icon {
     font-size: 2.5rem;
     margin-bottom: 15px;
     color: var(--error-color);
 }
 
-.auth-error-card h2 {
+/* .auth-error-card h2 {
     font-size: 1.4rem;
     margin-bottom: 10px;
     color: var(--dark-color);
-}
+} */
 
-.auth-error-card p {
+/* .auth-error-card p {
     color: var(--dark-gray);
     margin-bottom: 20px;
     font-size: 0.95rem;
-}
+} */
 
 .auth-redirect-button {
     display: inline-block;
-    padding: 12px 24px;
+    padding: 8px 18px;
     background-color: var(--primary-color);
     color: white;
     border: none;
     border-radius: 24px;
-    font-size: 1rem;
+    font-size: 14px;
     font-weight: 500;
     text-decoration: none;
     cursor: pointer;
     transition: all 0.3s;
+    margin-top: 12px;
 }
-
 .auth-redirect-button:hover {
     background-color: var(--secondary-color);
     transform: translateY(-2px);
@@ -535,6 +506,12 @@ body {
 .hover-effect:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.user-chat-app .back-arrow span{
+    /* background-color: darkblue; */
+    background-color: rgb(255, 255, 255);
+    color: black;
 }
 
 /* Responsive Adjustments */

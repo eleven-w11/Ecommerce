@@ -249,21 +249,7 @@ const Chat = () => {
         });
     }, [message, isAdmin, selectedUserId, userId]);
 
-    if (authError) {
-        return (
-            <div className="auth-error-container">
-                <div className="auth-error-card">
-                    <div className="error-icon">⚠️</div>
-                    <h2>Authentication Required</h2>
-                    <p>{authError}</p>
-                    <Link to="/signin" className="auth-redirect-button pulse">
-                        Sign In Now
-                    </Link>
-                </div>
-            </div>
-        );
-    }
-
+    // Keep the initial loading screen
     if (isLoading && !userProfile) {
         return (
             <div className="fp-chat">
@@ -300,7 +286,20 @@ const Chat = () => {
                 </div>
 
                 <div className="chat-body">
-                    {isLoading ? (
+                    {authError ? (
+                        // Show authentication error in chat body
+                        <div className="auth-error-message">
+                            <div className="auth-error-content">
+                                <div className="error-icon">⚠️</div>
+                                <h3>Authentication Required</h3>
+                                <p>{authError}</p>
+                                <Link to="/signin" className="auth-redirect-button pulse">
+                                    Sign In Now
+                                </Link>
+                            </div>
+                        </div>
+                    ) : isLoading ? (
+                        // Show loading state for chat messages
                         <div className="messages-loading">
                             <div className="loading-animation">
                                 <div className="loading-bar"></div>
@@ -309,6 +308,7 @@ const Chat = () => {
                             </div>
                         </div>
                     ) : (
+                        // Show chat messages
                         <div className="messages-container">
                             {chat.length === 0 ? (
                                 <div className="empty-chat">
@@ -343,27 +343,29 @@ const Chat = () => {
                     )}
                 </div>
 
-                {/* Move input container outside chat-body to prevent re-render blinks */}
-                <div className="message-input-container slide-up">
-                    <div className="input-wrapper">
-                        <input
-                            ref={inputRef}
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                            placeholder="Type your message..."
-                            className="message-input"
-                        />
-                        <button
-                            onClick={sendMessage}
-                            className="send-button hover-effect"
-                            disabled={!message.trim()}
-                        >
-                            <span className="send-icon">✈️</span>
-                            <span className="send-text">Send</span>
-                        </button>
+                {/* Conditionally render input container only when user is authenticated and not loading */}
+                {!authError && !isLoading && (
+                    <div className="message-input-container slide-up">
+                        <div className="input-wrapper">
+                            <input
+                                ref={inputRef}
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                                placeholder="Type your message..."
+                                className="message-input"
+                            />
+                            <button
+                                onClick={sendMessage}
+                                className="send-button hover-effect"
+                                disabled={!message.trim()}
+                            >
+                                <span className="send-icon">✈️</span>
+                                <span className="send-text">Send</span>
+                            </button>
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </div>
     );
