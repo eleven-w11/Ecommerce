@@ -406,7 +406,7 @@
     padding: 12px;
     border-top: 1px solid #e0e0e0;
     background-color: #ffffff;
-    /* background-color: crimson; */
+    background-color: crimson;
     flex-shrink: 0;
 }
 
@@ -591,13 +591,13 @@
 
     .admin-chat-app .message-content {
         max-width: 85%;
-        /* background-color: blueviolet; */
     }
-
-
+    
+    
     .admin-chat-app .input-wrapper {
         padding: 0px 15px;
         margin: 0 10px;
+        /* background-color: blueviolet; */
     }
 
 
