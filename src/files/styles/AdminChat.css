@@ -538,8 +538,10 @@
 @media (max-width: 768px) {
     .admin-chat-app {
         position: relative;
-        height: 100dvh;
+        /* height: 100vh; */
+
         overflow: hidden;
+        background-color: red;
     }
 
     .admin-chat-app .admin-sidebar {
@@ -559,7 +561,7 @@
     }
 
     .admin-chat-app .admin-chat-area {
-        height: 100dvh;
+        /* height: 100dvh; */
         position: absolute;
         top: 0;
         left: 0;
@@ -646,12 +648,12 @@
     }
 }
 
-/* @media (max-width: 768px) {
+@media (max-width: 600px) {
     .admin-chat-app {
-        height: 100vh;
+        height: 100dvh;
         margin-top: 0;
     }
-} */
+}
 
 /* Scrollbar Styling */
 .admin-chat-app .users-list::-webkit-scrollbar,
