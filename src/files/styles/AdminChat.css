@@ -646,14 +646,12 @@
     }
 }
 
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
     .admin-chat-app {
-        /* position: relative; */
         height: 100vh;
         margin-top: 0;
-        /* overflow: hidden; */
     }
-}
+} */
 
 /* Scrollbar Styling */
 .admin-chat-app .users-list::-webkit-scrollbar,
