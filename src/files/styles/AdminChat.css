@@ -575,7 +575,7 @@
         transform: translateX(0);
     }
 
-    
+
 
     .admin-chat-app .sidebar-header {
         padding: 13px;
@@ -591,26 +591,26 @@
 
     .admin-chat-app .message-content {
         max-width: 85%;
+        /* background-color: blueviolet; */
     }
 
+
     .admin-chat-app .input-wrapper {
-        padding: 10px 15px;
+        padding: 0px 15px;
         margin: 0 10px;
     }
 
-    .admin-chat-app .message-input-container {
-        padding: 15px 10px;
-    }
 
     .admin-chat-app .send-text {
         display: none;
+
     }
 
     .admin-chat-app .send-button {
-        padding: 10px 15px;
+        width: 35px;
+        height: 35px;
+        /* padding: 0px; */
         border-radius: 50%;
-        width: 44px;
-        height: 44px;
         justify-content: center;
     }
 

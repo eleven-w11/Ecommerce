@@ -443,7 +443,7 @@ body {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     animation: slideUp 0.4s ease-out;
 } */
-.auth-error-message{
+.auth-error-message {
     height: 100%;
     display: flex;
     align-items: center;
@@ -452,15 +452,17 @@ body {
     /* background-color: lightgreen; */
 }
 
-.auth-error-content{
+.auth-error-content {
     background-color: lightgray;
     padding: 10px 30px 20px 30px;
     border-radius: 20px;
 }
+
 .error-icon {
     font-size: 2.5rem;
     margin-bottom: 15px;
     color: var(--error-color);
+    animation: shakeIcon 3s linear  2s infinite normal none;
 }
 
 /* .auth-error-card h2 {
@@ -489,6 +491,7 @@ body {
     transition: all 0.3s;
     margin-top: 12px;
 }
+
 .auth-redirect-button:hover {
     background-color: var(--secondary-color);
     transform: translateY(-2px);
@@ -508,10 +511,38 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.user-chat-app .back-arrow span{
+.user-chat-app .back-arrow span {
     /* background-color: darkblue; */
     background-color: rgb(255, 255, 255);
     color: black;
+}
+
+@keyframes shakeIcon {
+    0% {
+        animation-timing-function: ease-out;
+        transform: scale(1.1);
+        transform-origin: center center;
+    }
+
+    10% {
+        animation-timing-function: ease-in;
+        transform: scale(0.91);
+    }
+
+    17% {
+        animation-timing-function: ease-out;
+        transform: scale(0.98);
+    }
+
+    33% {
+        animation-timing-function: ease-in;
+        transform: scale(0.87);
+    }
+
+    45% {
+        animation-timing-function: ease-out;
+        transform: scale(1.2);
+    }
 }
 
 /* Responsive Adjustments */
@@ -541,6 +572,7 @@ body {
         max-width: 85%;
     }
 }
+
 @media (max-width: 600px) {
     .user-chat-app .chat-app {
         height: 100dvh;

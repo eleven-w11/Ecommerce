@@ -15,6 +15,7 @@ const AdminChat = () => {
     const isMounted = useRef(true);
     const messagesEndRef = useRef(null);
     const [showMobileView, setShowMobileView] = useState(false);
+    const [isLoading, setIsLoading] = useState(true); // ✅ New loading state
 
     // Function to format date for display
     const formatMessageDate = (timestamp) => {
@@ -44,6 +45,7 @@ const AdminChat = () => {
 
     useEffect(() => {
         isMounted.current = true;
+        setIsLoading(true); // ✅ Start loading
 
         const backendURL = process.env.REACT_APP_API_BASE_URL;
         socketRef.current = io(backendURL, { withCredentials: true });
@@ -55,6 +57,7 @@ const AdminChat = () => {
         socketRef.current.on("usersList", (data) => {
             if (isMounted.current) {
                 setUsers(data);
+                setIsLoading(false); // ✅ Stop loading when users are loaded
             }
         });
 
@@ -166,6 +169,7 @@ const AdminChat = () => {
         if (!isMounted.current) return;
 
         try {
+            setIsLoading(true); // ✅ Start loading when fetching chat
             const res = await axios.get(`${API_BASE}/api/admin/chat/${userId}`, {
                 withCredentials: true,
             });
@@ -174,11 +178,13 @@ const AdminChat = () => {
                 setSelectedChat(res.data.messages || []);
                 setSelectedUserId(userId);
                 setShowMobileView(true);
+                setIsLoading(false); // ✅ Stop loading when chat is loaded
             }
         } catch (err) {
             console.error("Error fetching chat:", err);
             if (isMounted.current) {
                 setError("Failed to load chat.");
+                setIsLoading(false); // ✅ Stop loading on error too
             }
         }
     };
@@ -219,6 +225,19 @@ const AdminChat = () => {
 
     const groupedMessages = groupMessagesByDate(sortedMessages);
 
+    // ✅ Show loader for AdminChat while initial loading
+    if (isLoading && users.length === 0) {
+        return (
+            <div className="chat-loader-container">
+                <div className="loader">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="admin-chat-app">
             <div className={`admin-sidebar ${showMobileView ? "hidden-mobile" : ""}`}>
@@ -234,6 +253,7 @@ const AdminChat = () => {
                     users={users}
                     selectedUserId={selectedUserId}
                     fetchUserChat={fetchUserChat}
+                    isLoading={isLoading} // ✅ Pass loading state to UserList
                 />
             </div>
 

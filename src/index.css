@@ -189,37 +189,14 @@ li {
 
 
 
-
-/* .inline-loader{
-    background-color: blue;
-}
-
-.pro_view_loader{
+.chat-loader-container{
     width: 100%;
-    height: 90vh;
+    height: 100dvh;
     display: flex;
-    justify-content: center;
     align-items: center;
-
-} */
-
-/* for cart page */
-.fp-cart-loader-container {
-    /* width: 100%; */
-    /* height: 90vh; */
-    /* background-color: red; */
+    justify-content: center;
 }
 
-
-/* Loader Container */
-.fp-cart-loader-container,
-.fp-loader-container {
-    /* display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column; */
-    /* background-color: red; */
-}
 
 /* best-selling page */
 /* top products */
