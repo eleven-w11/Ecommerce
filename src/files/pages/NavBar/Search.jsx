@@ -155,7 +155,7 @@ const Search = ({ onClose }) => {
                                         <span></span>
                                         <span></span>
                                     </div>
-                                    <p>Searching products...</p>
+                                    {/* <p>Searching products...</p> */}
                                 </div>
                             ) : results.length > 0 ? (
                                 <>
