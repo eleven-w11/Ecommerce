@@ -20,7 +20,6 @@ import ChatBox from './files/pages/Chat';
 import AdminChat from './files/AdminChat/AdminChat';
 import UserList from './files/AdminChat/UserList';
 import Google from './files/pages/Google';
-import DelNavbar from './files/pages/NavBar/delnav';
 import SearchResults from './files/pages/NavBar/SearchResults';
 import AdminPanel from './files/pages/AdminPanel';
 import ChatAppIcon from "./files/images/ChatAppIcon.png";
@@ -115,7 +114,6 @@ function App() {
         <Route path="/AdminChat" element={<AdminChat />} />
 
         <Route path="/Google" element={<Google />} />
-        <Route path="/DelNav" element={<DelNavbar />} />
         <Route path="/search" element={<SearchResults />} />
         <Route path="/AdminPanel" element={<AdminPanel />} />
         {/* <Route path="/UserListPage" element={<UserListPage />} /> */}
