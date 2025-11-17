@@ -57,21 +57,33 @@
     .modern_checkout {
         /* width: 95%; */
     }
-    .checkout-MOBILE-layout{
+
+    .checkout-MOBILE-layout {
         width: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
-        /* background-color: goldenrod; */
-
     }
-    .MOBILECheckoutCartReview{
+
+    .MOBILECheckoutCartReview {
         width: 370px;
     }
-    .MOBILECheckoutShipping{
+
+    .MOBILECheckoutShipping {
         width: 90%;
     }
-    .MOBILECheckoutPayment{
+
+    .MOBILECheckoutPayment {
+        width: 90%;
+    }
+}
+
+@media (max-width: 430px) {
+    .modern_checkout {
+        width: 100%;
+    }
+
+    .MOBILECheckoutCartReview {
         width: 90%;
     }
 }
