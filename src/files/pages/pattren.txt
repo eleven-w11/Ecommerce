@@ -54,19 +54,6 @@ search
 
 
 
-best selling 
-axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/products`)
-top product
-axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/products`)
-
-
-
-pensing loader
-all products 56
-
-
-
-
 
 
 
@@ -104,14 +91,30 @@ adminchat history
 
 
 
+#DBDBDB background for pages , lightgray
+#C4C4C4 card background , darkgray
+#ADADAD check if fit for navbar
+
+pop up
+------
+
+productview
+sign up
+sign in
+
+mid rage , heading
+------------------
+
+checkout .modern-checkout
+bestselling .cart-page
+top products
+cart
+all products
 
 
 
 
+todo
+----
 
-
-
-
-userlist loader
-userlist backbutton
-admin chat message input area
+price and discount price

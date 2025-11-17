@@ -20,32 +20,44 @@ const Chat = () => {
     const pendingMessages = useRef(new Map());
     const inputRef = useRef(null);
 
+    // ✅ Format date
+    const formatMessageDate = (timestamp) => {
+        const messageDate = new Date(timestamp);
+        return messageDate.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+        });
+    };
+
+    const groupMessagesByDate = (messages) => {
+        const grouped = {};
+        messages.forEach((msg) => {
+            const dateKey = new Date(msg.timestamp).toDateString();
+            if (!grouped[dateKey]) grouped[dateKey] = [];
+            grouped[dateKey].push(msg);
+        });
+        return grouped;
+    };
+
     useEffect(() => {
         const setSignHeight = () => {
             const height = window.innerHeight - 60;
             const signElement = document.querySelector(".user-chat-app");
-
-            if (signElement) {
-                signElement.style.height = `${height}px`;
-            }
+            if (signElement) signElement.style.height = `${height}px`;
         };
-
         setSignHeight();
         window.addEventListener("resize", setSignHeight);
-
         return () => window.removeEventListener("resize", setSignHeight);
     }, []);
 
-    // Component mount/unmount
     useEffect(() => {
         isMounted.current = true;
-
         const authTimeout = setTimeout(() => {
             if (isLoading && !userProfile && isMounted.current) {
                 setAuthError("Please sign in to access the chat");
             }
         }, 5000);
-
         return () => {
             isMounted.current = false;
             pendingMessages.current.clear();
@@ -53,21 +65,42 @@ const Chat = () => {
         };
     }, [isLoading, userProfile]);
 
-    // Socket connection
+    // ✅ Initialize socket
     useEffect(() => {
         const backendURL = process.env.REACT_APP_API_BASE_URL;
-        socketRef.current = io(backendURL, {
-            withCredentials: true,
+        socketRef.current = io(backendURL, { withCredentials: true });
+
+        // ✅ Message acknowledgments
+        socketRef.current.on("messageSentAck", (msgId) => {
+            setChat((prev) =>
+                prev.map((msg) =>
+                    msg._id === msgId ? { ...msg, status: "sent" } : msg
+                )
+            );
+        });
+
+        socketRef.current.on("messageDelivered", (msgId) => {
+            setChat((prev) =>
+                prev.map((msg) =>
+                    msg._id === msgId ? { ...msg, status: "delivered" } : msg
+                )
+            );
+        });
+
+        socketRef.current.on("messageSeen", (msgId) => {
+            setChat((prev) =>
+                prev.map((msg) =>
+                    msg._id === msgId ? { ...msg, status: "seen" } : msg
+                )
+            );
         });
 
         return () => {
-            if (socketRef.current) {
-                socketRef.current.disconnect();
-            }
+            if (socketRef.current) socketRef.current.disconnect();
         };
     }, []);
 
-    // Fetch user data and register socket
+    // ✅ Fetch user data
     useEffect(() => {
         const fetchUserData = async () => {
             try {
@@ -75,20 +108,16 @@ const Chat = () => {
                     `${process.env.REACT_APP_API_BASE_URL}/api/user/profile`,
                     { withCredentials: true }
                 );
-
                 if (response.data._id && isMounted.current) {
                     const fetchedUserId = response.data._id;
                     const adminStatus = response.data.isAdmin || false;
-
                     setUserId(fetchedUserId);
                     setIsAdmin(adminStatus);
                     setUserProfile(response.data);
                     setAuthError(null);
-
-                    // ✅ Register user/admin to socket
                     socketRef.current.emit("register", {
                         userId: fetchedUserId,
-                        role: adminStatus ? "admin" : "user", // 🔥 Role defined properly
+                        role: adminStatus ? "admin" : "user",
                     });
                 }
             } catch (error) {
@@ -99,48 +128,28 @@ const Chat = () => {
                 }
             }
         };
-
         fetchUserData();
     }, []);
 
-    // Handle received messages - moved outside useEffect
     const handleReceiveMessage = useCallback((data) => {
         if (!isMounted.current) return;
-
-        setChat(prev => {
-            // Check if this is a response to our own message
-            const isOwnMessage = data.fromUserId === userId && !data.fromAdmin;
-            const isOwnAdminMessage = data.fromAdmin && data.toUserId === selectedUserId;
-
-            if (isOwnMessage || isOwnAdminMessage) {
-                // Find and replace the optimistic update
-                const existingIndex = prev.findIndex(msg =>
-                    pendingMessages.current.has(msg.timestamp) &&
-                    pendingMessages.current.get(msg.timestamp).message === data.message
-                );
-
-                if (existingIndex !== -1) {
-                    pendingMessages.current.delete(prev[existingIndex].timestamp);
-                    const newChat = [...prev];
-                    newChat[existingIndex] = data;
-                    return newChat;
-                }
-            }
-
-            // Check for duplicates using database _id
-            const exists = prev.some(msg =>
-                (msg._id && msg._id === data._id) ||
-                (msg.timestamp === data.timestamp && msg.message === data.message)
+        setChat((prev) => {
+            const exists = prev.some(
+                (msg) =>
+                    (msg._id && msg._id === data._id) ||
+                    (msg.timestamp === data.timestamp &&
+                        msg.message === data.message)
             );
-
-            return exists ? prev : [...prev, data];
+            if (exists) return prev;
+            // ✅ Send delivery acknowledgment back
+            socketRef.current.emit("deliveredAck", data._id);
+            return [...prev, data];
         });
-    }, [userId, selectedUserId]);
+    }, []);
 
-    // Fetch chat history and setup socket listener
+    // ✅ Fetch chat history
     useEffect(() => {
         if (!userId || !socketRef.current) return;
-
         const fetchChatHistory = async () => {
             try {
                 setIsLoading(true);
@@ -148,116 +157,68 @@ const Chat = () => {
                     `${process.env.REACT_APP_API_BASE_URL}/api/messages/chat/history/${userId}`,
                     { withCredentials: true }
                 );
-
                 if (res.data.success && isMounted.current) {
                     setChat(res.data.messages || []);
                 }
             } catch (error) {
                 console.error("Error fetching chat history:", error);
             } finally {
-                if (isMounted.current) {
-                    setIsLoading(false);
-                }
+                if (isMounted.current) setIsLoading(false);
             }
         };
-
         fetchChatHistory();
         socketRef.current.on("receiveMessage", handleReceiveMessage);
+        return () => socketRef.current?.off("receiveMessage", handleReceiveMessage);
+    }, [userId, handleReceiveMessage]);
 
-        return () => {
-            if (socketRef.current) {
-                socketRef.current.off("receiveMessage", handleReceiveMessage);
-            }
-        };
-    }, [userId, selectedUserId, handleReceiveMessage]);
-
-    // Scroll to bottom on new messages
+    // ✅ Auto scroll
     useEffect(() => {
         if (messagesEndRef.current && !isLoading) {
             messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
     }, [chat, isLoading]);
 
+    // ✅ Send message with optimistic UI
     const sendMessage = useCallback(() => {
         if (!message.trim() || !socketRef.current) return;
-
         const tempId = Date.now();
         const timestamp = new Date().toISOString();
         const currentMessage = message.trim();
-        const messageToSend = currentMessage;
 
-        if (isAdmin) {
-            if (!selectedUserId) {
-                alert("Please select a user to chat with");
-                return;
-            }
+        const optimisticMsg = {
+            _id: tempId,
+            message: currentMessage,
+            fromAdmin: isAdmin,
+            fromUserId: userId,
+            toUserId: selectedUserId,
+            timestamp,
+            status: "pending", // ✅ new field
+        };
 
-            const optimisticMsg = {
-                _id: tempId,
-                message: messageToSend,
-                fromAdmin: true,
-                timestamp,
-                toUserId: selectedUserId
-            };
+        setChat((prev) => [...prev, optimisticMsg]);
 
-            pendingMessages.current.set(timestamp, {
-                tempId,
-                message: messageToSend
-            });
-
-            setChat(prev => [...prev, optimisticMsg]);
-            socketRef.current.emit("adminMessage", {
-                fromUserId: userId,   // ✅ admin ka ID
-                senderRole: "admin",  // ✅ add this
-                toUserId: selectedUserId,
-                message: messageToSend,
-                timestamp
-            });
-
-        } else {
-            const optimisticMsg = {
-                _id: tempId,
-                message: messageToSend,
-                fromAdmin: false,
-                timestamp,
-                fromUserId: userId
-            };
-
-            pendingMessages.current.set(timestamp, {
-                tempId,
-                message: messageToSend
-            });
-
-            setChat(prev => [...prev, optimisticMsg]);
-            socketRef.current.emit("userMessage", {
-                fromUserId: userId,
-                senderRole: "user",   // ✅ add this
-                message: messageToSend,
-                timestamp
-            });
-
-        }
+        const emitEvent = isAdmin ? "adminMessage" : "userMessage";
+        socketRef.current.emit(emitEvent, {
+            ...optimisticMsg,
+            senderRole: isAdmin ? "admin" : "user",
+        });
 
         setMessage("");
-
-        Promise.resolve().then(() => {
-            if (inputRef.current) {
-                inputRef.current.focus();
-                inputRef.current.blur();
-                inputRef.current.focus();
-            }
-        });
+        Promise.resolve().then(() => inputRef.current?.focus());
     }, [message, isAdmin, selectedUserId, userId]);
 
-    // Keep the initial loading screen
+    // ✅ Sort and group messages
+    const sortedMessages = [...chat].sort(
+        (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+    );
+    const groupedMessages = groupMessagesByDate(sortedMessages);
+
     if (isLoading && !userProfile) {
         return (
             <div className="fp-chat">
                 <div className="fp-loader-container">
                     <div className="loader">
-                        <span></span>
-                        <span></span>
-                        <span></span>
+                        <span></span><span></span><span></span>
                     </div>
                 </div>
             </div>
@@ -287,7 +248,6 @@ const Chat = () => {
 
                 <div className="chat-body">
                     {authError ? (
-                        // Show authentication error in chat body
                         <div className="auth-error-message">
                             <div className="auth-error-content">
                                 <div className="error-icon">⚠️</div>
@@ -299,7 +259,6 @@ const Chat = () => {
                             </div>
                         </div>
                     ) : isLoading ? (
-                        // Show loading state for chat messages
                         <div className="messages-loading">
                             <div className="loading-animation">
                                 <div className="loading-bar"></div>
@@ -308,42 +267,63 @@ const Chat = () => {
                             </div>
                         </div>
                     ) : (
-                        // Show chat messages
                         <div className="messages-container">
-                            {chat.length === 0 ? (
+                            {sortedMessages.length === 0 ? (
                                 <div className="empty-chat">
                                     <div className="empty-icon">💬</div>
                                     <h3>Start the conversation</h3>
                                     <p>Send your first message to get started</p>
                                 </div>
                             ) : (
-                                chat.map((msg) => (
-                                    <div
-                                        key={msg._id || msg.timestamp}
-                                        className={`message-bubble ${msg.senderRole === "admin"
-                                            ? "admin-message"
-                                            : msg.fromUserId === userId
-                                                ? "user-message self"
-                                                : "user-message"
-                                            } fade-in`}
-
-                                    >
-                                        <p className="message-text">{msg.message}</p>
-                                        <p className="message-time">
-                                            {new Date(msg.timestamp).toLocaleTimeString([], {
-                                                hour: '2-digit',
-                                                minute: '2-digit'
-                                            })}
-                                        </p>
-                                    </div>
-                                ))
+                                <div className="messages-wrapper">
+                                    {Object.keys(groupedMessages).map((dateKey) => (
+                                        <React.Fragment key={dateKey}>
+                                            <div className="date-separator">
+                                                <div className="date">
+                                                    {formatMessageDate(
+                                                        groupedMessages[dateKey][0].timestamp
+                                                    )}
+                                                </div>
+                                            </div>
+                                            {groupedMessages[dateKey].map((msg) => (
+                                                <div
+                                                    key={msg._id || msg.timestamp}
+                                                    className={`message-bubble ${msg.fromAdmin
+                                                            ? "admin-message"
+                                                            : msg.fromUserId === userId
+                                                                ? "user-message self"
+                                                                : "user-message"
+                                                        } fade-in`}
+                                                >
+                                                    <p className="message-text">{msg.message}</p>
+                                                    <div className="message-meta">
+                                                        <span className="message-time">
+                                                            {new Date(msg.timestamp).toLocaleTimeString([], {
+                                                                hour: "2-digit",
+                                                                minute: "2-digit",
+                                                            })}
+                                                        </span>
+                                                        {/* ✅ Tick system */}
+                                                        <span className="message-status">
+                                                            {msg.status === "pending" && "🕓"}
+                                                            {msg.status === "sent" && "✔️"}
+                                                            {msg.status === "delivered" && "✔️✔️"}
+                                                            {msg.status === "seen" && (
+                                                                <span style={{ color: "blue" }}>✔️✔️</span>
+                                                            )}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </React.Fragment>
+                                    ))}
+                                </div>
                             )}
                             <div ref={messagesEndRef}></div>
                         </div>
                     )}
                 </div>
 
-                {/* Conditionally render input container only when user is authenticated and not loading */}
                 {!authError && !isLoading && (
                     <div className="message-input-container slide-up">
                         <div className="input-wrapper">
@@ -351,7 +331,7 @@ const Chat = () => {
                                 ref={inputRef}
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
-                                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                                onKeyPress={(e) => e.key === "Enter" && sendMessage()}
                                 placeholder="Type your message..."
                                 className="message-input"
                             />

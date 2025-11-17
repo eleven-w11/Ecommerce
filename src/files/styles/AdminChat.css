@@ -421,7 +421,7 @@
     background-color: #f8f9fa;
     /* background-color: tan; */
 
-    padding: 0px 10px 0px 0; 
+    padding: 0px 10px 0px 0;
     border-radius: 25px;
     /* padding: 2px; */
     border: 1px solid #e0e0e0;
@@ -498,6 +498,27 @@
 .admin-chat-app .fade-in {
     animation: fadeIn 0.3s ease-out;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Connection Status Bar */
+.connection-status-bar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+}
+
 
 @keyframes fadeIn {
     from {
@@ -593,8 +614,8 @@
     .admin-chat-app .message-content {
         max-width: 85%;
     }
-    
-    
+
+
     .admin-chat-app .input-wrapper {
         padding: 0px 15px;
         margin: 0 10px;

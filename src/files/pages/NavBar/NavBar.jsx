@@ -23,7 +23,8 @@ const NavBar = ({ Authentication }) => {
     const [scrollPosition, setScrollPosition] = useState(0);
     const [cartCount, setCartCount] = useState(0);
     const [showSearch, setShowSearch] = useState(false);
-    const [bgColor, setBgColor] = useState("#faf7f2");
+    const [bgColor, setBgColor] = useState(`linear-gradient(to right, rgba(181,181,181,1), rgba(255,255,255,0.66))`);
+
 
     const linksRef = useRef([]);
     const manDropdownRef = useRef(null);
@@ -34,9 +35,9 @@ const NavBar = ({ Authentication }) => {
     const animationPlayed = useRef(false);
     const location = useLocation();
     const [searchActive, setSearchActive] = useState(false);
-    const [query, setQuery] = useState("");
+    // const [query, setQuery] = useState("");
     const navRef = useRef(null);
-    const searchRef = useRef(null);
+    // const searchRef = useRef(null);
     const searchContainerRef = useRef(null);
 
     // GSAP animation for search
@@ -102,14 +103,21 @@ const NavBar = ({ Authentication }) => {
             const scrollY = window.scrollY;
             if (scrollY <= 350) {
                 const opacity = 1 - scrollY / 350;
-                setBgColor(`rgba(250, 247, 242, ${opacity})`);
+                setBgColor(
+                    `linear-gradient(to right, rgba(181,181,181,${opacity}), rgba(255,255,255,${opacity * 0.66}))`
+                );
             } else {
-                setBgColor(`rgba(250, 247, 242, 0)`);
+                setBgColor(
+                    `linear-gradient(to right, rgba(181,181,181,0), rgba(255,255,255,0))`
+                );
             }
         };
+
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+
+
 
     useEffect(() => {
         setActivePath(location.pathname);

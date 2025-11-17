@@ -23,6 +23,9 @@ import Google from './files/pages/Google';
 import DelNavbar from './files/pages/NavBar/delnav';
 import SearchResults from './files/pages/NavBar/SearchResults';
 import AdminPanel from './files/pages/AdminPanel';
+import ChatAppIcon from "./files/images/ChatAppIcon.png";
+import Checkout from './files/pages/CheckOut/Checkout';
+
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -75,10 +78,17 @@ function App() {
       <Routes>
         <Route path="/" element={
           <>
-            <TestHero />
-            <BestSellingProducts isBestSellingPage={false} />
-            <TopProduct isTopProductsPage={false} />
-            <Footer />
+            <div className="Home-Webverse">
+              <div className="ChatAppIcon">
+                <img src={ChatAppIcon} alt="" />
+              </div>
+              <TestHero />
+              <BestSellingProducts isBestSellingPage={false} />
+              <TopProduct isTopProductsPage={false} />
+              <Footer />
+
+            </div>
+
           </>
         } />
         <Route path="/UserLocation" element={<UserLocation />} />
@@ -99,6 +109,7 @@ function App() {
         <Route path="/WomanBags" element={<AllProducts />} />
         <Route path="/WomanAccessories" element={<AllProducts />} />
         <Route path="/Chat" element={<ChatBox />} />
+        <Route path="/Checkout" element={<Checkout />} />
 
         <Route path="/UserList" element={<UserList />} />
         <Route path="/AdminChat" element={<AdminChat />} />

@@ -7,7 +7,10 @@
     justify-content: center;
 }
 
-
+/* for app.js / mardin for app.js */
+.Home-Webverse .best-selling-section{
+    margin: 50px 0;
+}
 
 .best-selling-section {
     width: 100%;
@@ -17,15 +20,15 @@
 
 .best-selling-section-page {
     margin-top: 70px;
-    /* background-color: goldenrod; */
 }
 
 .best-selling-section .product-container {
     width: 90%;
-    margin: 30px auto;
+    margin: 0 auto;
     border-radius: 10px;
-    background-color: #f7f7f7;
+    /* background-color: #f0f0f0; */
     padding: 0px 20px 30px 20px;
+    background-color: var(--bg-page);
 }
 
 .best-selling-section .product-container h2 {
@@ -61,16 +64,20 @@
     height: 370px;
     margin: auto;
     flex-direction: column;
-    border-radius: 10px;
+    border-radius: 30px;
     background-color: white;
     position: relative;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    border: 1px solid #c0c0c0b5
 }
 
 .best-selling-section .product-image-wrapper {
     width: 100%;
     height: 65%;
-    border-radius: 10px;
-    background-color: #e1e1e1;
+    border-radius:  30px 30px 20px 20px;
+    /* background-color: #e1e1e1; */
+    background-color: var(--bg-card);
+
 }
 
 .best-selling-section .products-grid img,

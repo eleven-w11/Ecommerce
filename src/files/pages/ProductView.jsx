@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/ProductView.css";
 import "../styles/BestSelling.css";
@@ -11,11 +11,11 @@ import right from "../images/right.png";
 import addTocart from "../images/add-to-cart.png";
 import Footer from "./Footer";
 
-
 gsap.registerPlugin(ScrollTrigger);
 
 const ProductView = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [product, setProduct] = useState(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [selectedColor, setSelectedColor] = useState(null);
@@ -25,13 +25,10 @@ const ProductView = () => {
     const [randomProducts, setRandomProducts] = useState([]);
     const [selectedSize, setSelectedSize] = useState(null);
 
-
-    // const buyNowRef = useRef(null);
     const proDetailsRef = useRef(null);
     const detailsRef = useRef(null);
 
     useEffect(() => {
-        // Reset all selection-related states
         setSelectedColor(null);
         setSelectedSize(null);
         setQuantity(1);
@@ -40,8 +37,8 @@ const ProductView = () => {
 
     const addToCart = (product) => {
         const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-        const timeStamp = Date.now(); // ✅ millisecond-based timestamp
-        const uniqueId = `${product._id}-${timeStamp}`; // ✅ create composite id + time
+        const timeStamp = Date.now();
+        const uniqueId = `${product._id}-${timeStamp}`;
 
         const index = storedCart.findIndex(item => item.id === product._id);
         if (index !== -1) {
@@ -50,13 +47,12 @@ const ProductView = () => {
 
             localStorage.setItem("cart", JSON.stringify(storedCart));
             window.dispatchEvent(new Event("storage"));
-            // alert("Quantity increased!");
             return;
         }
 
         const newCartItem = {
-            uniqueId: uniqueId, // ✅ store combined id
-            id: product._id,     // original MongoDB ID
+            uniqueId: uniqueId,
+            id: product._id,  
             quantity: 1,
             addedAt: new Date().toISOString()
         };
@@ -64,20 +60,16 @@ const ProductView = () => {
         const updatedCart = [...storedCart, newCartItem];
         localStorage.setItem("cart", JSON.stringify(updatedCart));
         window.dispatchEvent(new Event("storage"));
-        // alert("Product added to cart!");
     };
 
-    // const proDetailsRef = useRef(null);
     const addToCartWithDetails = (product, selectedColor, selectedSize, quantity, currentIndex) => {
         const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
 
-        // ✅ Get selected image based on currentIndex
         const selectedImage =
             product.images?.[currentIndex]?.pi_1 ||
             product.images?.[currentIndex]?.url ||
             "default.jpg";
 
-        // ✅ Check if *same variant* exists
         const existingIndex = storedCart.findIndex(item =>
             item.id === product._id &&
             item.color === selectedColor &&
@@ -85,20 +77,17 @@ const ProductView = () => {
         );
 
         if (existingIndex !== -1) {
-            // ✅ If exact variant exists, just increase quantity
             storedCart[existingIndex].quantity += quantity;
             storedCart[existingIndex].addedAt = new Date().toISOString();
 
             localStorage.setItem("cart", JSON.stringify(storedCart));
             window.dispatchEvent(new Event("storage"));
-            // alert("Quantity updated for existing item!");
             return;
         }
 
-        // ✅ Otherwise, add new variant entry in cart with uniqueId
         const newCartItem = {
             id: product._id,
-            uniqueId: `${product._id}_${Date.now()}`, // ✅ Added line
+            uniqueId: `${product._id}_${Date.now()}`,
             color: selectedColor,
             size: selectedSize,
             quantity: quantity,
@@ -109,7 +98,49 @@ const ProductView = () => {
         const updatedCart = [...storedCart, newCartItem];
         localStorage.setItem("cart", JSON.stringify(updatedCart));
         window.dispatchEvent(new Event("storage"));
-        // alert("New item added to cart!");
+    };
+
+    // New function to handle Buy Now
+    const handleBuyNow = () => {
+        if (!selectedSize) {
+            alert("Please select a size before proceeding to checkout.");
+            return;
+        }
+
+        if (!selectedColor) {
+            alert("Please select a color before proceeding to checkout.");
+            return;
+        }
+
+        const selectedImage =
+            product.images?.[currentIndex]?.pi_1 ||
+            product.images?.[currentIndex]?.url ||
+            "default.jpg";
+
+        const checkoutItem = {
+            id: product._id,
+            productId: product._id,
+            productName: product.product_name,
+            color: selectedColor,
+            size: selectedSize,
+            quantity: quantity,
+            image: selectedImage,
+            price: product.dis_product_price || product.product_price,
+            originalPrice: product.product_price,
+            hasDiscount: !!product.dis_product_price,
+            saveAmount: product.save || 0,
+            addedAt: new Date().toISOString()
+        };
+
+        // Store the checkout item in localStorage or sessionStorage
+        localStorage.setItem("checkoutItem", JSON.stringify(checkoutItem));
+        
+        // Navigate to checkout page
+        navigate("/Checkout", { 
+            state: { 
+                checkoutItem: checkoutItem 
+            } 
+        });
     };
 
     useEffect(() => {
@@ -173,7 +204,7 @@ const ProductView = () => {
                 ].filter(Boolean));
 
                 setProduct({ ...data, images, save: saveAmount });
-                setSelectedColor(images[0] || null);
+                setSelectedColor(images[0]?.color_code || null);
             })
             .catch(error => console.error("Error fetching product:", error));
     }, [id]);
@@ -217,6 +248,7 @@ const ProductView = () => {
     const decreaseQuantity = () => {
         setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
     };
+
     const selectColor = (image, index) => {
         setSelectedColor(image.color_code);
         setCurrentIndex(index);
@@ -233,24 +265,20 @@ const ProductView = () => {
             .catch(error => console.error("Error fetching products:", error));
     }, [id]);
 
-
     if (!product || !product.images || product.images.length === 0) {
         return (
-
-            // <div className="fp-chat">
             <div className="product-view-loader">
                 <div className="loader">
                     <span></span>
                     <span></span>
                     <span></span>
                 </div>
-                {/* </div> */}
             </div>
         );
     }
 
     const handleSizeSelect = (size) => {
-        setSelectedSize(size); // ✅ Selected size update karega
+        setSelectedSize(size);
     };
 
     return (
@@ -283,12 +311,11 @@ const ProductView = () => {
                             </div>
                         </div>
                         <div className="product-data">
-                            <p className="Free-Delivery"><span class="material-symbols-outlined">
-                                local_shipping
-                            </span> Free Delivery</p>
+                            <p className="Free-Delivery">
+                                <span className="material-symbols-outlined">local_shipping</span> Free Delivery
+                            </p>
                             <div className="data-frame">
                                 <h2>{product.product_name}</h2>
-                                {/* <p>{product._id}</p> */}
                                 <p className="type"><span className="pro_data_heading">Type </span>{product.p_type}</p>
                                 <p className="des"><span className="pro_data_heading">Product Description </span>{product.p_des}</p>
                                 <div className="hr"></div>
@@ -303,7 +330,6 @@ const ProductView = () => {
                                         <p className="price">${product.product_price}</p>
                                     </div>
                                 )}
-                                {/* <p>${product.id}</p> */}
                                 {product.images && (
                                     <div className="color-selection">
                                         <div className="colors">
@@ -326,14 +352,13 @@ const ProductView = () => {
                                             <span
                                                 key={size}
                                                 className={`size-box ${available ? "available" : "unavailable"} ${selectedSize === size ? "selected" : ""}`}
-                                                onClick={() => available && handleSizeSelect(size)} // ✅ Sirf available size ko select karega
+                                                onClick={() => available && handleSizeSelect(size)}
                                             >
                                                 {size}
                                             </span>
                                         ))}
                                     </div>
                                 </div>
-                                {/* <p>{product._id}</p> */}
                                 <div className="quantity-addtocart">
                                     <div className="quantity">
                                         <button className="quantity-btn decreaseQuantity" onClick={decreaseQuantity}>-</button>
@@ -354,19 +379,20 @@ const ProductView = () => {
                                     </div>
                                 </div>
                                 <div className="buy_this_now">
-                                    <Link className="buy-now">Buy Now</Link>
+                                    <button 
+                                        className="buy-now"
+                                        onClick={handleBuyNow}
+                                    >
+                                        Buy Now
+                                    </button>
                                 </div>
                                 <div className="hr"></div>
                                 <div className={`product-details-shipping ${proDetails ? "active-border" : ""}`}
                                     onClick={() => setProDetails(!proDetails)}
                                 >
                                     <div className="heading-arrow_down">
-                                        <h4>
-                                            Product Detail
-                                        </h4>
-                                        <span className="material-symbols-outlined">
-                                            keyboard_arrow_down
-                                        </span>
+                                        <h4>Product Detail</h4>
+                                        <span className="material-symbols-outlined">keyboard_arrow_down</span>
                                     </div>
                                     <div ref={proDetailsRef} className="data-shipping-product"
                                         style={{ display: proDetails ? "block" : "none" }}
@@ -380,12 +406,8 @@ const ProductView = () => {
                                     onClick={() => setShippingDetails(!shippingDetails)}
                                 >
                                     <div className="heading-arrow_down">
-                                        <h4>
-                                            Shipping & Returns
-                                        </h4>
-                                        <span className="material-symbols-outlined">
-                                            keyboard_arrow_down
-                                        </span>
+                                        <h4>Shipping & Returns</h4>
+                                        <span className="material-symbols-outlined">keyboard_arrow_down</span>
                                     </div>
                                     {shippingDetails && (
                                         <div ref={detailsRef} className={`data-shipping-product`}
@@ -434,7 +456,6 @@ const ProductView = () => {
                                                     ) : (
                                                         <p className="product-price">${p.product_price}</p>
                                                     )}
-                                                    {/* <p>{product.id}</p> */}
                                                     <Link to={`/product/${p._id}`} className="shop-now">
                                                         Shop Now
                                                     </Link>
@@ -456,9 +477,7 @@ const ProductView = () => {
                     </div>
                 </div>
             </div>
-
             <Footer />
-
         </>
     );
 };

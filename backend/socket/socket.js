@@ -14,7 +14,7 @@ const initSocket = (server, allowedOrigins) => {
     io.on("connection", (socket) => {
         console.log("🟢 New client connected:", socket.id);
 
-        // ✅ Register admin or user
+        // ✅ Register user or admin
         socket.on("register", ({ userId, role }) => {
             socket.userId = userId;
             socket.userRole = role;
@@ -22,7 +22,7 @@ const initSocket = (server, allowedOrigins) => {
             console.log(`🔐 ${role} (${userId}) connected with socket ID ${socket.id}`);
         });
 
-        // ✅ Admin fetches all users with last message
+        // ✅ Admin fetch users with last message
         socket.on("getUsers", async () => {
             try {
                 const users = await User.find({}, "name image");
@@ -44,7 +44,6 @@ const initSocket = (server, allowedOrigins) => {
                     });
                 }
 
-                // Sort by recent message
                 usersWithLastMessage.sort((a, b) => {
                     const dateA = a.lastMessageTime ? new Date(a.lastMessageTime).getTime() : 0;
                     const dateB = b.lastMessageTime ? new Date(b.lastMessageTime).getTime() : 0;
@@ -67,6 +66,7 @@ const initSocket = (server, allowedOrigins) => {
                     toUserId: adminId,
                     senderRole: "user",
                     message,
+                    status: "sent", // 🟢 Single tick
                     timestamp: timestamp || new Date(),
                 });
 
@@ -76,18 +76,23 @@ const initSocket = (server, allowedOrigins) => {
                     ? { name: user.name, image: user.image }
                     : { name: "New User", image: null };
 
-                console.log("📥 User message saved:", response);
+                // ✅ Acknowledge message sent (single tick)
+                socket.emit("messageSentAck", saved._id);
 
-                // 🔎 Send to connected admin
+                // 🔎 Send message to admin if connected
                 const adminSocket = Array.from(io.sockets.sockets.values()).find(
                     (s) => s.userRole === "admin"
                 );
 
                 if (adminSocket) {
                     io.to(adminSocket.userId).emit("receiveMessage", response);
-                    console.log("📤 Message sent to admin");
+
+                    // ✅ Update status → delivered
+                    await Message.findByIdAndUpdate(saved._id, { status: "delivered" });
+                    io.to(fromUserId).emit("messageDelivered", saved._id);
+                    console.log("📤 Message delivered to admin");
                 } else {
-                    console.log("⚠️ No admin currently connected.");
+                    console.log("⚠️ No admin connected");
                 }
             } catch (err) {
                 console.error("❌ userMessage error:", err);
@@ -104,15 +109,54 @@ const initSocket = (server, allowedOrigins) => {
                     toUserId,
                     senderRole: "admin",
                     message,
+                    status: "sent", // 🟢 Single tick
                     timestamp: timestamp || new Date(),
                 });
 
                 const response = saved.toObject();
-                io.to(toUserId).emit("receiveMessage", response);
 
-                console.log("📤 Admin message sent to user:", toUserId);
+                // ✅ Admin gets confirmation (single tick)
+                socket.emit("messageSentAck", saved._id);
+
+                // 📤 Send to user if connected
+                const userSocket = Array.from(io.sockets.sockets.values()).find(
+                    (s) => s.userId === toUserId
+                );
+
+                if (userSocket) {
+                    io.to(toUserId).emit("receiveMessage", response);
+
+                    // ✅ Mark as delivered
+                    await Message.findByIdAndUpdate(saved._id, { status: "delivered" });
+                    io.to(adminId).emit("messageDelivered", saved._id);
+                    console.log("📤 Message delivered to user:", toUserId);
+                } else {
+                    console.log("⚠️ User not online:", toUserId);
+                }
             } catch (err) {
                 console.error("❌ adminMessage error:", err);
+            }
+        });
+
+        // ✅ When message delivered acknowledgment received from client
+        socket.on("deliveredAck", async (msgId) => {
+            try {
+                await Message.findByIdAndUpdate(msgId, { status: "delivered" });
+                io.emit("messageDelivered", msgId);
+                console.log("📬 Delivered acknowledgment:", msgId);
+            } catch (err) {
+                console.error("❌ deliveredAck error:", err);
+            }
+        });
+
+        // ✅ When message seen acknowledgment received from client
+        socket.on("seenAck", async (msgId) => {
+            try {
+                await Message.findByIdAndUpdate(msgId, { status: "seen" });
+                io.emit("messageSeen", msgId);
+                console.log("👁️ Seen acknowledgment:", msgId);
+            } catch (err) {
+                console.error("❌ seenAck error:", err);
             }
         });
 

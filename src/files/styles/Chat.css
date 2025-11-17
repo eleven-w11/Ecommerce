@@ -120,6 +120,7 @@ body {
     /* Ensure it takes full width */
     padding: 12px 15px;
     /* Add some padding */
+    /* background-color: red; */
 }
 
 .user-chat-app .chat-title {
@@ -204,50 +205,56 @@ body {
     min-height: 0;
     /* Important for flex grandchildren to scroll */
     height: 100%;
+    overflow-y: auto;
     /* Take up all available space */
 }
 
 .user-chat-app .messages-container {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    /* This enables vertical scrolling */
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    background-color: #f8fafc;
-    /* Add these properties to ensure proper scrolling */
-    min-height: 0;
-    /* Important for flex children to scroll */
-    height: 0;
-    /* Important for flex children to scroll */
+    gap: 15px;
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.messages-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 /* Message Bubbles */
-.user-chat-app .message-bubble {
+.message-bubble {
     max-width: 70%;
-    padding: 12px 16px;
-    border-radius: 18px;
-    position: relative;
+    padding: 15px 20px;
+    border-radius: 20px;
+    margin-bottom: 5px;
     animation: fadeIn 0.3s ease-out;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    line-height: 1.4;
-}
-
-.user-chat-app .user-message {
-    background-color: rgba(2, 0, 67, 1);
-    color: white;
-    align-self: flex-end;
-    border-bottom-right-radius: 4px;
-    animation-delay: 0.1s;
-}
-
-.user-chat-app .admin-message {
-    background-color: white;
-    color: var(--dark-color);
     align-self: flex-start;
-    border-bottom-left-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    /* Default to left */
+}
+
+/* User messages (self) should be on the right */
+.user-message.self {
+    align-self: flex-end;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-bottom-right-radius: 5px;
+}
+
+/* Admin messages and other user messages on the left */
+.admin-message,
+.user-message:not(.self) {
+    align-self: flex-start;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    border-bottom-left-radius: 5px;
+}
+
+/* Admin message specific styling */
+.admin-message {
+    border-left: 4px solid #e74c3c;
 }
 
 .user-chat-app .message-text {
@@ -462,20 +469,8 @@ body {
     font-size: 2.5rem;
     margin-bottom: 15px;
     color: var(--error-color);
-    animation: shakeIcon 3s linear  2s infinite normal none;
+    animation: shakeIcon 3s linear 2s infinite normal none;
 }
-
-/* .auth-error-card h2 {
-    font-size: 1.4rem;
-    margin-bottom: 10px;
-    color: var(--dark-color);
-} */
-
-/* .auth-error-card p {
-    color: var(--dark-gray);
-    margin-bottom: 20px;
-    font-size: 0.95rem;
-} */
 
 .auth-redirect-button {
     display: inline-block;
@@ -556,7 +551,7 @@ body {
     }
 
     .user-chat-app .chat-header {
-        padding: 12px 15px;
+        /* padding: 12px 15px; */
     }
 
     .user-chat-app .profile-name,
@@ -581,4 +576,9 @@ body {
         border-radius: 0;
         /* margin-top: 0; */
     }
+
+    .chat-app .back-arrow span {
+        margin-top: 0px;
+    }
 }
+

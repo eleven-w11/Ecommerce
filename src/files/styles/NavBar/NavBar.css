@@ -3,14 +3,13 @@ nav {
     height: 60px;
     position: fixed;
     top: 0;
-    background-color: #faf7f2;
     z-index: 30;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), background 0.2s linear;
+    /* transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), background 0.2s linear;
     will-change: transform, background;
-    transform: translateZ(0);
+    transform: translateZ(0); */
 }
 
 nav ul {
@@ -60,11 +59,11 @@ nav .nav-logo {
     transition: transform 0.3s ease;
 }
 
-nav .nav-logo:hover {
+.nav-logo:hover {
     transform: translateY(-2px);
 }
 
-nav .nav-logo h1 {
+.nav-logo h1 {
     font-size: 35px;
     font-family: "Cherry Bomb One", system-ui;
     font-weight: 400;
@@ -75,25 +74,25 @@ nav .nav-logo h1 {
     display: inline-block;
 }
 
-nav .nav-logo:hover h1 {
+.nav-logo:hover h1 {
     transform: scale(1.05);
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-nav .nav-logo h1 span {
+.nav-logo h1 span {
     color: red;
     font-weight: 900;
     transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     display: inline-block;
 }
 
-nav .nav-logo:hover h1 span {
+ .nav-logo:hover h1 span {
     color: #ff0000;
     transform: scale(1.2) rotate(5deg);
     text-shadow: 0 0 12px rgba(255, 0, 0, 0.4);
 }
 
-nav .nav-logo h1::after {
+ .nav-logo h1::after {
     content: '';
     position: absolute;
     bottom: -5px;
@@ -104,11 +103,11 @@ nav .nav-logo h1::after {
     transition: width 0.4s ease;
 }
 
-nav .nav-logo:hover h1::after {
+ .nav-logo:hover h1::after {
     width: 100%;
 }
 
-nav .nav-logo:active h1 {
+ .nav-logo:active h1 {
     transform: scale(0.98);
     transition: transform 0.1s ease;
 }
@@ -565,8 +564,7 @@ nav .userimg {
 
 @media (max-width: 610px) {
 
-    .footer-brand h1,
-    nav .nav-logo h1 {
+    .nav-logo h1 {
         font-size: 30px;
     }
 
@@ -590,8 +588,7 @@ nav .userimg {
 
 @media (max-width: 522px) {
 
-    .footer-brand h1,
-    nav .nav-logo h1 {
+     .nav-logo h1 {
         font-size: 25px;
     }
 }

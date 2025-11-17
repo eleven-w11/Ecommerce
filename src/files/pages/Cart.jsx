@@ -1,11 +1,10 @@
-// Gooooooooooooooooooooooooooood
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import "../styles/Cart.css";
 import "../styles/animation.css";
 import left from "../images/left.png";
 import right from "../images/right.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Cart = () => {
     const [cartProducts, setCartProducts] = useState([]);
@@ -17,10 +16,7 @@ const Cart = () => {
     const [imageIndexMap, setImageIndexMap] = useState({});
     const [activeId, setActiveId] = useState(null);
     const wrapperRef = useRef(null);
-
-
-
-
+    const navigate = useNavigate();
 
     const fetchCartProducts = () => {
         setLoading(true);
@@ -60,14 +56,8 @@ const Cart = () => {
             });
     };
 
-
-
-
-
-
     useEffect(() => {
         fetchCartProducts();
-
 
         const handleStorageChange = () => {
             fetchCartProducts();
@@ -91,14 +81,10 @@ const Cart = () => {
         refreshUpdatedProduct(uniqueId);
     };
 
-
-
-
     useEffect(() => {
         if (editProductId) {
             const currentProduct = cartProducts.find(p => p.uniqueId === editProductId);
             if (currentProduct) {
-                // Find the index of the current color in the images array
                 const currentColor = currentProduct.color || currentProduct.images?.[0]?.color_code;
                 const currentImageIndex = currentProduct.images?.findIndex(img => img.color_code === currentColor) || 0;
 
@@ -143,8 +129,6 @@ const Cart = () => {
         setTempChanges(prev => ({ ...prev, size }));
     };
 
-
-    // code 2
     const handleUpdate = (uniqueId) => {
         setUpdatingId(uniqueId);
         const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -173,7 +157,6 @@ const Cart = () => {
         setUpdatingId(null);
     };
 
-
     const refreshUpdatedProduct = (uniqueId) => {
         const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -193,10 +176,6 @@ const Cart = () => {
         );
     };
 
-
-
-
-
     useEffect(() => {
         const storedCart = localStorage.getItem("cart");
         if (storedCart) {
@@ -205,16 +184,10 @@ const Cart = () => {
     }, []);
 
     useEffect(() => {
-
         if (cart.length > 0) {
             localStorage.setItem("cart", JSON.stringify(cart));
         }
     }, [cart]);
-
-
-
-
-
 
     const handleNextImage = (uniqueId, images) => {
         setImageIndexMap(prev => {
@@ -297,11 +270,67 @@ const Cart = () => {
             document.body.style.overflow = "auto";
         }
 
-
         return () => {
             document.body.style.overflow = "auto";
         };
     }, [activeId]);
+
+    // New function to handle checkout
+    const handleCheckout = () => {
+        if (cartProducts.length === 0) {
+            alert("Your cart is empty!");
+            return;
+        }
+
+        // Prepare checkout data
+        const checkoutData = {
+            items: cartProducts.map(product => ({
+                id: product._id,
+                productId: product._id,
+                productName: product.product_name,
+                // color: product.color,
+                color: product.color || product.images?.[0]?.color_code,
+                size: product.size,
+                quantity: product.quantity,
+                image: product.image,
+                price: product.dis_product_price || product.product_price,
+                originalPrice: product.product_price,
+                hasDiscount: !!product.dis_product_price,
+                saveAmount: product.save || 0,
+                uniqueId: product.uniqueId,
+                addedAt: product.addedAt
+            })),
+            subtotal: cartProducts.reduce((total, product) => {
+                const price = product.dis_product_price || product.product_price;
+                return total + price * product.quantity;
+            }, 0),
+            totalItems: cartProducts.reduce((total, product) => total + product.quantity, 0),
+            checkoutType: "cart" // To distinguish from single product checkout
+        };
+
+        // Store checkout data in localStorage
+        localStorage.setItem("checkoutData", JSON.stringify(checkoutData));
+        
+        // Navigate to checkout page with data
+        navigate("/checkout", { 
+            state: { 
+                checkoutData: checkoutData 
+            } 
+        });
+    };
+
+    // Calculate estimated total
+    const calculateEstimatedTotal = () => {
+        return cartProducts.reduce((total, product) => {
+            const price = product.dis_product_price || product.product_price;
+            return total + price * product.quantity;
+        }, 0).toFixed(2);
+    };
+
+    // Calculate total items in cart
+    const calculateTotalItems = () => {
+        return cartProducts.reduce((total, product) => total + product.quantity, 0);
+    };
 
     return (
         <>
@@ -315,23 +344,25 @@ const Cart = () => {
                         </div>
                     </div>
                 ) : cartProducts.length > 0 ? (
-                    cartProducts.map(product => {
-                        const isEditing = editProductId === product.uniqueId;
+                    <>
+                        <div className="cart-header">
+                            <h1>Shopping Cart ({calculateTotalItems()} {calculateTotalItems() === 1 ? 'item' : 'items'})</h1>
+                        </div>
+                        {cartProducts.map(product => {
+                            const isEditing = editProductId === product.uniqueId;
 
-                        const currentImageObj = isEditing
-                            ? product.images?.[imageIndexMap[product.uniqueId] || 0] || null
-                            : null;
+                            const currentImageObj = isEditing
+                                ? product.images?.[imageIndexMap[product.uniqueId] || 0] || null
+                                : null;
 
-                        const imageKey = isEditing
-                            ? (currentImageObj && Object.keys(currentImageObj).find(k => k.startsWith('pi_'))) || null
-                            : null;
+                            const imageKey = isEditing
+                                ? (currentImageObj && Object.keys(currentImageObj).find(k => k.startsWith('pi_'))) || null
+                                : null;
 
-
-                        const currentImage = isEditing
-                            ? currentImageObj?.[imageKey] || product.image
-                            : product.image;
-                        return (
-                            <>
+                            const currentImage = isEditing
+                                ? currentImageObj?.[imageKey] || product.image
+                                : product.image;
+                            return (
                                 <div key={product.uniqueId} className="cart-item">
                                     {activeId === product.uniqueId && (
                                         <>
@@ -363,10 +394,7 @@ const Cart = () => {
                                             </div>
                                         </div>
                                     ) : (
-                                        // <div className="cart_item-wrapper">
                                         <div className={`cart_item-wrapper ${editProductId === product.uniqueId ? 'edit-mode' : ''}`}>
-
-
                                             <div className="images-frame">
                                                 {editProductId === product.uniqueId && (
                                                     <>
@@ -390,12 +418,8 @@ const Cart = () => {
                                                 />
                                             </div>
 
-
-
-
                                             <div className={`cart-detail-container ${editProductId === product.uniqueId ? 'cart-detail-container-edit-mode' : ''}`}>
                                                 <div className=" cart-details">
-                                                    {/* <div className="cart-details"> */}
                                                     <h2>{product.product_name}</h2>
 
                                                     {editProductId === product.uniqueId ? (
@@ -411,7 +435,6 @@ const Cart = () => {
                                                                     />
                                                                 ))}
                                                             </div>
-
 
                                                             <div className="sizes">
                                                                 <span>Size:</span>
@@ -435,7 +458,6 @@ const Cart = () => {
                                                                     })}
                                                                 </div>
                                                             </div>
-
                                                         </>
                                                     ) : (
                                                         <>
@@ -505,7 +527,7 @@ const Cart = () => {
                                                         {editProductId === product.uniqueId ? (
                                                             <>
                                                                 <div className="update mob_top">
-                                                                    <button onClick={() => handleUpdate(product.uniqueId)}>Update</button> {/* ✅ pass uniqueId */}
+                                                                    <button onClick={() => handleUpdate(product.uniqueId)}>Update</button>
                                                                 </div>
                                                                 <div className="edit mob_top">
                                                                     <button onClick={() => setEditProductId(null)}>Cancel</button>
@@ -513,53 +535,66 @@ const Cart = () => {
                                                             </>
                                                         ) : (
                                                             <div className="edit mob_top">
-                                                                <button onClick={() => setEditProductId(product.uniqueId)}>Edit</button> {/* ✅ set edit ID to uniqueId */}
+                                                                <button onClick={() => setEditProductId(product.uniqueId)}>Edit</button>
                                                             </div>
                                                         )}
 
                                                         <div className="remove">
-                                                            <button onClick={() => removeFromCart(product.uniqueId)}>Remove</button> {/* ✅ pass uniqueId */}
+                                                            <button onClick={() => removeFromCart(product.uniqueId)}>Remove</button>
                                                         </div>
                                                         <div className="description">
                                                             <button onClick={() => toggleBox(product.uniqueId)}>
                                                                 Add Description
                                                             </button>
                                                         </div>
-
                                                     </div>
                                                 </div>
                                             </div>
-
                                         </div>
                                     )}
-
                                 </div>
-                            </>
-                        );
-
-                    })
-
+                            );
+                        })}
+                    </>
                 ) : (
                     <div className="empty-cart">
-                        <p>No items in your cart.</p>
+                        <div className="empty-cart-content">
+                            <h2>Your cart is empty</h2>
+                            <p>Add some amazing products to your cart</p>
+                            <Link to="/products" className="continue-shopping-btn">
+                                Continue Shopping
+                            </Link>
+                        </div>
                     </div>
                 )}
                 {cartProducts && cartProducts.length > 0 ? (
                     <>
                         <div className="hr"></div>
                         <div className="total-amount_checkout">
-                            <div className="E-total">
-                                <h3>Estimated Total</h3>
-                                <p className="estimated-total-amount">
-                                    ${cartProducts.reduce((total, product) => {
-                                        const price = product.dis_product_price || product.product_price;
-                                        return total + price * product.quantity;
-                                    }, 0).toFixed(2)}
-                                </p>
+                            <div className="cart-summary">
+                                <div className="summary-item">
+                                    <span>Items ({calculateTotalItems()}):</span>
+                                    <span>${calculateEstimatedTotal()}</span>
+                                </div>
+                                <div className="summary-item">
+                                    <span>Shipping:</span>
+                                    <span className="free-shipping">FREE</span>
+                                </div>
+                                <div className="hr"></div>
+                                <div className="summary-item total">
+                                    <span><strong>Estimated Total:</strong></span>
+                                    <span><strong>${calculateEstimatedTotal()}</strong></span>
+                                </div>
                             </div>
-                            <div className="hr"></div>
                             <div className="checkout_button">
-                                <Link to="/checkout">Checkout</Link>
+                                <button onClick={handleCheckout} className="checkout-btn">
+                                    Proceed to Checkout
+                                </button>
+                            </div>
+                            <div className="continue-shopping">
+                                <Link to="/products" className="continue-shopping-link">
+                                    Continue Shopping
+                                </Link>
                             </div>
                         </div>
                     </>
@@ -567,7 +602,6 @@ const Cart = () => {
             </div>
         </>
     );
-
 };
 
 export default Cart;
