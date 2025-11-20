@@ -310,12 +310,12 @@ const Cart = () => {
 
         // Store checkout data in localStorage
         localStorage.setItem("checkoutData", JSON.stringify(checkoutData));
-        
+
         // Navigate to checkout page with data
-        navigate("/checkout", { 
-            state: { 
-                checkoutData: checkoutData 
-            } 
+        navigate("/checkout", {
+            state: {
+                checkoutData: checkoutData
+            }
         });
     };
 
@@ -346,7 +346,7 @@ const Cart = () => {
                 ) : cartProducts.length > 0 ? (
                     <>
                         <div className="cart-header">
-                            <h1>Shopping Cart ({calculateTotalItems()} {calculateTotalItems() === 1 ? 'item' : 'items'})</h1>
+                            <h1>Shopping Cart <span>({calculateTotalItems()} {calculateTotalItems() === 1 ? 'item' : 'items'})</span></h1>
                         </div>
                         {cartProducts.map(product => {
                             const isEditing = editProductId === product.uniqueId;

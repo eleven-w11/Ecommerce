@@ -135,7 +135,7 @@ const Checkout = () => {
     return (
         <>
             <div className="modern_checkout">
-                <h2>Review Your Order</h2>
+                <h1>Review Your Order</h1>
 
                 {loading && (
                     <div className="checkout-loader-wrapperdel">
