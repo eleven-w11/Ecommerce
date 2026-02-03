@@ -218,6 +218,12 @@ async def get_profile(request: Request):
 @api_router.get("/messages/chat/history/{user_id}")
 async def get_chat_history(user_id: str, request: Request):
     """Get chat history for a user (messages between user and admin)"""
+    # Verify user is authenticated
+    current_user = await get_current_user(request)
+    # User can only access their own chat history (unless admin)
+    if current_user["_id"] != user_id and current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Access denied")
+    
     messages = await db.messages.find({
         "$or": [
             {"from_user_id": user_id},
