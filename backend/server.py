@@ -569,10 +569,9 @@ fastapi_app.include_router(api_router)
 fastapi_app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=["*"] if os.environ.get('CORS_ORIGINS', '*') == '*' else os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_origins=os.environ.get('CORS_ORIGINS', 'http://localhost:3000').split(','),
     allow_methods=["*"],
     allow_headers=["*"],
-    allow_origin_regex=r".*" if os.environ.get('CORS_ORIGINS', '*') == '*' else None,
 )
 
 @fastapi_app.on_event("shutdown")
