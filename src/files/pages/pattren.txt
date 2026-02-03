@@ -1,0 +1,120 @@
+backend
+    middleware
+        verifyPath.js
+        verifyToken.js
+    models
+        Message.js
+        Product.js
+        User.js
+    routes
+        adminRoutes.js
+        cartRoutes.js
+        messageRoutes.js
+        productRoutes.js
+        signinRoutes.js
+        signoutRoutes.js
+        SignUpRoutes.js
+        UserProRoutes.js
+        user.js
+    server.js
+public
+src    
+    pages
+            images
+                    images
+            styles
+                    css files
+            pages files .jsx
+    app.js
+    index.js
+
+
+
+
+loader 
+
+best selling home 
+best selling
+top product home
+top product
+productview
+search
+cart
+
+best selling home 
+top product home
+
+best selling
+top product
+productview
+cart
+
+search
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+adminchat history 
+1 talha
+2 red
+3 blue
+4 talha w11
+5 talha w11
+6 test3
+7 test4
+8 test5
+9 test6
+10 test7
+
+
+
+
+
+
+
+
+
+
+
+#DBDBDB background for pages , lightgray
+#C4C4C4 card background , darkgray
+#ADADAD check if fit for navbar
+
+pop up
+------
+
+productview
+sign up
+sign in
+
+mid rage , heading
+------------------
+
+checkout .modern-checkout
+bestselling .cart-page
+top products
+cart
+all products
+
+
+
+
+todo
+----
+
+price and discount price
