@@ -21,7 +21,7 @@ const messageSchema = new mongoose.Schema({
     toUserId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: false   // ← 🔥 ye line change ki gayi (pehle true tha)
+        required: false
     },
     senderRole: {
         type: String,
@@ -31,6 +31,11 @@ const messageSchema = new mongoose.Schema({
     message: {
         type: String,
         required: true
+    },
+    status: {
+        type: String,
+        enum: ['pending', 'sent', 'delivered', 'seen'],
+        default: 'sent'
     },
     timestamp: {
         type: Date,
