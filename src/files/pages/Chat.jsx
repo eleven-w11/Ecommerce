@@ -14,6 +14,7 @@ const Chat = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [userProfile, setUserProfile] = useState(null);
     const [authError, setAuthError] = useState(null);
+    const [adminOnline, setAdminOnline] = useState(false); // ✅ NEW: Admin online status
     const messagesEndRef = useRef(null);
     const socketRef = useRef(null);
     const isMounted = useRef(true);
@@ -74,7 +75,9 @@ const Chat = () => {
         socketRef.current.on("messageSentAck", (msgId) => {
             setChat((prev) =>
                 prev.map((msg) =>
-                    msg._id === msgId ? { ...msg, status: "sent" } : msg
+                    msg._id === msgId || msg._id === parseInt(msgId) 
+                        ? { ...msg, _id: msgId, status: "sent" } 
+                        : msg
                 )
             );
         });
@@ -93,6 +96,25 @@ const Chat = () => {
                     msg._id === msgId ? { ...msg, status: "seen" } : msg
                 )
             );
+        });
+
+        // ✅ NEW: Admin online/offline status
+        socketRef.current.on("adminStatus", (data) => {
+            if (isMounted.current) {
+                setAdminOnline(data.isOnline);
+            }
+        });
+
+        socketRef.current.on("userOnline", (data) => {
+            if (data.role === "admin" && isMounted.current) {
+                setAdminOnline(true);
+            }
+        });
+
+        socketRef.current.on("userOffline", (data) => {
+            if (data.role === "admin" && isMounted.current) {
+                setAdminOnline(false);
+            }
         });
 
         return () => {
@@ -115,10 +137,13 @@ const Chat = () => {
                     setIsAdmin(adminStatus);
                     setUserProfile(response.data);
                     setAuthError(null);
+                    
+                    // Register and get admin status
                     socketRef.current.emit("register", {
                         userId: fetchedUserId,
                         role: adminStatus ? "admin" : "user",
                     });
+                    socketRef.current.emit("getAdminStatus"); // ✅ NEW: Request admin status
                 }
             } catch (error) {
                 console.error("Error fetching user profile:", error);
@@ -192,7 +217,7 @@ const Chat = () => {
             fromUserId: userId,
             toUserId: selectedUserId,
             timestamp,
-            status: "pending", // ✅ new field
+            status: "pending",
         };
 
         setChat((prev) => [...prev, optimisticMsg]);
@@ -231,16 +256,22 @@ const Chat = () => {
                 <div className="chat-header glassmorphism">
                     <div className="header-content">
                         <div className="back-arrow">
-                            <span className="material-symbols-outlined">arrow_back</span>
+                            <Link to="/">
+                                <span className="material-symbols-outlined">arrow_back</span>
+                            </Link>
                         </div>
                         <div className="admin-profile">
                             <div className="profile-image-container">
                                 <img src={admin} alt="Admin" className="profile-image" />
-                                <span className="online-indicator"></span>
+                                {/* ✅ NEW: Dynamic online indicator */}
+                                <span className={`online-indicator ${adminOnline ? 'online' : 'offline'}`}></span>
                             </div>
                             <div className="profile-info">
                                 <p className="profile-name">Admin</p>
-                                <p className="profile-status">Online</p>
+                                {/* ✅ NEW: Dynamic status text */}
+                                <p className={`profile-status ${adminOnline ? 'online' : 'offline'}`}>
+                                    {adminOnline ? 'Online' : 'Offline'}
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -253,7 +284,7 @@ const Chat = () => {
                                 <div className="error-icon">⚠️</div>
                                 <h3>Authentication Required</h3>
                                 <p>{authError}</p>
-                                <Link to="/signin" className="auth-redirect-button pulse">
+                                <Link to="/SignIn" className="auth-redirect-button pulse">
                                     Sign In Now
                                 </Link>
                             </div>
@@ -288,7 +319,7 @@ const Chat = () => {
                                             {groupedMessages[dateKey].map((msg) => (
                                                 <div
                                                     key={msg._id || msg.timestamp}
-                                                    className={`message-bubble ${msg.fromAdmin
+                                                    className={`message-bubble ${msg.fromAdmin || msg.senderRole === 'admin'
                                                             ? "admin-message"
                                                             : msg.fromUserId === userId
                                                                 ? "user-message self"
@@ -303,15 +334,15 @@ const Chat = () => {
                                                                 minute: "2-digit",
                                                             })}
                                                         </span>
-                                                        {/* ✅ Tick system */}
-                                                        <span className="message-status">
-                                                            {msg.status === "pending" && "🕓"}
-                                                            {msg.status === "sent" && "✔️"}
-                                                            {msg.status === "delivered" && "✔️✔️"}
-                                                            {msg.status === "seen" && (
-                                                                <span style={{ color: "blue" }}>✔️✔️</span>
-                                                            )}
-                                                        </span>
+                                                        {/* ✅ Tick system - only for user's own messages */}
+                                                        {(msg.fromUserId === userId || (!msg.fromAdmin && msg.senderRole !== 'admin')) && (
+                                                            <span className="message-status">
+                                                                {msg.status === "pending" && <span className="status-pending">🕓</span>}
+                                                                {msg.status === "sent" && <span className="status-sent">✓</span>}
+                                                                {msg.status === "delivered" && <span className="status-delivered">✓✓</span>}
+                                                                {msg.status === "seen" && <span className="status-seen">✓✓</span>}
+                                                            </span>
+                                                        )}
                                                     </div>
                                                 </div>
                                             ))}
