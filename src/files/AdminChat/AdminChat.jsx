@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
 import "../styles/AdminChat.css";
 import UserList from "./UserList";
+import { Link } from "react-router-dom";
 
 const AdminChat = () => {
     const API_BASE = process.env.REACT_APP_API_BASE_URL;
@@ -10,17 +11,22 @@ const AdminChat = () => {
     const [error, setError] = useState("");
     const [selectedChat, setSelectedChat] = useState([]);
     const [selectedUserId, setSelectedUserId] = useState("");
-    const [adminMessage, setAdminMessage] = useState("");
     const socketRef = useRef(null);
     const isMounted = useRef(true);
     const messagesEndRef = useRef(null);
     const [showMobileView, setShowMobileView] = useState(false);
-    const [isLoading, setIsLoading] = useState(true); // ✅ New loading state
+    const [isLoading, setIsLoading] = useState(true);
+    const [adminMessage, setAdminMessage] = useState("");
+    const selectedUserIdRef = useRef(selectedUserId);
+
+    // Keep ref in sync with state
+    useEffect(() => {
+        selectedUserIdRef.current = selectedUserId;
+    }, [selectedUserId]);
 
     // Function to format date for display
     const formatMessageDate = (timestamp) => {
         const messageDate = new Date(timestamp);
-
         return messageDate.toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'short',
@@ -31,7 +37,6 @@ const AdminChat = () => {
     // Function to group messages by date
     const groupMessagesByDate = (messages) => {
         const grouped = {};
-
         messages.forEach(message => {
             const dateKey = new Date(message.timestamp).toDateString();
             if (!grouped[dateKey]) {
@@ -39,13 +44,74 @@ const AdminChat = () => {
             }
             grouped[dateKey].push(message);
         });
-
         return grouped;
     };
 
+    // ✅ Handle incoming messages
+    const handleReceiveMessage = useCallback(async (message) => {
+        if (!isMounted.current) return;
+
+        const userId = message.senderRole === "admin" ? message.toUserId : message.fromUserId;
+        if (!userId) return;
+
+        // Update chat if this user is selected
+        if (userId === selectedUserIdRef.current) {
+            setSelectedChat((prev) => {
+                const isDuplicate = prev.some(
+                    (msg) =>
+                        msg._id === message._id ||
+                        (msg.message === message.message &&
+                            new Date(msg.timestamp).getTime() === new Date(message.timestamp).getTime())
+                );
+                return isDuplicate ? prev : [...prev, message];
+            });
+        }
+
+        // Update users list
+        setUsers((prev) => {
+            const userExists = prev.find((u) => u._id === userId);
+            const name = message.user?.name || "New User";
+            const image = message.user?.image || "";
+
+            let updatedUsers;
+            if (userExists) {
+                updatedUsers = prev.map((u) =>
+                    u._id === userId
+                        ? {
+                            ...u,
+                            name: name || u.name,
+                            image: image || u.image,
+                            lastMessage: message.message,
+                            lastMessageTime: message.timestamp,
+                            unreadCount: u._id !== selectedUserIdRef.current ? (u.unreadCount || 0) + 1 : 0,
+                            isOnline: true,
+                        }
+                        : u
+                );
+            } else {
+                updatedUsers = [
+                    {
+                        _id: userId,
+                        name,
+                        image,
+                        lastMessage: message.message,
+                        lastMessageTime: message.timestamp,
+                        unreadCount: 1,
+                        isOnline: true,
+                    },
+                    ...prev,
+                ];
+            }
+
+            return updatedUsers.sort(
+                (a, b) => new Date(b.lastMessageTime || 0) - new Date(a.lastMessageTime || 0)
+            );
+        });
+    }, []);
+
     useEffect(() => {
         isMounted.current = true;
-        setIsLoading(true); // ✅ Start loading
+        setIsLoading(true);
 
         const backendURL = process.env.REACT_APP_API_BASE_URL;
         socketRef.current = io(backendURL, { withCredentials: true });
@@ -57,119 +123,66 @@ const AdminChat = () => {
         socketRef.current.on("usersList", (data) => {
             if (isMounted.current) {
                 setUsers(data);
-                setIsLoading(false); // ✅ Stop loading when users are loaded
+                setIsLoading(false);
             }
         });
 
-        const handleReceiveMessage = async (message) => {
-            if (!isMounted.current) return;
-
-            const userId =
-                message.senderRole === "admin"
-                    ? message.toUserId
-                    : message.fromUserId;
-
-            if (!userId) return;
-
-            setSelectedChat((prev) => {
-                const isDuplicate = prev.some(
-                    (msg) =>
-                        msg._id === message._id ||
-                        (msg.message === message.message &&
-                            new Date(msg.timestamp).getTime() ===
-                            new Date(message.timestamp).getTime())
-                );
-                if (!isDuplicate && userId === selectedUserId) {
-                    return [...prev, message];
-                }
-                return prev;
-            });
-
-            setUsers((prev) => {
-                const userExists = prev.find((u) => u._id === userId);
-                const name = message.user?.name || "New User";
-                const image = message.user?.image || "";
-
-                let updatedUsers;
-                if (userExists) {
-                    updatedUsers = prev.map((u) =>
-                        u._id === userId
-                            ? {
-                                ...u,
-                                name: name || u.name,
-                                image: image || u.image,
-                                lastMessage: message.message,
-                                lastMessageTime: message.timestamp,
-                                unreadCount:
-                                    u._id !== selectedUserId
-                                        ? (u.unreadCount || 0) + 1
-                                        : 0,
-                                isOnline: true,
-                            }
-                            : u
-                    );
-                } else {
-                    updatedUsers = [
-                        {
-                            _id: userId,
-                            name,
-                            image,
-                            lastMessage: message.message,
-                            lastMessageTime: message.timestamp,
-                            unreadCount: 1,
-                            isOnline: true,
-                        },
-                        ...prev,
-                    ];
-                }
-
-                return updatedUsers.sort(
-                    (a, b) =>
-                        new Date(b.lastMessageTime) -
-                        new Date(a.lastMessageTime)
-                );
-            });
-
-            const userInState = users.find((u) => u._id === userId);
-            if (!userInState || !userInState.name) {
-                try {
-                    const res = await axios.get(
-                        `${backendURL}/api/user/${userId}`,
-                        { withCredentials: true }
-                    );
-                    const user = res.data;
-
-                    setUsers((prev) =>
-                        prev.map((u) =>
-                            u._id === user._id
-                                ? {
-                                    ...u,
-                                    name: user.name,
-                                    image: user.profileImage,
-                                }
-                                : u
-                        )
-                    );
-                } catch (err) {
-                    console.error("❌ Failed to fetch user:", err.message);
-                }
-            }
-        };
-
         socketRef.current.on("receiveMessage", handleReceiveMessage);
+
+        // ✅ NEW: Listen for user online/offline status
+        socketRef.current.on("userOnline", (data) => {
+            if (isMounted.current && data.role === "user") {
+                setUsers((prev) =>
+                    prev.map((u) =>
+                        u._id === data.userId ? { ...u, isOnline: true } : u
+                    )
+                );
+            }
+        });
+
+        socketRef.current.on("userOffline", (data) => {
+            if (isMounted.current && data.role === "user") {
+                setUsers((prev) =>
+                    prev.map((u) =>
+                        u._id === data.userId ? { ...u, isOnline: false } : u
+                    )
+                );
+            }
+        });
+
+        // ✅ Message acknowledgments
+        socketRef.current.on("messageSentAck", (msgId) => {
+            setSelectedChat((prev) =>
+                prev.map((msg) =>
+                    msg._id === msgId || msg._id === parseInt(msgId)
+                        ? { ...msg, _id: msgId, status: "sent" }
+                        : msg
+                )
+            );
+        });
+
+        socketRef.current.on("messageDelivered", (msgId) => {
+            setSelectedChat((prev) =>
+                prev.map((msg) =>
+                    msg._id === msgId ? { ...msg, status: "delivered" } : msg
+                )
+            );
+        });
 
         return () => {
             isMounted.current = false;
             socketRef.current?.off("receiveMessage", handleReceiveMessage);
+            socketRef.current?.off("userOnline");
+            socketRef.current?.off("userOffline");
             socketRef.current?.disconnect();
         };
-    }, [selectedUserId]);
+    }, [handleReceiveMessage]);
 
     const fetchUserChat = async (userId) => {
         if (!isMounted.current) return;
 
         try {
-            setIsLoading(true); // ✅ Start loading when fetching chat
+            setIsLoading(true);
             const res = await axios.get(`${API_BASE}/api/admin/chat/${userId}`, {
                 withCredentials: true,
             });
@@ -178,13 +191,20 @@ const AdminChat = () => {
                 setSelectedChat(res.data.messages || []);
                 setSelectedUserId(userId);
                 setShowMobileView(true);
-                setIsLoading(false); // ✅ Stop loading when chat is loaded
+                setIsLoading(false);
+                
+                // Reset unread count for this user
+                setUsers((prev) =>
+                    prev.map((u) =>
+                        u._id === userId ? { ...u, unreadCount: 0 } : u
+                    )
+                );
             }
         } catch (err) {
             console.error("Error fetching chat:", err);
             if (isMounted.current) {
                 setError("Failed to load chat.");
-                setIsLoading(false); // ✅ Stop loading on error too
+                setIsLoading(false);
             }
         }
     };
@@ -201,15 +221,26 @@ const AdminChat = () => {
             senderRole: "admin",
             timestamp,
             toUserId: selectedUserId,
+            status: "pending",
         };
 
         setSelectedChat((prev) => [...prev, newMessage]);
-        setAdminMessage("");
+        
+        // Update last message in user list
+        setUsers((prev) =>
+            prev.map((u) =>
+                u._id === selectedUserId
+                    ? { ...u, lastMessage: adminMessage, lastMessageTime: timestamp }
+                    : u
+            )
+        );
 
         socketRef.current.emit("adminMessage", {
             toUserId: selectedUserId,
             message: adminMessage,
         });
+        
+        setAdminMessage("");
     };
 
     useEffect(() => {
@@ -225,7 +256,10 @@ const AdminChat = () => {
 
     const groupedMessages = groupMessagesByDate(sortedMessages);
 
-    // ✅ Show loader for AdminChat while initial loading
+    // Get selected user info
+    const selectedUser = users.find((u) => u._id === selectedUserId);
+
+    // Show loader for AdminChat while initial loading
     if (isLoading && users.length === 0) {
         return (
             <div className="chat-loader-container">
@@ -243,7 +277,9 @@ const AdminChat = () => {
             <div className={`admin-sidebar ${showMobileView ? "hidden-mobile" : ""}`}>
                 <div className="sidebar-header">
                     <div className="back-arrow">
-                        <span className="material-symbols-outlined">arrow_back</span>
+                        <Link to="/">
+                            <span className="material-symbols-outlined">arrow_back</span>
+                        </Link>
                     </div>
                     <h2 className="sidebar-title">Customer Chats</h2>
                 </div>
@@ -253,7 +289,7 @@ const AdminChat = () => {
                     users={users}
                     selectedUserId={selectedUserId}
                     fetchUserChat={fetchUserChat}
-                    isLoading={isLoading} // ✅ Pass loading state to UserList
+                    isLoading={isLoading}
                 />
             </div>
 
@@ -261,37 +297,28 @@ const AdminChat = () => {
                 {selectedUserId ? (
                     <>
                         <div className="chat-header">
-                            <span
-                                className="back-arrow"
-                                onClick={handleBackToUsers}
-                            >
-                                <span className="material-symbols-outlined">
-                                    arrow_back
-                                </span>
+                            <span className="back-arrow" onClick={handleBackToUsers}>
+                                <span className="material-symbols-outlined">arrow_back</span>
                             </span>
                             <div className="chat-partner-info">
-                                <img
-                                    src={
-                                        users.find(
-                                            (u) => u._id === selectedUserId
-                                        )?.image ||
-                                        `https://ui-avatars.com/api/?name=${users.find(
-                                            (u) => u._id === selectedUserId
-                                        )?.name
-                                        }&background=random`
-                                    }
-                                    alt="User"
-                                    className="chat-avatar"
-                                />
-                                <div>
-                                    <h2 className="partner-name">
-                                        {
-                                            users.find(
-                                                (u) => u._id === selectedUserId
-                                            )?.name
+                                <div className="partner-avatar-container">
+                                    <img
+                                        src={
+                                            selectedUser?.image ||
+                                            `https://ui-avatars.com/api/?name=${selectedUser?.name}&background=random`
                                         }
-                                    </h2>
-                                    <p className="partner-status">Active now</p>
+                                        alt="User"
+                                        className="chat-avatar"
+                                    />
+                                    {/* ✅ NEW: Online indicator */}
+                                    <span className={`status-indicator ${selectedUser?.isOnline ? 'online' : 'offline'}`}></span>
+                                </div>
+                                <div>
+                                    <h2 className="partner-name">{selectedUser?.name}</h2>
+                                    {/* ✅ NEW: Dynamic status text */}
+                                    <p className={`partner-status ${selectedUser?.isOnline ? 'online' : 'offline'}`}>
+                                        {selectedUser?.isOnline ? 'Online' : 'Offline'}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -301,14 +328,7 @@ const AdminChat = () => {
                                 <div className="empty-chat">
                                     <div className="empty-icon">💬</div>
                                     <h3>No messages found</h3>
-                                    <p>
-                                        Try refreshing or wait for new messages
-                                        from{" "}
-                                        {users.find(
-                                            (u) => u._id === selectedUserId
-                                        )?.name || "user"}
-                                        .
-                                    </p>
+                                    <p>Try refreshing or wait for new messages from {selectedUser?.name || "user"}.</p>
                                 </div>
                             ) : (
                                 Object.keys(groupedMessages).map(dateKey => (
@@ -321,23 +341,27 @@ const AdminChat = () => {
                                         {groupedMessages[dateKey].map((msg, idx) => (
                                             <div
                                                 key={msg._id || idx}
-                                                className={`message-bubble ${msg.senderRole === "admin"
-                                                    ? "outgoing"
-                                                    : "incoming"
-                                                    } fade-in`}
+                                                className={`message-bubble ${msg.senderRole === "admin" ? "outgoing" : "incoming"} fade-in`}
                                             >
                                                 <div className="message-content">
-                                                    <p className="message-text">
-                                                        {msg.message}
-                                                    </p>
-                                                    <p className="message-time">
-                                                        {new Date(
-                                                            msg.timestamp
-                                                        ).toLocaleTimeString([], {
-                                                            hour: "2-digit",
-                                                            minute: "2-digit",
-                                                        })}
-                                                    </p>
+                                                    <p className="message-text">{msg.message}</p>
+                                                    <div className="message-meta">
+                                                        <span className="message-time">
+                                                            {new Date(msg.timestamp).toLocaleTimeString([], {
+                                                                hour: "2-digit",
+                                                                minute: "2-digit",
+                                                            })}
+                                                        </span>
+                                                        {/* ✅ Message status for admin's messages */}
+                                                        {msg.senderRole === "admin" && (
+                                                            <span className="message-status">
+                                                                {msg.status === "pending" && <span className="status-pending">🕓</span>}
+                                                                {msg.status === "sent" && <span className="status-sent">✓</span>}
+                                                                {msg.status === "delivered" && <span className="status-delivered">✓✓</span>}
+                                                                {msg.status === "seen" && <span className="status-seen">✓✓</span>}
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
                                         ))}
@@ -352,26 +376,15 @@ const AdminChat = () => {
                                 <textarea
                                     rows="1"
                                     className="message-input"
-                                    placeholder={`Message ${users.find(
-                                        (u) => u._id === selectedUserId
-                                    )?.name
-                                        }...`}
+                                    placeholder={`Message ${selectedUser?.name}...`}
                                     value={adminMessage}
-                                    onChange={(e) =>
-                                        setAdminMessage(e.target.value)
-                                    }
-                                    onKeyPress={(e) =>
-                                        e.key === "Enter" &&
-                                        !e.shiftKey &&
-                                        handleAdminReply()
-                                    }
+                                    onChange={(e) => setAdminMessage(e.target.value)}
+                                    onKeyPress={(e) => e.key === "Enter" && !e.shiftKey && handleAdminReply()}
                                 ></textarea>
                                 <button
                                     className="send-button hover-effect"
                                     onClick={handleAdminReply}
-                                    disabled={
-                                        !adminMessage.trim() || !selectedUserId
-                                    }
+                                    disabled={!adminMessage.trim() || !selectedUserId}
                                 >
                                     <span className="send-icon">✈️</span>
                                     <span className="send-text">Send</span>
