@@ -2,6 +2,9 @@ const { Server } = require("socket.io");
 const Message = require("../models/Message");
 const User = require("../models/StoreUser");
 
+// Track online users: { oduserId: socketId }
+const onlineUsers = new Map();
+
 const initSocket = (server, allowedOrigins) => {
     const io = new Server(server, {
         cors: {
@@ -19,7 +22,32 @@ const initSocket = (server, allowedOrigins) => {
             socket.userId = userId;
             socket.userRole = role;
             socket.join(userId);
+            
+            // Track online status
+            onlineUsers.set(userId, { socketId: socket.id, role });
+            
+            // Broadcast online status to all clients
+            io.emit("userOnline", { userId, role });
+            
             console.log(`🔐 ${role} (${userId}) connected with socket ID ${socket.id}`);
+        });
+
+        // ✅ Check if admin is online (for user chat page)
+        socket.on("getAdminStatus", () => {
+            let adminOnline = false;
+            for (const [uid, data] of onlineUsers) {
+                if (data.role === "admin") {
+                    adminOnline = true;
+                    break;
+                }
+            }
+            socket.emit("adminStatus", { isOnline: adminOnline });
+        });
+
+        // ✅ Check if a specific user is online
+        socket.on("checkUserOnline", (userId) => {
+            const isOnline = onlineUsers.has(userId);
+            socket.emit("userOnlineStatus", { userId, isOnline });
         });
 
         // ✅ Admin fetch users with last message
@@ -41,6 +69,7 @@ const initSocket = (server, allowedOrigins) => {
                         image: user.image,
                         lastMessage: lastMsg.message,
                         lastMessageTime: lastMsg.timestamp,
+                        isOnline: onlineUsers.has(user._id.toString()),
                     });
                 }
 
@@ -66,7 +95,7 @@ const initSocket = (server, allowedOrigins) => {
                     toUserId: adminId,
                     senderRole: "user",
                     message,
-                    status: "sent", // 🟢 Single tick
+                    status: "sent",
                     timestamp: timestamp || new Date(),
                 });
 
@@ -109,7 +138,7 @@ const initSocket = (server, allowedOrigins) => {
                     toUserId,
                     senderRole: "admin",
                     message,
-                    status: "sent", // 🟢 Single tick
+                    status: "sent",
                     timestamp: timestamp || new Date(),
                 });
 
@@ -161,7 +190,17 @@ const initSocket = (server, allowedOrigins) => {
         });
 
         socket.on("disconnect", () => {
-            console.log(`🔴 ${socket.userRole || "Unknown"} disconnected: ${socket.id}`);
+            const userId = socket.userId;
+            const role = socket.userRole;
+            
+            // Remove from online users
+            if (userId) {
+                onlineUsers.delete(userId);
+                // Broadcast offline status
+                io.emit("userOffline", { userId, role });
+            }
+            
+            console.log(`🔴 ${role || "Unknown"} disconnected: ${socket.id}`);
         });
     });
 };
