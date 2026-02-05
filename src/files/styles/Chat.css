@@ -176,6 +176,16 @@ body {
     background-color: var(--success-color);
     border-radius: 50%;
     border: 2px solid white;
+    transition: background-color 0.3s ease;
+}
+
+/* ✅ NEW: Online/Offline indicator colors */
+.user-chat-app .online-indicator.online {
+    background-color: #22c55e;
+}
+
+.user-chat-app .online-indicator.offline {
+    background-color: #71717a;
 }
 
 .user-chat-app .profile-info {
@@ -192,6 +202,38 @@ body {
 .user-chat-app .profile-status {
     font-size: 0.7rem;
     color: rgba(255, 255, 255, 0.8);
+    transition: color 0.3s ease;
+}
+
+/* ✅ NEW: Status text colors */
+.user-chat-app .profile-status.online {
+    color: #22c55e;
+}
+
+.user-chat-app .profile-status.offline {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* ✅ NEW: Message status styling */
+.user-chat-app .message-status {
+    margin-left: 5px;
+    font-size: 0.75rem;
+}
+
+.user-chat-app .status-pending {
+    opacity: 0.5;
+}
+
+.user-chat-app .status-sent {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.user-chat-app .status-delivered {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.user-chat-app .status-seen {
+    color: #60a5fa;
 }
 
 /* Chat Body */
