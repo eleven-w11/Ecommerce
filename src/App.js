@@ -16,14 +16,12 @@ import ScrollToTop from "./files/pages/ScrollToTop";
 import Footer from './files/pages/Footer';
 import Cart from './files/pages/Cart';
 import AllProducts from './files/pages/AllProducts';
-import ChatBox from './files/pages/Chat';
-import AdminChat from './files/AdminChat/AdminChat';
-import UserList from './files/AdminChat/UserList';
 import Google from './files/pages/Google';
 import SearchResults from './files/pages/NavBar/SearchResults';
 import AdminPanel from './files/pages/AdminPanel';
-import ChatAppIcon from "./files/images/ChatAppIcon.png";
 import Checkout from './files/pages/CheckOut/Checkout';
+import AboutUs from './files/pages/AboutUs';
+import ContactUs from './files/pages/ContactUs';
 
 
 function App() {
@@ -39,7 +37,6 @@ function App() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const hideNavBarRoutes = ["/Chat", "/AdminChat", "/AdminChat/:userId"];
   const shouldShowNavBar = !(width < 600 && hideNavBarRoutes.some(route =>
     location.pathname.startsWith(route.replace(':userId', ''))
   ));
@@ -78,9 +75,7 @@ function App() {
         <Route path="/" element={
           <>
             <div className="Home-Webverse">
-              <div className="ChatAppIcon">
-                <img src={ChatAppIcon} alt="" />
-              </div>
+              
               <TestHero />
               <BestSellingProducts isBestSellingPage={false} />
               <TopProduct isTopProductsPage={false} />
@@ -107,16 +102,13 @@ function App() {
         <Route path="/WomanShoes" element={<AllProducts />} />
         <Route path="/WomanBags" element={<AllProducts />} />
         <Route path="/WomanAccessories" element={<AllProducts />} />
-        <Route path="/Chat" element={<ChatBox />} />
         <Route path="/Checkout" element={<Checkout />} />
+        <Route path="/AboutUs" element={<AboutUs />} />
+        <Route path="/ContactUs" element={<ContactUs />} />
 
-        <Route path="/UserList" element={<UserList />} />
-        <Route path="/AdminChat" element={<AdminChat />} />
 
         <Route path="/Google" element={<Google />} />
         <Route path="/search" element={<SearchResults />} />
-        <Route path="/AdminPanel" element={<AdminPanel />} />
-        {/* <Route path="/UserListPage" element={<UserListPage />} /> */}
       </Routes>
     </div>
   );

@@ -14,6 +14,7 @@
 
 .cart-popup {
     max-width: 450px;
+    height: fit-content;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     animation: popupSlideIn 0.3s ease-out;
     background-color: white;
@@ -53,6 +54,7 @@
     max-height: 350px;
     overflow-y: auto;
     background-color: var(--bg-page);
+    background-color: lightblue;
     padding: 0px 10px 10px 10px;
     border-radius: 10px;
     scrollbar-width: thin;
@@ -126,6 +128,7 @@
 .color-badge-popup {
     width: 16px;
     height: 16px;
+    background-color: lightcoral;
     border-radius: 50%;
     border: 2px solid white;
     box-shadow: 0 0 0 1px var(--border);
@@ -279,21 +282,20 @@
 @media (max-width: 768px) {
     .cart-popup {
         margin: 1rem;
-        max-width: calc(100% - 2rem);
+        max-width: 368px;
     }
 
-    .popup-actions {
-        flex-direction: column;
-        align-items: center;
+    .popup-items {
+        max-height: 310px;
+    }
+}
+
+@media (max-width: 600px) {
+    .popup-header {
+        padding: 0px 20px 8px 20px;
     }
 
-    .popup-btn {
-        max-width: 200px;
-        width: 100%;
-    }
-
-    .item-preview {
-        flex-direction: column;
-        text-align: center;
+    .popup-note {
+        padding: 2px 0px 0px 0px;
     }
 }

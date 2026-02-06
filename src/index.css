@@ -9,7 +9,7 @@
     --bg-card: #d4d4d4e6;
     --bg-light-card: #dededee6;
     --bg-navbar: #9C9C9C;
-
+/* hr color */
     --text-primary: #1E1E1E;
     --text-secondary: #555555;
 
@@ -25,7 +25,6 @@
 
 body {
     position: relative;
-    /* background-color: black; */
 }
 
 
@@ -75,10 +74,11 @@ li {
 
 .cart-loader-container {
     width: 100%;
-    height: 600px;
+    height: 500px;
     display: flex;
     align-items: center;
     justify-content: center;
+    /* background-color: red; */
 }
 
 .checkout-loader-wrapper {

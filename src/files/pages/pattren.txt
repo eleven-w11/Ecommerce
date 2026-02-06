@@ -116,5 +116,7 @@ all products
 
 todo
 ----
-
-price and discount price
+// cart bottom 
+// payment method Secure Checkout ✓ SSL Encrypted
+// poduct view Related product margin
+popup buttons

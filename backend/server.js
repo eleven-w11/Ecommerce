@@ -65,7 +65,6 @@ const verifyPathRoutes = require("./middleware/verifyPath");
 const adminRoutes = require("./routes/adminRoutes");
 const productRoutes = require("./routes/productRoutes");
 const cartRoutes = require("./routes/cartRoutes");
-const messageRoutes = require("./routes/messageRoutes");
 const GoogleRoutes = require("./routes/GoogleRoutes");
 const verifyRoutes = require("./routes/verifyRoutes");
 
@@ -79,7 +78,6 @@ app.use("/api/protected", verifyPathRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api", cartRoutes);
-app.use("/api/messages", messageRoutes);
 app.use("/api", verifyRoutes);
 app.use("/api", GoogleRoutes);
 
@@ -92,8 +90,6 @@ app.get("*", (req, res) => {
 });
 
 
-const initSocket = require("./socket/socket");
-initSocket(server, allowedOrigins);
 
 app.get("/", (req, res) => {
     res.send("✅ Server is running!");

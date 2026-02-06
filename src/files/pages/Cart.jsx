@@ -561,40 +561,24 @@ const Cart = () => {
                         <div className="empty-cart-content">
                             <h2>Your cart is empty</h2>
                             <p>Add some amazing products to your cart</p>
-                            <Link to="/products" className="continue-shopping-btn">
-                                Continue Shopping
-                            </Link>
                         </div>
                     </div>
                 )}
                 {cartProducts && cartProducts.length > 0 ? (
                     <>
                         <div className="hr"></div>
-                        <div className="total-amount_checkout">
-                            <div className="cart-summary">
+                        <div className="total-amount_checkout_cont">
+                            <div className="total-amount_checkout">
                                 <div className="summary-item">
-                                    <span>Items ({calculateTotalItems()}):</span>
-                                    <span>${calculateEstimatedTotal()}</span>
-                                </div>
-                                <div className="summary-item">
-                                    <span>Shipping:</span>
-                                    <span className="free-shipping">FREE</span>
+                                    <span>Estimated Total:</span>
+                                    <span className="totalamount" >${calculateEstimatedTotal()}</span>
                                 </div>
                                 <div className="hr"></div>
-                                <div className="summary-item total">
-                                    <span><strong>Estimated Total:</strong></span>
-                                    <span><strong>${calculateEstimatedTotal()}</strong></span>
+                                <div className="checkout_button">
+                                    <button onClick={handleCheckout} className="checkout-btn">
+                                        Proceed to Checkout
+                                    </button>
                                 </div>
-                            </div>
-                            <div className="checkout_button">
-                                <button onClick={handleCheckout} className="checkout-btn">
-                                    Proceed to Checkout
-                                </button>
-                            </div>
-                            <div className="continue-shopping">
-                                <Link to="/products" className="continue-shopping-link">
-                                    Continue Shopping
-                                </Link>
                             </div>
                         </div>
                     </>
