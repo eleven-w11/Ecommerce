@@ -79,6 +79,7 @@ const UserList = () => {
         if (!isAdmin || !userId) return;
 
         const newSocket = io(SOCKET_URL, {
+            path: '/api/socket.io/',
             transports: ['websocket', 'polling'],
             withCredentials: true
         });
