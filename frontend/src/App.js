@@ -116,6 +116,11 @@ function App() {
 
         <Route path="/Google" element={<Google />} />
         <Route path="/search" element={<SearchResults />} />
+        
+        {/* Chat Routes */}
+        <Route path="/Chat" element={<Chat />} />
+        <Route path="/UserList" element={<UserList />} />
+        <Route path="/AdminChat/:odirUserId" element={<AdminChat />} />
       </Routes>
     </div>
   );
