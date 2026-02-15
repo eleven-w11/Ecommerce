@@ -137,16 +137,16 @@ async def proxy_api(request: Request, path: str):
     """Proxy all /api/* requests to Node.js backend"""
     return await proxy_request(request, f"api/{path}")
 
-# Socket.IO proxy - handles all socket.io routes
-@app.api_route("/socket.io/", methods=["GET", "POST", "OPTIONS"])
+# Socket.IO proxy - through /api/socket.io/ path
+@app.api_route("/api/socket.io/", methods=["GET", "POST", "OPTIONS"])
 async def proxy_socket_root(request: Request):
     """Proxy Socket.IO root requests"""
-    return await proxy_request(request, "socket.io/")
+    return await proxy_request(request, "api/socket.io/")
 
-@app.api_route("/socket.io/{path:path}", methods=["GET", "POST", "OPTIONS"])
+@app.api_route("/api/socket.io/{path:path}", methods=["GET", "POST", "OPTIONS"])
 async def proxy_socket_path(request: Request, path: str):
     """Proxy Socket.IO path requests"""
-    return await proxy_request(request, f"socket.io/{path}")
+    return await proxy_request(request, f"api/socket.io/{path}")
 
 @app.get("/")
 async def root():
