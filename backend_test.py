@@ -143,17 +143,19 @@ class ChatSystemAPITester:
     def test_socket_endpoint(self):
         """Test if Socket.IO endpoint is accessible"""
         try:
-            # Test Socket.IO handshake endpoint
-            response = self.session.get(f"{self.base_url}/socket.io/", 
+            # Test Socket.IO handshake endpoint using correct /api/socket.io/ path
+            response = self.session.get(f"{self.base_url}/api/socket.io/", 
                                       params={'EIO': '4', 'transport': 'polling'},
                                       timeout=10)
             # Socket.IO should respond with 200 or specific error codes
             success = response.status_code in [200, 400, 403]
             details = f"Status: {response.status_code}"
-            self.log_test("Socket.IO Endpoint", success, details)
+            if success and response.status_code == 200:
+                details += f", Content: {response.text[:50]}..."
+            self.log_test("Socket.IO Endpoint (/api/socket.io/)", success, details)
             return success
         except requests.exceptions.RequestException as e:
-            self.log_test("Socket.IO Endpoint", False, f"Error: {str(e)}")
+            self.log_test("Socket.IO Endpoint (/api/socket.io/)", False, f"Error: {str(e)}")
             return False
 
     def run_all_tests(self):
