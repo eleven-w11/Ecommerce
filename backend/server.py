@@ -141,7 +141,8 @@ async def proxy_api(request: Request, path: str):
 @app.get("/socket.io/{path:path}")
 async def proxy_socket_get(request: Request, path: str):
     """Proxy Socket.IO GET requests"""
-    url = f"{NODE_URL}/socket.io/{path}"
+    query_string = str(request.query_params)
+    url = f"{NODE_URL}/socket.io/{path}?{query_string}" if query_string else f"{NODE_URL}/socket.io/{path}"
     
     headers = {}
     for key, value in request.headers.items():
@@ -152,8 +153,38 @@ async def proxy_socket_get(request: Request, path: str):
         response = await http_client.request(
             method="GET",
             url=url,
-            headers=headers,
-            params=request.query_params
+            headers=headers
+        )
+        
+        response_headers = {}
+        for key, value in response.headers.items():
+            if key.lower() not in ['content-encoding', 'transfer-encoding']:
+                response_headers[key] = value
+        
+        return Response(
+            content=response.content,
+            status_code=response.status_code,
+            headers=response_headers
+        )
+    except Exception as e:
+        return JSONResponse(status_code=502, content={"error": str(e)})
+
+@app.get("/socket.io/")
+async def proxy_socket_root(request: Request):
+    """Proxy Socket.IO root GET requests"""
+    query_string = str(request.query_params)
+    url = f"{NODE_URL}/socket.io/?{query_string}" if query_string else f"{NODE_URL}/socket.io/"
+    
+    headers = {}
+    for key, value in request.headers.items():
+        if key.lower() not in ['host']:
+            headers[key] = value
+    
+    try:
+        response = await http_client.request(
+            method="GET",
+            url=url,
+            headers=headers
         )
         
         response_headers = {}
