@@ -120,6 +120,7 @@ const AdminChat = () => {
         if (!isAdmin || !adminId) return;
 
         const newSocket = io(SOCKET_URL, {
+            path: '/api/socket.io/',
             transports: ['websocket', 'polling'],
             withCredentials: true
         });
