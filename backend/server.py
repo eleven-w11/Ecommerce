@@ -4,14 +4,11 @@ This allows the Node.js backend to work within Emergent's Python-based infrastru
 """
 import subprocess
 import os
-import signal
-import sys
 import asyncio
 import httpx
-from fastapi import FastAPI, Request, Response, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse, JSONResponse
-import socketio
+from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 
 # Node.js backend runs on this internal port
@@ -42,9 +39,17 @@ def start_node_server():
         cwd='/app/backend',
         env=env,
         stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE
+        stderr=subprocess.STDOUT
     )
     print(f"Started Node.js server on port {NODE_PORT}, PID: {node_process.pid}")
+    
+    # Start a thread to read and log Node.js output
+    import threading
+    def log_output():
+        for line in iter(node_process.stdout.readline, b''):
+            print(f"[Node.js] {line.decode().strip()}")
+    
+    threading.Thread(target=log_output, daemon=True).start()
 
 def stop_node_server():
     """Stop the Node.js server"""
@@ -62,7 +67,7 @@ async def lifespan(app: FastAPI):
     """Manage Node.js server lifecycle"""
     start_node_server()
     # Give Node.js time to start
-    await asyncio.sleep(2)
+    await asyncio.sleep(3)
     yield
     stop_node_server()
 
@@ -78,17 +83,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Create Socket.IO server that proxies to Node.js Socket.IO
-sio = socketio.AsyncServer(
-    async_mode='asgi',
-    cors_allowed_origins='*',
-    logger=True,
-    engineio_logger=True
-)
-socket_app = socketio.ASGIApp(sio, app)
-
-# HTTP client for proxying
-http_client = httpx.AsyncClient(timeout=30.0)
+# HTTP client for proxying with longer timeout
+http_client = httpx.AsyncClient(timeout=60.0)
 
 @app.api_route("/api/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"])
 async def proxy_api(request: Request, path: str):
@@ -98,12 +94,16 @@ async def proxy_api(request: Request, path: str):
     # Get request body
     body = await request.body()
     
-    # Forward headers (excluding host)
-    headers = dict(request.headers)
-    headers.pop('host', None)
+    # Forward headers
+    headers = {}
+    for key, value in request.headers.items():
+        if key.lower() not in ['host', 'content-length']:
+            headers[key] = value
     
-    # Get cookies
-    cookies = request.cookies
+    # Get cookies as string
+    cookie_header = request.headers.get('cookie', '')
+    if cookie_header:
+        headers['cookie'] = cookie_header
     
     try:
         response = await http_client.request(
@@ -111,77 +111,107 @@ async def proxy_api(request: Request, path: str):
             url=url,
             content=body,
             headers=headers,
-            cookies=cookies,
             params=request.query_params
         )
         
-        # Build response headers, excluding certain ones
-        response_headers = dict(response.headers)
-        for key in ['content-encoding', 'content-length', 'transfer-encoding']:
-            response_headers.pop(key, None)
+        # Build response headers
+        response_headers = {}
+        for key, value in response.headers.items():
+            if key.lower() not in ['content-encoding', 'content-length', 'transfer-encoding']:
+                response_headers[key] = value
         
         return Response(
             content=response.content,
             status_code=response.status_code,
-            headers=response_headers
+            headers=response_headers,
+            media_type=response.headers.get('content-type')
         )
     except httpx.ConnectError:
         return JSONResponse(
             status_code=503,
-            content={"error": "Node.js backend not available"}
+            content={"error": "Node.js backend not available", "detail": "Please wait for server to start"}
         )
     except Exception as e:
+        print(f"Proxy error: {e}")
         return JSONResponse(
             status_code=500,
             content={"error": str(e)}
         )
 
-@app.get("/")
-async def root():
-    """Health check endpoint"""
-    return {"status": "ok", "message": "Proxy server running"}
-
-# Socket.IO event handlers - these will be forwarded to Node.js
-@sio.event
-async def connect(sid, environ):
-    print(f"Client connected: {sid}")
-
-@sio.event
-async def disconnect(sid):
-    print(f"Client disconnected: {sid}")
-
-@sio.event
-async def register(sid, data):
-    """Forward register event"""
-    await sio.emit('registered', {'sid': sid}, to=sid)
-
-@sio.event
-async def message(sid, data):
-    """Forward message events"""
-    await sio.emit('message', data)
-
-# For static files
-@app.get("/{path:path}")
-async def proxy_static(request: Request, path: str):
-    """Proxy static files and other routes to Node.js"""
-    url = f"{NODE_URL}/{path}"
+@app.get("/socket.io/{path:path}")
+async def proxy_socket_get(request: Request, path: str):
+    """Proxy Socket.IO GET requests"""
+    url = f"{NODE_URL}/socket.io/{path}"
+    
+    headers = {}
+    for key, value in request.headers.items():
+        if key.lower() not in ['host']:
+            headers[key] = value
     
     try:
         response = await http_client.request(
-            method=request.method,
+            method="GET",
             url=url,
-            headers=dict(request.headers),
+            headers=headers,
             params=request.query_params
         )
         
-        response_headers = dict(response.headers)
-        for key in ['content-encoding', 'content-length', 'transfer-encoding']:
-            response_headers.pop(key, None)
+        response_headers = {}
+        for key, value in response.headers.items():
+            if key.lower() not in ['content-encoding', 'transfer-encoding']:
+                response_headers[key] = value
         
         return Response(
             content=response.content,
             status_code=response.status_code,
             headers=response_headers
         )
+    except Exception as e:
+        return JSONResponse(status_code=502, content={"error": str(e)})
+
+@app.post("/socket.io/{path:path}")
+async def proxy_socket_post(request: Request, path: str):
+    """Proxy Socket.IO POST requests"""
+    url = f"{NODE_URL}/socket.io/{path}"
+    body = await request.body()
+    
+    headers = {}
+    for key, value in request.headers.items():
+        if key.lower() not in ['host', 'content-length']:
+            headers[key] = value
+    
+    try:
+        response = await http_client.request(
+            method="POST",
+            url=url,
+            content=body,
+            headers=headers,
+            params=request.query_params
+        )
+        
+        response_headers = {}
+        for key, value in response.headers.items():
+            if key.lower() not in ['content-encoding', 'transfer-encoding']:
+                response_headers[key] = value
+        
+        return Response(
+            content=response.content,
+            status_code=response.status_code,
+            headers=response_headers
+        )
+    except Exception as e:
+        return JSONResponse(status_code=502, content={"error": str(e)})
+
+@app.get("/")
+async def root():
+    """Health check endpoint"""
+    return {"status": "ok", "message": "Proxy server running", "node_port": NODE_PORT}
+
+@app.get("/health")
+async def health():
+    """Health check"""
+    try:
+        response = await http_client.get(f"{NODE_URL}/api/health", timeout=5.0)
+        return {"proxy": "ok", "nodejs": response.json()}
     except:
-        return JSONResponse(status_code=404, content={"error": "Not found"})
+        return {"proxy": "ok", "nodejs": "starting"}
