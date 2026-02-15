@@ -140,7 +140,7 @@ const SignIn = ({ onSignIn }) => {
                         </span>}
                     </div>
                     <button type="submit" disabled={isLoading}>
-                        {isLoading ? 'Creating Account...' : 'Sign Up'}
+                        {isLoading ? 'Signing In...' : 'Sign In'}
                     </button>
                     <div className="forget_password">
                         <Link>forget password</Link>
