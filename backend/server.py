@@ -84,12 +84,11 @@ app.add_middleware(
 )
 
 # HTTP client for proxying with longer timeout
-http_client = httpx.AsyncClient(timeout=60.0)
+http_client = httpx.AsyncClient(timeout=60.0, follow_redirects=True)
 
-@app.api_route("/api/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"])
-async def proxy_api(request: Request, path: str):
-    """Proxy all /api/* requests to Node.js backend"""
-    url = f"{NODE_URL}/api/{path}"
+async def proxy_request(request: Request, path: str):
+    """Generic proxy function"""
+    url = f"{NODE_URL}/{path}"
     
     # Get request body
     body = await request.body()
@@ -99,11 +98,6 @@ async def proxy_api(request: Request, path: str):
     for key, value in request.headers.items():
         if key.lower() not in ['host', 'content-length']:
             headers[key] = value
-    
-    # Get cookies as string
-    cookie_header = request.headers.get('cookie', '')
-    if cookie_header:
-        headers['cookie'] = cookie_header
     
     try:
         response = await http_client.request(
@@ -129,109 +123,30 @@ async def proxy_api(request: Request, path: str):
     except httpx.ConnectError:
         return JSONResponse(
             status_code=503,
-            content={"error": "Node.js backend not available", "detail": "Please wait for server to start"}
+            content={"error": "Node.js backend not available"}
         )
     except Exception as e:
-        print(f"Proxy error: {e}")
+        print(f"Proxy error for {path}: {e}")
         return JSONResponse(
             status_code=500,
             content={"error": str(e)}
         )
 
-@app.get("/socket.io/{path:path}")
-async def proxy_socket_get(request: Request, path: str):
-    """Proxy Socket.IO GET requests"""
-    query_string = str(request.query_params)
-    url = f"{NODE_URL}/socket.io/{path}?{query_string}" if query_string else f"{NODE_URL}/socket.io/{path}"
-    
-    headers = {}
-    for key, value in request.headers.items():
-        if key.lower() not in ['host']:
-            headers[key] = value
-    
-    try:
-        response = await http_client.request(
-            method="GET",
-            url=url,
-            headers=headers
-        )
-        
-        response_headers = {}
-        for key, value in response.headers.items():
-            if key.lower() not in ['content-encoding', 'transfer-encoding']:
-                response_headers[key] = value
-        
-        return Response(
-            content=response.content,
-            status_code=response.status_code,
-            headers=response_headers
-        )
-    except Exception as e:
-        return JSONResponse(status_code=502, content={"error": str(e)})
+@app.api_route("/api/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"])
+async def proxy_api(request: Request, path: str):
+    """Proxy all /api/* requests to Node.js backend"""
+    return await proxy_request(request, f"api/{path}")
 
-@app.get("/socket.io/")
+# Socket.IO proxy - handles all socket.io routes
+@app.api_route("/socket.io/", methods=["GET", "POST", "OPTIONS"])
 async def proxy_socket_root(request: Request):
-    """Proxy Socket.IO root GET requests"""
-    query_string = str(request.query_params)
-    url = f"{NODE_URL}/socket.io/?{query_string}" if query_string else f"{NODE_URL}/socket.io/"
-    
-    headers = {}
-    for key, value in request.headers.items():
-        if key.lower() not in ['host']:
-            headers[key] = value
-    
-    try:
-        response = await http_client.request(
-            method="GET",
-            url=url,
-            headers=headers
-        )
-        
-        response_headers = {}
-        for key, value in response.headers.items():
-            if key.lower() not in ['content-encoding', 'transfer-encoding']:
-                response_headers[key] = value
-        
-        return Response(
-            content=response.content,
-            status_code=response.status_code,
-            headers=response_headers
-        )
-    except Exception as e:
-        return JSONResponse(status_code=502, content={"error": str(e)})
+    """Proxy Socket.IO root requests"""
+    return await proxy_request(request, "socket.io/")
 
-@app.post("/socket.io/{path:path}")
-async def proxy_socket_post(request: Request, path: str):
-    """Proxy Socket.IO POST requests"""
-    url = f"{NODE_URL}/socket.io/{path}"
-    body = await request.body()
-    
-    headers = {}
-    for key, value in request.headers.items():
-        if key.lower() not in ['host', 'content-length']:
-            headers[key] = value
-    
-    try:
-        response = await http_client.request(
-            method="POST",
-            url=url,
-            content=body,
-            headers=headers,
-            params=request.query_params
-        )
-        
-        response_headers = {}
-        for key, value in response.headers.items():
-            if key.lower() not in ['content-encoding', 'transfer-encoding']:
-                response_headers[key] = value
-        
-        return Response(
-            content=response.content,
-            status_code=response.status_code,
-            headers=response_headers
-        )
-    except Exception as e:
-        return JSONResponse(status_code=502, content={"error": str(e)})
+@app.api_route("/socket.io/{path:path}", methods=["GET", "POST", "OPTIONS"])
+async def proxy_socket_path(request: Request, path: str):
+    """Proxy Socket.IO path requests"""
+    return await proxy_request(request, f"socket.io/{path}")
 
 @app.get("/")
 async def root():
