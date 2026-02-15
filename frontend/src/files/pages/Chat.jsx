@@ -102,6 +102,7 @@ const Chat = () => {
         if (!isAuthenticated || !userId) return;
 
         const newSocket = io(SOCKET_URL, {
+            path: '/api/socket.io/',
             transports: ['websocket', 'polling'],
             withCredentials: true
         });
