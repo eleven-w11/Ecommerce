@@ -52,8 +52,9 @@ mongoose.connect(process.env.MONGO_URI, {
     .then(() => console.log("✅ Connected to MongoDB"))
     .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// ✅ Socket.IO Setup
+// ✅ Socket.IO Setup - using /api/socket.io path for Kubernetes ingress compatibility
 const io = new Server(server, {
+    path: '/api/socket.io/',
     cors: {
         origin: "*",
         credentials: true,
