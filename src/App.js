@@ -22,6 +22,13 @@ import AdminPanel from './files/pages/AdminPanel';
 import Checkout from './files/pages/CheckOut/Checkout';
 import AboutUs from './files/pages/AboutUs';
 import ContactUs from './files/pages/ContactUs';
+// Chat imports
+import Chat from './files/pages/Chat';
+import UserList from './files/pages/admin/UserList';
+import AdminChat from './files/pages/admin/AdminChat';
+
+// Routes where navbar should be hidden on mobile
+const hideNavBarRoutes = ['/Chat', '/UserList', '/AdminChat'];
 
 
 function App() {
