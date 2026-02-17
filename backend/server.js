@@ -225,6 +225,21 @@ io.on("connection", (socket) => {
         }
     });
 
+    // Notify about new message (for file uploads - no duplicate creation)
+    socket.on("notifyNewMessage", async ({ messageId, receiverId }) => {
+        try {
+            const message = await Message.findById(messageId)
+                .populate("senderId", "name email image")
+                .populate("receiverId", "name email image");
+            
+            if (message) {
+                io.to(receiverId).emit("newMessage", message);
+            }
+        } catch (error) {
+            console.error("❌ notifyNewMessage error:", error);
+        }
+    });
+
     // Get online status
     socket.on("checkOnline", ({ userIds }) => {
         const statuses = {};
