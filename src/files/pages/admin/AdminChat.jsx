@@ -220,6 +220,7 @@ const AdminChat = () => {
                     }
                     return m;
                 }));
+            }
         });
 
         newSocket.on('userTyping', ({ userId: typingUserId, isTyping: typing }) => {
