@@ -257,4 +257,4 @@ const SignUp = ({ onSignUp }) => {
     );
 };
 
-export default SignUpNew;
+export default SignUp;
