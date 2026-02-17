@@ -108,22 +108,29 @@ io.on("connection", (socket) => {
             const onlineUserIds = Array.from(onlineUsers.keys());
             socket.emit("onlineUsers", onlineUserIds);
 
-            // Mark pending messages as delivered
-            const adminId = await getAdminId();
-            if (adminId) {
+            // Mark pending messages as delivered and notify senders
+            const pendingMessages = await Message.find({
+                receiverId: userId,
+                status: "sent"
+            }).select("_id senderId");
+            
+            if (pendingMessages.length > 0) {
+                // Update all to delivered
                 await Message.updateMany(
                     { receiverId: userId, status: "sent" },
                     { status: "delivered" }
                 );
                 
-                // Notify senders about delivery
-                const pendingMessages = await Message.find({
-                    receiverId: userId,
-                    senderId: adminId
-                }).select("_id senderId");
-                
-                pendingMessages.forEach(msg => {
-                    io.to(msg.senderId.toString()).emit("messageDelivered", { messageId: msg._id });
+                // Notify each sender about delivery
+                const senderIds = [...new Set(pendingMessages.map(m => m.senderId.toString()))];
+                senderIds.forEach(senderId => {
+                    const messageIds = pendingMessages
+                        .filter(m => m.senderId.toString() === senderId)
+                        .map(m => m._id.toString());
+                    io.to(senderId).emit("messagesDelivered", { 
+                        messageIds,
+                        recipientId: userId 
+                    });
                 });
             }
         } catch (error) {
