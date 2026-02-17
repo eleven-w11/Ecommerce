@@ -4,8 +4,6 @@ import NavBar from './files/pages/NavBar/NavBar';
 import UserLocation from './files/pages/UserLocationInfo';
 import SignIn from './files/pages/SignIn';
 import SignUp from './files/pages/SignUp';
-import SignInNew from './files/pages/SignInNew';
-import SignUpNew from './files/pages/SignUpNew';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import UserProfile from './files/pages/UserProfilePage';
@@ -30,7 +28,7 @@ import UserList from './files/pages/admin/UserList';
 import AdminChat from './files/pages/admin/AdminChat';
 
 // Routes where navbar should be hidden on mobile
-const hideNavBarRoutes = ['/Chat', '/UserList', '/AdminChat', '/SignInNew', '/SignUpNew'];
+const hideNavBarRoutes = ['/Chat', '/UserList', '/AdminChat'];
 
 
 function App() {
