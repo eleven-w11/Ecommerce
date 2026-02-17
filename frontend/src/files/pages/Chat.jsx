@@ -162,20 +162,48 @@ const Chat = () => {
 
         newSocket.on('messageSent', (message) => {
             setMessages(prev => {
-                // Replace temp message with confirmed one, prevent duplicates
+                // Replace temp message with confirmed one (status: sent)
                 const filtered = prev.filter(m => 
                     m.tempId !== message.tempId && m._id !== message._id
                 );
-                return [...filtered, message];
+                return [...filtered, { ...message, status: 'sent' }];
             });
             scrollToBottom();
         });
 
-        newSocket.on('messagesSeen', () => {
-            setMessages(prev => prev.map(m => ({
-                ...m,
-                status: m.senderId?._id === userId || m.senderId === userId ? 'seen' : m.status
-            })));
+        // Single message delivered
+        newSocket.on('messageDelivered', ({ messageId, tempId }) => {
+            setMessages(prev => prev.map(m => {
+                if (m._id === messageId || m.tempId === tempId) {
+                    return { ...m, status: 'delivered' };
+                }
+                return m;
+            }));
+        });
+
+        // Multiple messages delivered (when user comes online)
+        newSocket.on('messagesDelivered', ({ messageIds, recipientId }) => {
+            if (recipientId === adminId) {
+                setMessages(prev => prev.map(m => {
+                    if (messageIds.includes(m._id) || messageIds.includes(m._id?.toString())) {
+                        return { ...m, status: 'delivered' };
+                    }
+                    return m;
+                }));
+            }
+        });
+
+        newSocket.on('messagesSeen', ({ by }) => {
+            // Only update messages sent to the person who saw them
+            if (by === adminId) {
+                setMessages(prev => prev.map(m => {
+                    const isMine = m.senderId?._id === userId || m.senderId === userId;
+                    if (isMine && m.status !== 'seen') {
+                        return { ...m, status: 'seen' };
+                    }
+                    return m;
+                }));
+            }
         });
 
         newSocket.on('userTyping', ({ userId: typingUserId, isTyping: typing }) => {
