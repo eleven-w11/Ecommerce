@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
-import '../styles/SignNew.css';
+import '../styles/Sign.css';
 import Google from './Google';
 
-const SignInNew = ({ onSignIn }) => {
+const SignIn = ({ onSignIn }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
