@@ -16,8 +16,10 @@ const Chat = () => {
     const [isAdminOnline, setIsAdminOnline] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
     const [uploadingFile, setUploadingFile] = useState(false);
+    const [error, setError] = useState(''); // Error state
     
     const messagesEndRef = useRef(null);
+    const messagesContainerRef = useRef(null);
     const fileInputRef = useRef(null);
     const typingTimeoutRef = useRef(null);
     const navigate = useNavigate();
@@ -25,14 +27,26 @@ const Chat = () => {
     const API_URL = process.env.REACT_APP_API_BASE_URL;
     const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || API_URL;
 
-    // Scroll to bottom
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    };
+    // Improved scroll to bottom
+    const scrollToBottom = useCallback((behavior = 'smooth') => {
+        setTimeout(() => {
+            if (messagesContainerRef.current) {
+                messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+            }
+        }, 100);
+    }, []);
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages]);
+    }, [messages, scrollToBottom]);
+
+    // Auto-hide error after 5 seconds
+    useEffect(() => {
+        if (error) {
+            const timer = setTimeout(() => setError(''), 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [error]);
 
     // Check authentication
     useEffect(() => {
@@ -72,6 +86,7 @@ const Chat = () => {
                 }
             } catch (error) {
                 console.error('Error fetching admin:', error);
+                setError('Failed to connect to support. Please try again.');
             }
         };
         fetchAdmin();
@@ -87,11 +102,13 @@ const Chat = () => {
             });
             if (response.data?.success) {
                 setMessages(response.data.messages);
+                scrollToBottom('auto');
             }
         } catch (error) {
             console.error('Error fetching messages:', error);
+            setError('Failed to load messages. Please refresh the page.');
         }
-    }, [adminId, API_URL]);
+    }, [adminId, API_URL, scrollToBottom]);
 
     useEffect(() => {
         fetchMessages();
@@ -112,6 +129,11 @@ const Chat = () => {
             newSocket.emit('register', { userId });
         });
 
+        newSocket.on('connect_error', (err) => {
+            console.error('Socket connection error:', err);
+            setError('Connection error. Messages may be delayed.');
+        });
+
         newSocket.on('onlineUsers', (users) => {
             if (adminId) {
                 setIsAdminOnline(users.includes(adminId));
@@ -125,19 +147,28 @@ const Chat = () => {
         });
 
         newSocket.on('newMessage', (message) => {
-            setMessages(prev => [...prev, message]);
+            // Only add if not already exists (prevent duplicates)
+            setMessages(prev => {
+                const exists = prev.some(m => m._id === message._id);
+                if (exists) return prev;
+                return [...prev, message];
+            });
             // Mark as seen since user is viewing chat
             if (adminId) {
                 newSocket.emit('markSeen', { senderId: adminId, receiverId: userId });
             }
+            scrollToBottom();
         });
 
         newSocket.on('messageSent', (message) => {
             setMessages(prev => {
-                // Replace temp message with confirmed one
-                const filtered = prev.filter(m => m.tempId !== message.tempId);
+                // Replace temp message with confirmed one, prevent duplicates
+                const filtered = prev.filter(m => 
+                    m.tempId !== message.tempId && m._id !== message._id
+                );
                 return [...filtered, message];
             });
+            scrollToBottom();
         });
 
         newSocket.on('messagesSeen', () => {
@@ -153,12 +184,16 @@ const Chat = () => {
             }
         });
 
+        newSocket.on('messageError', ({ error: errMsg }) => {
+            setError(errMsg || 'Failed to send message. Please try again.');
+        });
+
         setSocket(newSocket);
 
         return () => {
             newSocket.disconnect();
         };
-    }, [isAuthenticated, userId, adminId, SOCKET_URL]);
+    }, [isAuthenticated, userId, adminId, SOCKET_URL, scrollToBottom]);
 
     // Mark messages as seen when chat opens
     useEffect(() => {
@@ -185,6 +220,7 @@ const Chat = () => {
 
         setMessages(prev => [...prev, tempMessage]);
         setNewMessage('');
+        scrollToBottom();
 
         socket.emit('sendMessage', {
             senderId: userId,
@@ -212,16 +248,53 @@ const Chat = () => {
         }
     };
 
-    // Handle file upload
+    // Handle file upload - Fixed to prevent duplicate messages
     const handleFileUpload = async (e) => {
         const file = e.target.files[0];
         if (!file || !adminId) return;
 
+        // Validate file size (10MB max)
+        if (file.size > 10 * 1024 * 1024) {
+            setError('File size must be less than 10MB');
+            fileInputRef.current.value = '';
+            return;
+        }
+
+        // Validate file type
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 
+                            'application/pdf', 'text/plain', 
+                            'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        if (!allowedTypes.includes(file.type)) {
+            setError('File type not supported. Please upload images, PDF, or documents.');
+            fileInputRef.current.value = '';
+            return;
+        }
+
         setUploadingFile(true);
+        setError('');
+
+        // Create temp message for immediate UI feedback
+        const tempId = Date.now().toString();
+        const isImage = file.type.startsWith('image/');
+        const tempMessage = {
+            tempId,
+            senderId: { _id: userId },
+            receiverId: { _id: adminId },
+            message: '',
+            messageType: isImage ? 'image' : 'file',
+            fileName: file.name,
+            fileUrl: isImage ? URL.createObjectURL(file) : null,
+            status: 'sending',
+            createdAt: new Date().toISOString()
+        };
+
+        setMessages(prev => [...prev, tempMessage]);
+        scrollToBottom();
+
         const formData = new FormData();
         formData.append('file', file);
         formData.append('receiverId', adminId);
-        formData.append('messageType', file.type.startsWith('image/') ? 'image' : 'file');
+        formData.append('messageType', isImage ? 'image' : 'file');
 
         try {
             const response = await axios.post(`${API_URL}/api/chat/send`, formData, {
@@ -231,30 +304,45 @@ const Chat = () => {
 
             if (response.data?.success) {
                 const msg = response.data.message;
-                setMessages(prev => [...prev, msg]);
                 
-                // Notify via socket
-                socket.emit('sendMessage', {
-                    senderId: userId,
-                    receiverId: adminId,
-                    message: '',
-                    messageType: msg.messageType,
-                    fileUrl: msg.fileUrl,
-                    fileName: msg.fileName,
-                    tempId: Date.now().toString()
+                // Replace temp message with actual message
+                setMessages(prev => {
+                    const filtered = prev.filter(m => m.tempId !== tempId);
+                    return [...filtered, msg];
                 });
+                
+                // Notify receiver via socket (without creating duplicate)
+                if (socket) {
+                    socket.emit('notifyNewMessage', {
+                        messageId: msg._id,
+                        receiverId: adminId
+                    });
+                }
+                
+                scrollToBottom();
+            } else {
+                throw new Error(response.data?.message || 'Upload failed');
             }
         } catch (error) {
             console.error('Error uploading file:', error);
+            // Remove temp message on error
+            setMessages(prev => prev.filter(m => m.tempId !== tempId));
+            setError(error.response?.data?.message || 'Failed to upload file. Please try again.');
         } finally {
             setUploadingFile(false);
-            fileInputRef.current.value = '';
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
         }
     };
 
     // Render message status ticks
     const renderStatus = (message) => {
         if (message.senderId?._id !== userId && message.senderId !== userId) return null;
+        
+        if (message.status === 'sending') {
+            return <span className="tick sending" data-testid="tick-sending">⏳</span>;
+        }
         
         switch (message.status) {
             case 'sent':
@@ -308,6 +396,14 @@ const Chat = () => {
 
     return (
         <div className="chat-container" data-testid="chat-container">
+            {/* Error Message */}
+            {error && (
+                <div className="chat-error" data-testid="chat-error">
+                    <span>{error}</span>
+                    <button onClick={() => setError('')} className="error-close">×</button>
+                </div>
+            )}
+
             {/* Chat Header */}
             <div className="chat-header" data-testid="chat-header">
                 <div className="back-arrow" onClick={() => navigate(-1)}>
@@ -333,7 +429,7 @@ const Chat = () => {
             </div>
 
             {/* Messages Area */}
-            <div className="messages-area" data-testid="messages-area">
+            <div className="messages-area" ref={messagesContainerRef} data-testid="messages-area">
                 {messages.length === 0 ? (
                     <div className="no-messages">
                         <p>No messages yet. Start the conversation!</p>
@@ -344,21 +440,21 @@ const Chat = () => {
                         return (
                             <div 
                                 key={msg._id || msg.tempId || index} 
-                                className={`message ${isMine ? 'sent' : 'received'}`}
+                                className={`message ${isMine ? 'sent' : 'received'} ${msg.status === 'sending' ? 'sending' : ''}`}
                                 data-testid={`message-${isMine ? 'sent' : 'received'}`}
                             >
                                 <div className="message-content">
                                     {msg.messageType === 'image' && msg.fileUrl && (
                                         <img 
-                                            src={`${API_URL}${msg.fileUrl}`} 
+                                            src={msg.fileUrl.startsWith('blob:') ? msg.fileUrl : `${API_URL}${msg.fileUrl}`} 
                                             alt="Shared" 
                                             className="message-image"
-                                            onClick={() => window.open(`${API_URL}${msg.fileUrl}`, '_blank')}
+                                            onClick={() => !msg.fileUrl.startsWith('blob:') && window.open(`${API_URL}${msg.fileUrl}`, '_blank')}
                                         />
                                     )}
-                                    {msg.messageType === 'file' && msg.fileUrl && (
+                                    {msg.messageType === 'file' && (
                                         <a 
-                                            href={`${API_URL}${msg.fileUrl}`} 
+                                            href={msg.fileUrl ? `${API_URL}${msg.fileUrl}` : '#'} 
                                             target="_blank" 
                                             rel="noreferrer"
                                             className="file-link"
@@ -403,7 +499,7 @@ const Chat = () => {
                     disabled={uploadingFile}
                     data-testid="attach-btn"
                 >
-                    {uploadingFile ? '...' : '📎'}
+                    {uploadingFile ? '⏳' : '📎'}
                 </button>
                 <input
                     type="text"
