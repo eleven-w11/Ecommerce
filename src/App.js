@@ -95,9 +95,6 @@ function App() {
         <Route path="/UserLocation" element={<UserLocation />} />
         <Route path="/SignIn" element={<SignIn onSignIn={handleSignIn} />} />
         <Route path="/SignUp" element={<SignUp onSignUp={handleSignUp} />} />
-        {/* New UI - Preview Routes */}
-        <Route path="/SignInNew" element={<SignInNew onSignIn={handleSignIn} />} />
-        <Route path="/SignUpNew" element={<SignUpNew onSignUp={handleSignUp} />} />
         <Route path="/UserProfile" element={<UserProfile onSignOut={handleSignOut} />} />
         <Route path="/test" element={<TeSt />} />
         <Route path="/product/:id" element={<ProductView />} />
