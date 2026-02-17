@@ -136,7 +136,7 @@ io.on("connection", (socket) => {
         try {
             const { senderId, receiverId, message, messageType, fileUrl, fileName, tempId } = data;
 
-            // Create message in database
+            // Create message in database - always start with "sent" status
             const newMessage = await Message.create({
                 senderId,
                 receiverId,
@@ -144,7 +144,7 @@ io.on("connection", (socket) => {
                 messageType: messageType || "text",
                 fileUrl,
                 fileName,
-                status: onlineUsers.has(receiverId) ? "delivered" : "sent"
+                status: "sent"  // Always start as sent
             });
 
             // Update chat
@@ -180,13 +180,26 @@ io.on("connection", (socket) => {
                 tempId
             };
 
-            // Send to receiver
-            io.to(receiverId).emit("newMessage", messageResponse);
-            
-            // Confirm to sender
+            // Confirm to sender first (with "sent" status)
             socket.emit("messageSent", messageResponse);
 
-            console.log(`📨 Message from ${senderId} to ${receiverId}`);
+            // If receiver is online, send message and mark as delivered
+            if (onlineUsers.has(receiverId)) {
+                // Send to receiver
+                io.to(receiverId).emit("newMessage", messageResponse);
+                
+                // Update status to delivered in DB
+                await Message.findByIdAndUpdate(newMessage._id, { status: "delivered" });
+                
+                // Notify sender that message was delivered
+                socket.emit("messageDelivered", { 
+                    messageId: newMessage._id.toString(),
+                    tempId 
+                });
+            }
+
+            console.log(`📨 Message from ${senderId} to ${receiverId}, receiver online: ${onlineUsers.has(receiverId)}`);
+        } catch (error) {
         } catch (error) {
             console.error("❌ sendMessage error:", error);
             socket.emit("messageError", { error: error.message });
