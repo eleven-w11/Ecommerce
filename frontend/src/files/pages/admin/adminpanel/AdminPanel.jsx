@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../../styles/admin/adminpanel/AdminPanel.css';
+import '../../../styles/admin/adminpanel/AdminPanel.css';
 
 // Icons as SVG components
 const Icons = {
