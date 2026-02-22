@@ -18,17 +18,19 @@ import Cart from './files/pages/Cart';
 import AllProducts from './files/pages/AllProducts';
 import Google from './files/pages/Google';
 import SearchResults from './files/pages/NavBar/SearchResults';
-import AdminPanel from './files/pages/AdminPanel';
+import AdminPanelOld from './files/pages/AdminPanel';
 import Checkout from './files/pages/CheckOut/Checkout';
 import AboutUs from './files/pages/AboutUs';
 import ContactUs from './files/pages/ContactUs';
 // Chat imports
 import Chat from './files/pages/Chat';
-import UserList from './files/pages/admin/UserList';
-import AdminChat from './files/pages/admin/AdminChat';
+import UserList from './files/pages/admin/adminchat/UserList';
+import AdminChat from './files/pages/admin/adminchat/AdminChat';
+// Admin Panel
+import AdminPanel from './files/pages/admin/adminpanel/AdminPanel';
 
 // Routes where navbar should be hidden on mobile
-const hideNavBarRoutes = ['/Chat', '/UserList', '/AdminChat'];
+const hideNavBarRoutes = ['/Chat', '/UserList', '/AdminChat', '/AdminPanel'];
 
 
 function App() {
