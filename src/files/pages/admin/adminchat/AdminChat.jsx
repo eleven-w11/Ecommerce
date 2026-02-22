@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { io } from 'socket.io-client';
-import '../../styles/admin/AdminChat.css';
+import '../../styles/admin/adminchat/AdminChat.css';
 
 const AdminChat = () => {
     const { odirUserId } = useParams();
