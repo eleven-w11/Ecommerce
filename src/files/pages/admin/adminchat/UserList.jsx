@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { io } from 'socket.io-client';
-import '../../styles/admin/UserList.css';
+import '../../styles/admin/adminchat/UserList.css';
 
 const UserList = () => {
     const [users, setUsers] = useState([]);
