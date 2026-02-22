@@ -123,6 +123,9 @@ function App() {
         <Route path="/Chat" element={<Chat />} />
         <Route path="/UserList" element={<UserList />} />
         <Route path="/AdminChat/:odirUserId" element={<AdminChat />} />
+        
+        {/* Admin Panel */}
+        <Route path="/AdminPanel" element={<AdminPanel />} />
       </Routes>
     </div>
   );
