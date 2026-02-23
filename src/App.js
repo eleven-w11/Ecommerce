@@ -18,6 +18,7 @@ import Cart from './files/pages/Cart';
 import AllProducts from './files/pages/AllProducts';
 import Google from './files/pages/Google';
 import SearchResults from './files/pages/NavBar/SearchResults';
+<<<<<<< HEAD
 import AdminPanelOld from './files/pages/AdminPanel';
 import Checkout from './files/pages/CheckOut/Checkout';
 import AboutUs from './files/pages/AboutUs';
@@ -31,6 +32,12 @@ import AdminPanel from './files/pages/admin/adminpanel/AdminPanel';
 
 // Routes where navbar should be hidden on mobile
 const hideNavBarRoutes = ['/Chat', '/UserList', '/AdminChat', '/AdminPanel'];
+=======
+import AdminPanel from './files/pages/AdminPanel';
+import Checkout from './files/pages/CheckOut/Checkout';
+import AboutUs from './files/pages/AboutUs';
+import ContactUs from './files/pages/ContactUs';
+>>>>>>> 22db2700b112c260606532a27f36f9623dd09a14
 
 
 function App() {
@@ -118,6 +125,7 @@ function App() {
 
         <Route path="/Google" element={<Google />} />
         <Route path="/search" element={<SearchResults />} />
+<<<<<<< HEAD
         
         {/* Chat Routes */}
         <Route path="/Chat" element={<Chat />} />
@@ -126,6 +134,8 @@ function App() {
         
         {/* Admin Panel */}
         <Route path="/AdminPanel" element={<AdminPanel />} />
+=======
+>>>>>>> 22db2700b112c260606532a27f36f9623dd09a14
       </Routes>
     </div>
   );

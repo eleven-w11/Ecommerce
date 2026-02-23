@@ -21,7 +21,10 @@
     "google-auth-library": "^9.15.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.14.3",
+<<<<<<< HEAD
     "multer": "^2.0.2",
+=======
+>>>>>>> 22db2700b112c260606532a27f36f9623dd09a14
     "nodemon": "^3.1.10",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",

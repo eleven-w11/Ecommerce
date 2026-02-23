@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # IDE and editors
@@ -117,3 +118,54 @@ frontend/node_modules/.cache/default-development/6.pack
 # Environment files
 *.env
 *.env.*
+=======
+# Environment files
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+backend/node_modules
+
+# Testing
+/coverage
+*.lcov
+
+# Production
+/build
+/dist
+*.log
+
+# IDE and OS files
+.DS_Store
+.idea
+.vscode
+*.swp
+*.swo
+*.swn
+*.pid
+*.seed
+*.pid.lock
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Cache
+.cache
+.temp
+.tmp
+
+# System Files
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+>>>>>>> 22db2700b112c260606532a27f36f9623dd09a14
