@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /* Sign.css - Modern Premium Auth UI */
 
 /* Import Google Fonts */
@@ -40,8 +39,15 @@
 }
 
 @keyframes float {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(30px, -30px) scale(1.1); }
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    50% {
+        transform: translate(30px, -30px) scale(1.1);
+    }
 }
 
 /* Main card container */
@@ -56,7 +62,7 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
     position: relative;
     z-index: 10;
-    box-shadow: 
+    box-shadow:
         0 25px 50px -12px rgba(0, 0, 0, 0.5),
         0 0 0 1px rgba(255, 255, 255, 0.05) inset;
 }
@@ -87,53 +93,10 @@
 }
 
 /* Form styling */
-=======
-.sign {
-    /* height: 90vh; */
-    /* height: 572px; */
-    min-height: 523px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-image: url('../images/dddepth-240.jpg');
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    font-family: "Roboto", serif;
-    position: relative;
-}
-
-
-.sign .sign_google {
-    width: 360px;
-    padding: 20px;
-    border-radius: 10px;
-    background-color: rgba(255, 255, 255, 0.235);
-    position: relative;
-    color: white;
-    /* margin-bottom: 5vh; */
-    margin-top: 40px;
-}
-
-.sign .sign-up {
-    width: 100%;
-    text-align: center;
-    /* background-color: lightblue; */
-    margin-bottom: 7px;
-    font-family: "Monoton", serif;
-    font-family: "Cherry Bomb One", system-ui;
-
-    font-weight: 100;
-    color: black;
-}
-
->>>>>>> 22db2700b112c260606532a27f36f9623dd09a14
 .sign form {
     width: 100%;
     display: flex;
     flex-direction: column;
-<<<<<<< HEAD
     gap: 16px;
 }
 
@@ -151,16 +114,10 @@
     color: rgba(255, 255, 255, 0.4);
     pointer-events: none;
     transition: color 0.3s ease;
-=======
-    align-items: center;
-    justify-content: center;
-    /* background-color: lightgreen; */
->>>>>>> 22db2700b112c260606532a27f36f9623dd09a14
 }
 
 .sign form input {
     width: 100%;
-<<<<<<< HEAD
     padding: 16px 16px 16px 48px;
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -183,61 +140,17 @@
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
 }
 
-.sign form input:focus + .input-icon,
+.sign form input:focus+.input-icon,
 .sign .input-group:focus-within .input-icon {
     color: #6366f1;
 }
 
 /* Password input container */
-=======
-    padding: 15px;
-    margin: 10px 0;
-    border-radius: 10px;
-    border: 1.4px solid lightgray;
-}
-
-.sign form .forget_password {
-    width: 100%;
-    /* background-color: red; */
-    font-size: 12px;
-    text-align: end;
-}
-
-.sign form .forget_password a {
-    /* padding: 10px; */
-    margin: 0px 5px 0px 0;
-    color: whitesmoke;
-    cursor: not-allowed;
-    
-
-}
-
-.sign form button {
-    height: 45px;
-    background-color: black;
-    color: white;
-    border: none;
-    /* margin-bottom: 10px; */
-}
-
-.sign form button {
-    width: 100%;
-    margin-top: 7px;
-    font-size: 13px;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-    margin-bottom: 13px;
-}
-
-
->>>>>>> 22db2700b112c260606532a27f36f9623dd09a14
 .sign .input-unhide {
     width: 100%;
     position: relative;
 }
 
-<<<<<<< HEAD
 .sign .input-unhide input {
     padding-right: 50px;
 }
@@ -359,36 +272,10 @@
     align-items: center;
     gap: 16px;
     margin: 24px 0;
-=======
-.sign .input-unhide span {
-    position: absolute;
-    right: 10%;
-    bottom: 5%;
-    transform: translateY(-50%);
-    cursor: pointer;
-}
-
-.sign .signup-link {
-    text-align: start;
-    font-size: 12px;
-
-}
-
-.sign .signup-link a {
-    color: lightblue;
-}
-
- .sign .hr_or_hr {
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    margin: 5px 0 12px 0;
->>>>>>> 22db2700b112c260606532a27f36f9623dd09a14
 }
 
 .sign .hr_or_hr p {
     font-size: 13px;
-<<<<<<< HEAD
     color: rgba(255, 255, 255, 0.4);
     margin: 0;
     white-space: nowrap;
@@ -439,56 +326,11 @@
 .sign .errorndsucc {
     width: 100%;
     margin-bottom: 20px;
-=======
-}
-
-.sign .hr {
-    width: 40%;
-    height: 1px;
-    background-color: white;
-}
-
-.sign .google-button {
-    width: 100%;
-    border-radius: 10px;
-    overflow: hidden;
-    background-color: white;
-    /* padding: 2px 0; */
-}
-
-.sign .custom-google-button{
-    width: 100%;
-    padding: 7px 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    cursor: pointer;
-}
-
-.sign .custom-google-button .google-icon{
-    margin: 3px 10px 0 0;
-}
-
-.sign .errorndsucc {
-    width: 320px;
-    /* min-height: 50px; */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    color: white;
-    text-align: center;
-    position: absolute;
-    top: -45px;
-    left: 0;
-    transform: translate(20px, -0%);
->>>>>>> 22db2700b112c260606532a27f36f9623dd09a14
 }
 
 .sign .err,
 .sign .suc {
     margin: 0;
-<<<<<<< HEAD
     padding: 14px 16px;
     font-size: 13px;
     border-radius: 12px;
@@ -498,16 +340,6 @@
     display: flex;
     align-items: center;
     gap: 10px;
-=======
-    padding: 0;
-    opacity: 0;
-    padding: 10px 20px;
-    font-size: 14px;
-    border-radius: 10px;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
->>>>>>> 22db2700b112c260606532a27f36f9623dd09a14
 }
 
 .sign .visible {
@@ -516,7 +348,6 @@
 }
 
 .sign .err {
-<<<<<<< HEAD
     background: rgba(239, 68, 68, 0.15);
     border: 1px solid rgba(239, 68, 68, 0.3);
     color: #fca5a5;
@@ -536,7 +367,7 @@
     content: '✓';
 }
 
-/* Password strength indicator (optional) */
+/* Password strength indicator */
 .sign .password-strength {
     display: flex;
     gap: 4px;
@@ -551,9 +382,57 @@
     transition: background 0.3s ease;
 }
 
-.sign .password-strength .strength-bar.weak { background: #ef4444; }
-.sign .password-strength .strength-bar.medium { background: #f59e0b; }
-.sign .password-strength .strength-bar.strong { background: #22c55e; }
+.sign .password-strength .strength-bar.weak {
+    background: #ef4444;
+}
+
+.sign .password-strength .strength-bar.medium {
+    background: #f59e0b;
+}
+
+.sign .password-strength .strength-bar.strong {
+    background: #22c55e;
+}
+
+/* Loading spinner for button */
+.sign form button[type="submit"].loading {
+    position: relative;
+    color: transparent;
+}
+
+.sign form button[type="submit"].loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin: -10px 0 0 -10px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Subtle grain texture overlay */
+.sign .sign_google::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 24px;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+}
 
 /* Mobile responsiveness */
 @media (max-width: 480px) {
@@ -589,69 +468,3 @@
         font-size: 24px;
     }
 }
-
-/* Loading spinner for button */
-.sign form button[type="submit"].loading {
-    position: relative;
-    color: transparent;
-}
-
-.sign form button[type="submit"].loading::after {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    top: 50%;
-    left: 50%;
-    margin: -10px 0 0 -10px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-top-color: white;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-/* Subtle grain texture overlay */
-.sign .sign_google::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 24px;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-    opacity: 0.03;
-    pointer-events: none;
-}
-=======
-    background-color: lightcoral;
-}
-
-.sign .suc {
-    background-color: lightgreen;
-}
-
-/* Mobile responsiveness */
-@media (max-width: 480px) {
-    .sign .google-button-container {
-        max-width: 100%;
-    }
-}
-
-@media (max-width: 400px) {
-    .sign .sign_google {
-        width: 90%;
-    }
-
-    .sign .errorndsucc {
-        width: 70vw;
-        top: -45px;
-        left: 0;
-        transform: translate(13%, 0%);
-    }
-}
->>>>>>> 22db2700b112c260606532a27f36f9623dd09a14
