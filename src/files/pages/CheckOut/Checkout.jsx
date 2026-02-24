@@ -263,7 +263,8 @@ const Checkout = () => {
                     </div>
                 )}
 
-                {!loading && (
+                {/* Show content only if authenticated */}
+                {!loading && isAuthenticated && (
                     <>
                         {/* ====================================
                            ⭐ DESKTOP — SHOW ALL 3 COLUMNS
