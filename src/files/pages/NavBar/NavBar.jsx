@@ -230,11 +230,13 @@ const NavBar = ({ Authentication }) => {
             >
                 <ul>
                     <li className='menu'>
-                        <img
-                            className='menuicon'
-                            onClick={handleToggle}
-                            src={MenuIcon}
-                            alt="" />
+                        <span className='menuicon' onClick={handleToggle}>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <line x1="3" y1="12" x2="21" y2="12"></line>
+                                <line x1="3" y1="18" x2="21" y2="18"></line>
+                            </svg>
+                        </span>
                     </li>
                     <li className='nav-logo'><Link to="/"><h1>WEB<span>V</span>ERSE</h1></Link></li>
                     <li className="location-account-search-cart">
@@ -242,8 +244,11 @@ const NavBar = ({ Authentication }) => {
                             {country ?
                                 <Link to="/UserLocation" className='country'>{country}</Link>
                                 :
-                                <Link to="/UserLocation">
-                                    <img src={LocationIcon} className='locationicon' alt="" />
+                                <Link to="/UserLocation" className="nav-icon-link">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                        <circle cx="12" cy="10" r="3"></circle>
+                                    </svg>
                                 </Link>}
                         </div>
                         <div className='userprofile-hide'>
@@ -255,20 +260,27 @@ const NavBar = ({ Authentication }) => {
                                         <img crossOrigin="anonymous" src={userData.image} alt="User" className='userimg' />
                                     }
                                 </Link>
-                            ) : <Link to="/SignIn" className="user-icon-link">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                            ) : <Link to="/SignIn" className="nav-icon-link">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                     <circle cx="12" cy="7" r="4"></circle>
                                 </svg>
                             </Link>}
                         </div>
-                        <div className='search-hide' onClick={toggleSearch}>
-                            <img src={SearchIcon} className='icon searchicon' alt="" />
+                        <div className='search-hide nav-icon-link' onClick={toggleSearch}>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
                         </div>
 
-                        <div><Link to="/Cart" className='cart_count'>
+                        <div><Link to="/Cart" className='cart_count nav-icon-link'>
                             <p className='count'>{cartCount}</p>
-                            <img src={CartIcon} className='icon carticon' alt="" />
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <circle cx="9" cy="21" r="1"></circle>
+                                <circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                            </svg>
                         </Link></div>
                     </li>
                 </ul>
