@@ -245,6 +245,13 @@ const Checkout = () => {
 
     return (
         <>
+            {/* Sign In Popup */}
+            <SignInPopup 
+                isOpen={showSignInPopup} 
+                onClose={handlePopupClose}
+                onSignInSuccess={handleSignInSuccess}
+            />
+
             <div className="modern_checkout">
                 <h1>Review Your Order</h1>
 
