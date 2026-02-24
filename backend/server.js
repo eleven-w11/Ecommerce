@@ -277,8 +277,19 @@ io.on("connection", (socket) => {
         socket.emit("onlineStatuses", statuses);
     });
 
+    // Get current visitor count (for admin panel)
+    socket.on("getVisitorCount", () => {
+        socket.emit("visitorCount", { count: activeVisitors.size });
+    });
+
     // Disconnect
     socket.on("disconnect", () => {
+        // Remove from active visitors
+        activeVisitors.delete(socket.id);
+        
+        // Broadcast updated visitor count
+        io.emit("visitorCount", { count: activeVisitors.size });
+        
         const userId = socketToUser.get(socket.id);
         if (userId) {
             const userSockets = onlineUsers.get(userId);
