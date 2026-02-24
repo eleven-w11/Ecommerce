@@ -102,15 +102,8 @@ function App() {
         <Route path="/BestSelling" element={<BestSellingProducts isBestSellingPage={true} />} />
         <Route path="/TopProducts" element={<TopProduct isTopProductsPage={true} />} />
         <Route path="/Cart" element={<Cart />} />
-        <Route path="/ManTop" element={<AllProducts />} />
-        <Route path="/ManBottom" element={<AllProducts />} />
-        <Route path="/ManShoes" element={<AllProducts />} />
-        <Route path="/WomanTop" element={<AllProducts />} />
-        <Route path="/WomanBottom" element={<AllProducts />} />
-        <Route path="/WomanShoes" element={<AllProducts />} />
-        <Route path="/WomanBags" element={<AllProducts />} />
-        <Route path="/WomanAccessories" element={<AllProducts />} />
         <Route path="/Checkout" element={<Checkout />} />
+        <Route path="/order-confirmation" element={<OrderConfirmation />} />
         <Route path="/AboutUs" element={<AboutUs />} />
         <Route path="/ContactUs" element={<ContactUs />} />
 
