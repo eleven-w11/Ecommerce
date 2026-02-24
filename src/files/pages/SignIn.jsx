@@ -45,8 +45,14 @@ const SignIn = ({ onSignIn }) => {
 
             const isAdmin = response.data?.user?.isAdmin;
 
+            // Check for redirect after auth
+            const redirectPath = localStorage.getItem("redirectAfterAuth");
+
             setTimeout(() => {
-                if (isAdmin) {
+                if (redirectPath) {
+                    localStorage.removeItem("redirectAfterAuth");
+                    navigate(redirectPath);
+                } else if (isAdmin) {
                     navigate("/UserList");
                 } else {
                     navigate("/UserProfile");
