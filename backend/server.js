@@ -80,6 +80,12 @@ const getAdminId = async () => {
 // Socket.IO Events
 io.on("connection", (socket) => {
     console.log("🟢 New client connected:", socket.id);
+    
+    // Track all visitors
+    activeVisitors.add(socket.id);
+    
+    // Broadcast updated visitor count to all admins
+    io.emit("visitorCount", { count: activeVisitors.size });
 
     // User registers with their ID
     socket.on("register", async ({ userId, token }) => {
