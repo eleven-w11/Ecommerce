@@ -88,7 +88,7 @@ const CheckoutShipping = ({
             setTimeout(() => {
                 setButtonHidden(false);
                 setLoadingStatus("idle");
-            }, 1200);
+            }, 3000);
         }
     };
 
@@ -135,7 +135,12 @@ const CheckoutShipping = ({
                             )}
 
                             {loadingStatus === "error" && (
-                                <div className="status-icon error">✕</div>
+                                <div style={{ width: "100px", height: "100px" }}>
+                                    <DotLottieReact
+                                        src="https://lottie.host/01bdcbb3-a41e-4c48-9d97-3eb645f7ccc2/dqSQ8QxaWk.lottie"
+                                        autoplay
+                                    />
+                                </div>
                             )}
                         </div>
                     )}

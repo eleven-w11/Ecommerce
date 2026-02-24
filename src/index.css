@@ -96,6 +96,7 @@ li {
     align-items: center;
     justify-content: center;
     background-color: white;
+    /* background-color: palegreen; */
 }
 
 .cart-review-layout .cart-review-loader{

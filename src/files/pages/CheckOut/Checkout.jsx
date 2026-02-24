@@ -112,7 +112,10 @@ const Checkout = () => {
 
             localStorage.removeItem("checkoutItem");
             localStorage.removeItem("checkoutData");
-            if (checkoutType === "cart") localStorage.removeItem("cart");
+            if (checkoutType === "cart") {
+                localStorage.removeItem("cart");
+                window.dispatchEvent(new Event("cartUpdated"));
+            }
 
             navigate("/order-confirmation", {
                 state: { order, orderId: order.orderId }

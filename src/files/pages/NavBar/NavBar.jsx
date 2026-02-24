@@ -128,9 +128,19 @@ const NavBar = ({ Authentication }) => {
             const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
             setCartCount(storedCart.length);
         };
+
         updateCartCount();
+
+        // Listen custom event (same tab)
+        window.addEventListener("cartUpdated", updateCartCount);
+
+        // Optional: keep storage for multi-tab support
         window.addEventListener("storage", updateCartCount);
-        return () => window.removeEventListener("storage", updateCartCount);
+
+        return () => {
+            window.removeEventListener("cartUpdated", updateCartCount);
+            window.removeEventListener("storage", updateCartCount);
+        };
     }, []);
 
     useEffect(() => {
