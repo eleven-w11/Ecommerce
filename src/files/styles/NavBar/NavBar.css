@@ -192,7 +192,7 @@ nav .userimg {
     }
 }
 
-.carticon.added {
+.cart_count.added svg {
     animation: cartBounce 0.6s ease;
 }
 
