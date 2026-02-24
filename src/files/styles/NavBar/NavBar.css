@@ -108,64 +108,28 @@ nav .location-account-search-cart div {
     justify-content: center;
 }
 
-nav .location-account-search-cart div .carticon {
-    margin: 0 20px 0 0;
-}
-
-nav .location-account-search-cart .locationicon,
-nav .location-account-search-cart .usericon,
-nav .location-account-search-cart .searchicon,
-nav .location-account-search-cart .carticon {
-    transition: all 0.3s ease;
+nav .location-account-search-cart .nav-icon-link {
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     cursor: pointer;
     transform-origin: center;
     will-change: transform, opacity;
 }
 
-nav .location-account-search-cart .locationicon {
-    width: 25px;
-}
-
-nav .location-account-search-cart .locationicon:hover {
-    transform: translateY(-2px) scale(1.1);
-    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
-}
-
-nav .location-account-search-cart .usericon {
-    width: 24px;
-}
-
-nav .location-account-search-cart .usericon:hover {
+nav .location-account-search-cart .nav-icon-link:hover {
     transform: scale(1.15);
-    filter: brightness(1.2) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.15));
 }
 
-nav .location-account-search-cart .searchicon {
-    width: 24px;
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-nav .location-account-search-cart .searchicon:hover {
-    transform: scale(1.2) rotate(8deg);
+nav .location-account-search-cart .nav-icon-link:hover svg {
     filter: brightness(1.2);
 }
 
-nav .location-account-search-cart .searchicon:active {
+nav .location-account-search-cart .nav-icon-link:active {
     transform: scale(0.95);
     transition: transform 0.1s ease;
 }
 
-nav .location-account-search-cart .carticon {
-    width: 27px;
-}
-
-nav .location-account-search-cart .carticon:hover {
-    transform: scale(1.15);
-    filter: brightness(1.2);
-}
-
-nav .location-account-search-cart img.icon:active {
-    animation: iconPulse 0.3s ease;
+nav .location-account-search-cart svg {
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .cart_count {
