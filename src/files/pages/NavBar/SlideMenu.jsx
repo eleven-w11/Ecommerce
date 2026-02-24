@@ -1,6 +1,7 @@
 // src/components/NavBar/SlideMenu.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import MenuIcon from "../../images/menu.png";
 import SearchIcon from "../../images/search.png";
 import UserIcon from "../../images/userIcon.png";
@@ -15,6 +16,37 @@ const SlideMenu = ({
     handleManClick, handleWomanClick,
     manDropdownRef, womanDropdownRef
 }) => {
+    const [hasPendingOrder, setHasPendingOrder] = useState(false);
+
+    // Check for pending orders when user is authenticated
+    useEffect(() => {
+        const checkPendingOrders = async () => {
+            if (!Authentication) {
+                setHasPendingOrder(false);
+                return;
+            }
+
+            try {
+                const response = await axios.get(
+                    `${process.env.REACT_APP_API_BASE_URL}/api/orders/my-orders`,
+                    { withCredentials: true }
+                );
+
+                if (response.data.success && response.data.orders) {
+                    // Check if user has any pending orders
+                    const pendingOrders = response.data.orders.filter(
+                        order => order.status === 'pending' || order.status === 'confirmed' || order.status === 'processing'
+                    );
+                    setHasPendingOrder(pendingOrders.length > 0);
+                }
+            } catch (error) {
+                console.error("Error checking orders:", error);
+                setHasPendingOrder(false);
+            }
+        };
+
+        checkPendingOrders();
+    }, [Authentication]);
 
     const handleLinkClick = () => {
         handleToggle(); // Close the slide menu
