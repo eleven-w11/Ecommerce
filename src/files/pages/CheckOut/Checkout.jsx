@@ -138,37 +138,99 @@ const Checkout = () => {
     };
 
     const handleOrderComplete = async () => {
+        // Check if user is authenticated before completing order
+        if (!isAuthenticated) {
+            setShowSignInPopup(true);
+            return;
+        }
+
         try {
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            const order = {
-                orderId: `ORD-${Date.now()}`,
-                items: checkoutItems,
-                customerInfo: formData,
-                subtotal: calculateSubtotal(),
-                shipping: 0,
-                totalAmount: calculateTotal(),
-                orderDate: new Date().toISOString(),
-                status: "pending",
+            setIsProcessing(true);
+
+            // Prepare order data for API
+            const orderData = {
+                items: checkoutItems.map(item => ({
+                    id: item.id || item.productId || item._id,
+                    productId: item.id || item.productId || item._id,
+                    productName: item.productName,
+                    price: item.price,
+                    originalPrice: item.originalPrice || item.price,
+                    quantity: item.quantity,
+                    color: item.color,
+                    size: item.size,
+                    image: item.image
+                })),
+                shippingAddress: {
+                    firstName: formData.firstName,
+                    lastName: formData.lastName,
+                    email: formData.email,
+                    phone: formData.phone,
+                    address: formData.address,
+                    apartment: formData.apartment,
+                    city: formData.city,
+                    state: formData.state,
+                    zipCode: formData.zipCode,
+                    country: formData.country
+                },
                 paymentMethod: formData.paymentMethod,
+                paymentDetails: formData.paymentMethod === 'credit-card' ? {
+                    cardLastFour: formData.cardNumber.slice(-4)
+                } : {},
+                subtotal: calculateSubtotal(),
+                shippingCost: 0,
+                discount: 0,
+                totalAmount: calculateTotal(),
                 checkoutType: checkoutType
             };
 
-            const existingOrders = JSON.parse(localStorage.getItem("orders")) || [];
-            localStorage.setItem("orders", JSON.stringify([...existingOrders, order]));
+            // Save order to MongoDB
+            const response = await axios.post(
+                `${process.env.REACT_APP_API_BASE_URL}/api/orders/create`,
+                orderData,
+                { withCredentials: true }
+            );
 
-            localStorage.removeItem("checkoutItem");
-            localStorage.removeItem("checkoutData");
-            if (checkoutType === "cart") {
-                localStorage.removeItem("cart");
-                window.dispatchEvent(new Event("cartUpdated"));
+            if (response.data.success) {
+                const order = {
+                    orderId: response.data.order.orderId,
+                    items: checkoutItems,
+                    customerInfo: formData,
+                    subtotal: calculateSubtotal(),
+                    shipping: 0,
+                    totalAmount: calculateTotal(),
+                    orderDate: new Date().toISOString(),
+                    status: "pending",
+                    paymentMethod: formData.paymentMethod,
+                    checkoutType: checkoutType
+                };
+
+                // Also save to localStorage for confirmation page
+                const existingOrders = JSON.parse(localStorage.getItem("orders")) || [];
+                localStorage.setItem("orders", JSON.stringify([...existingOrders, order]));
+
+                // Clear checkout data
+                localStorage.removeItem("checkoutItem");
+                localStorage.removeItem("checkoutData");
+                if (checkoutType === "cart") {
+                    localStorage.removeItem("cart");
+                    window.dispatchEvent(new Event("cartUpdated"));
+                }
+
+                navigate("/order-confirmation", {
+                    state: { order, orderId: response.data.order.orderId }
+                });
+            } else {
+                throw new Error(response.data.message || "Failed to create order");
             }
-
-            navigate("/order-confirmation", {
-                state: { order, orderId: order.orderId }
-            });
         } catch (error) {
             console.error("Order processing error:", error);
-            alert("There was an error processing your order. Please try again.");
+            if (error.response?.status === 401) {
+                setShowSignInPopup(true);
+            } else {
+                alert(error.response?.data?.message || "There was an error processing your order. Please try again.");
+            }
+        } finally {
+            setIsProcessing(false);
         }
     };
 
