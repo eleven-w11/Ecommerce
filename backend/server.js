@@ -314,6 +314,7 @@ app.use("/api", cartRoutes);
 app.use("/api", verifyRoutes);
 app.use("/api", GoogleRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/orders", orderRoutes);
 
 // Static files for uploads
 app.use("/api/chat/uploads", express.static(path.join(__dirname, "uploads/chat")));
