@@ -127,42 +127,27 @@ const SlideMenu = ({
                 </li>
                 <div className={`navline ${activePath === "/BestSelling" ? "active-line" : ""}`} ref={(el) => (linksRef.current[7] = el)}></div>
 
-                {/* Man Dropdown */}
-                <li className="man_nolink" onClick={handleManClick}>
-                    <span className='man_woman' ref={(el) => (linksRef.current[8] = el)}>Man</span>
-                    <span className={`material-symbols-outlined arrow-icon ${showManDropdown ? 'rotate' : ''}`} ref={(el) => (linksRef.current[9] = el)}>arrow_drop_down</span>
-                </li>
-                <div className="navline" ref={(el) => (linksRef.current[10] = el)}></div>
-                {showManDropdown && (
-                    <div className="dropdown-man" ref={manDropdownRef}>
-                        <li><Link to="/ManTop" state={{ category: "man", type: "top" }} className={activePath === "/ManTop" ? "active-link" : ""} onClick={handleLinkClick}>Top</Link></li>
-                        <div className={`navline navline_dropdown ${activePath === "/ManTop" ? "active-line" : ""}`}></div>
-                        <li><Link to="/ManBottom" state={{ category: "man", type: "bottom" }} className={activePath === "/ManBottom" ? "active-link" : ""} onClick={handleLinkClick}>Bottom</Link></li>
-                        <div className={`navline navline_dropdown ${activePath === "/ManBottom" ? "active-line" : ""}`}></div>
-                        <li><Link to="/ManShoes" state={{ category: "man", type: "shoes" }} className={activePath === "/ManShoes" ? "active-link" : ""} onClick={handleLinkClick}>Shoes</Link></li>
-                        <div className={`navline navline_dropdown ${activePath === "/ManShoes" ? "active-line" : ""}`}></div>
-                    </div>
-                )}
-
-                {/* Woman Dropdown */}
-                <li className="woman_nolink" onClick={handleWomanClick}>
-                    <span className='man_woman' ref={(el) => (linksRef.current[11] = el)}>Woman</span>
-                    <span className={`material-symbols-outlined arrow-icon ${showWomanDropdown ? 'rotate' : ''}`} ref={(el) => (linksRef.current[12] = el)}>arrow_drop_down</span>
-                </li>
-                <div className="navline" ref={(el) => (linksRef.current[13] = el)}></div>
-                {showWomanDropdown && (
-                    <div className="dropdown-woman" ref={womanDropdownRef}>
-                        <li><Link to="/WomanTop" state={{ category: "woman", type: "top" }} className={activePath === "/WomanTop" ? "active-link" : ""} onClick={handleLinkClick}>Top</Link></li>
-                        <div className={`navline navline_dropdown ${activePath === "/WomanTop" ? "active-line" : ""}`}></div>
-                        <li><Link to="/WomanBottom" state={{ category: "woman", type: "bottom" }} className={activePath === "/WomanBottom" ? "active-link" : ""} onClick={handleLinkClick}>Bottom</Link></li>
-                        <div className={`navline navline_dropdown ${activePath === "/WomanBottom" ? "active-line" : ""}`}></div>
-                        <li><Link to="/WomanShoes" state={{ category: "woman", type: "shoes" }} className={activePath === "/WomanShoes" ? "active-link" : ""} onClick={handleLinkClick}>Shoes</Link></li>
-                        <div className={`navline navline_dropdown ${activePath === "/WomanShoes" ? "active-line" : ""}`}></div>
-                        <li><Link to="/WomanBags" state={{ category: "woman", type: "bags" }} className={activePath === "/WomanBags" ? "active-link" : ""} onClick={handleLinkClick}>Bags</Link></li>
-                        <div className={`navline navline_dropdown ${activePath === "/WomanBags" ? "active-line" : ""}`}></div>
-                        <li><Link to="/WomanAccessories" state={{ category: "woman", type: "accessories" }} className={activePath === "/WomanAccessories" ? "active-link" : ""} onClick={handleLinkClick}>Accessories</Link></li>
-                        <div className={`navline navline_dropdown ${activePath === "/WomanAccessories" ? "active-line" : ""}`}></div>
-                    </div>
+                {/* Order Confirmation Link - Only show for authenticated users with pending orders */}
+                {Authentication && hasPendingOrder && (
+                    <>
+                        <li>
+                            <Link 
+                                to="/order-confirmation" 
+                                className={`order-link ${activePath === "/order-confirmation" ? "active-link" : ""}`}
+                                ref={(el) => (linksRef.current[21] = el)} 
+                                onClick={handleLinkClick}
+                            >
+                                <span className="order-link-icon">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                    </svg>
+                                </span>
+                                My Order
+                                <span className="pending-badge">Pending</span>
+                            </Link>
+                        </li>
+                        <div className={`navline ${activePath === "/order-confirmation" ? "active-line" : ""}`} ref={(el) => (linksRef.current[22] = el)}></div>
+                    </>
                 )}
 
                 {/* Remaining Links */}
