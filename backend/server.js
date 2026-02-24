@@ -300,6 +300,7 @@ const cartRoutes = require("./routes/cartRoutes");
 const GoogleRoutes = require("./routes/GoogleRoutes");
 const verifyRoutes = require("./routes/verifyRoutes");
 const chatRoutes = require("./routes/chatRoutes");
+const orderRoutes = require("./routes/orderRoutes");
 
 app.use("/api", signupRoutes);
 app.use("/api", signinRoutes);
