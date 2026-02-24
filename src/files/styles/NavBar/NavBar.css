@@ -513,10 +513,6 @@ nav .userimg {
     .slidemenu .userlocation-show {
         display: block;
     }
-
-    .slidemenu .userlocation-show .locationicon {
-        width: 26px;
-    }
 }
 
 @media (max-width: 610px) {
@@ -532,10 +528,6 @@ nav .userimg {
     .slidemenu .userprofile-show {
         display: block;
         margin-right: 10px;
-    }
-
-    .slidemenu .userprofile-show .usericon {
-        width: 24px;
     }
 
     .slidemenu {
