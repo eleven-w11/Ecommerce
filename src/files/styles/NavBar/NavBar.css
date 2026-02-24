@@ -696,4 +696,27 @@ nav .userimg {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.7; }
 }
+
+/* User Icon Link SVG Styling */
+.user-icon-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.user-icon-link svg {
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.user-icon-link:hover {
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.user-icon-link:hover svg {
+    color: #667eea;
+}
 }
