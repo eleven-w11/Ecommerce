@@ -67,6 +67,9 @@ const io = new Server(server, {
 const onlineUsers = new Map(); // Map<userId, Set<socketId>>
 const socketToUser = new Map(); // Map<socketId, userId>
 
+// Active site visitors tracking (all visitors, not just logged in)
+let activeVisitors = new Set(); // Set of all connected socket IDs
+
 // Get admin ID
 const getAdminId = async () => {
     const adminEmail = process.env.ADMIN_EMAIL;
@@ -77,6 +80,12 @@ const getAdminId = async () => {
 // Socket.IO Events
 io.on("connection", (socket) => {
     console.log("🟢 New client connected:", socket.id);
+    
+    // Track all visitors
+    activeVisitors.add(socket.id);
+    
+    // Broadcast updated visitor count to all admins
+    io.emit("visitorCount", { count: activeVisitors.size });
 
     // User registers with their ID
     socket.on("register", async ({ userId, token }) => {
@@ -268,8 +277,19 @@ io.on("connection", (socket) => {
         socket.emit("onlineStatuses", statuses);
     });
 
+    // Get current visitor count (for admin panel)
+    socket.on("getVisitorCount", () => {
+        socket.emit("visitorCount", { count: activeVisitors.size });
+    });
+
     // Disconnect
     socket.on("disconnect", () => {
+        // Remove from active visitors
+        activeVisitors.delete(socket.id);
+        
+        // Broadcast updated visitor count
+        io.emit("visitorCount", { count: activeVisitors.size });
+        
         const userId = socketToUser.get(socket.id);
         if (userId) {
             const userSockets = onlineUsers.get(userId);
