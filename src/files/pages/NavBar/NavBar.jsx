@@ -260,8 +260,11 @@ const NavBar = ({ Authentication }) => {
                                         <img crossOrigin="anonymous" src={userData.image} alt="User" className='userimg' />
                                     }
                                 </Link>
-                            ) : <Link to="/SignIn">
-                                <img src={UserIcon} className='icon usericon' alt="" />
+                            ) : <Link to="/SignIn" className="user-icon-link">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
                             </Link>}
                         </div>
                         <div className='search-hide' onClick={toggleSearch}>
