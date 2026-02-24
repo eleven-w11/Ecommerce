@@ -8,11 +8,6 @@ import Search from './Search';
 import SlideMenu from './SlideMenu';
 import '../../styles/NavBar/NavBar.css';
 import '../../styles/NavBar/Search.css';
-import CartIcon from "../../images/cart.png";
-import SearchIcon from "../../images/search.png";
-import UserIcon from "../../images/userIcon.png";
-import LocationIcon from "../../images/location.png";
-import MenuIcon from "../../images/menu.png";
 import { animateNavbarOnLoad } from "./NavbarAnimation";
 
 const NavBar = ({ Authentication }) => {
