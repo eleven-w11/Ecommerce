@@ -67,6 +67,9 @@ const io = new Server(server, {
 const onlineUsers = new Map(); // Map<userId, Set<socketId>>
 const socketToUser = new Map(); // Map<socketId, userId>
 
+// Active site visitors tracking (all visitors, not just logged in)
+let activeVisitors = new Set(); // Set of all connected socket IDs
+
 // Get admin ID
 const getAdminId = async () => {
     const adminEmail = process.env.ADMIN_EMAIL;
