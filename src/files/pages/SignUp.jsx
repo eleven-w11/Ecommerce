@@ -124,7 +124,15 @@ const SignUp = ({ onSignUp }) => {
 
     const handleGoogleSuccess = (userData) => {
         onSignUp();
-        if (userData.isAdmin) {
+        
+        // Check for redirect after auth
+        const redirectPath = localStorage.getItem("redirectAfterAuth");
+        
+        if (redirectPath) {
+            localStorage.removeItem("redirectAfterAuth");
+            setSuccess("Welcome! Redirecting...");
+            setTimeout(() => navigate(redirectPath), 1500);
+        } else if (userData.isAdmin) {
             setSuccess("Welcome Admin! Redirecting...");
             setTimeout(() => navigate("/UserList"), 1500);
         } else {
