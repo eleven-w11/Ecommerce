@@ -12,7 +12,8 @@
     font-family: 'Plus Jakarta Sans', sans-serif;
     position: relative;
     overflow: hidden;
-    padding: 20px;
+    padding: 80px 20px 20px 20px;
+    box-sizing: border-box;
 }
 
 /* Animated background elements */
@@ -39,12 +40,10 @@
 }
 
 @keyframes float {
-
     0%,
     100% {
         transform: translate(0, 0) scale(1);
     }
-
     50% {
         transform: translate(30px, -30px) scale(1.1);
     }
@@ -53,9 +52,9 @@
 /* Main card container */
 .sign .sign_google {
     width: 100%;
-    max-width: 420px;
-    padding: 48px 40px;
-    border-radius: 24px;
+    max-width: 400px;
+    padding: 36px 32px;
+    border-radius: 20px;
     background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -71,11 +70,11 @@
 .sign .sign-up {
     width: 100%;
     text-align: center;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
 }
 
 .sign .sign-up h1 {
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 700;
     color: #ffffff;
     margin: 0;
@@ -88,8 +87,8 @@
 
 .sign .sign-up p {
     color: rgba(255, 255, 255, 0.5);
-    font-size: 14px;
-    margin-top: 8px;
+    font-size: 13px;
+    margin-top: 6px;
 }
 
 /* Form styling */
@@ -97,7 +96,7 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
 }
 
 /* Input group with icon support */
@@ -108,7 +107,7 @@
 
 .sign .input-group .input-icon {
     position: absolute;
-    left: 16px;
+    left: 14px;
     top: 50%;
     transform: translateY(-50%);
     color: rgba(255, 255, 255, 0.4);
@@ -118,12 +117,12 @@
 
 .sign form input {
     width: 100%;
-    padding: 16px 16px 16px 48px;
-    border-radius: 12px;
+    padding: 14px 14px 14px 44px;
+    border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.05);
     color: #ffffff;
-    font-size: 15px;
+    font-size: 14px;
     font-family: inherit;
     transition: all 0.3s ease;
     outline: none;
@@ -137,7 +136,7 @@
 .sign form input:focus {
     border-color: rgba(99, 102, 241, 0.5);
     background: rgba(99, 102, 241, 0.1);
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
 .sign form input:focus+.input-icon,
@@ -152,12 +151,12 @@
 }
 
 .sign .input-unhide input {
-    padding-right: 50px;
+    padding-right: 46px;
 }
 
 .sign .input-unhide span {
     position: absolute;
-    right: 16px;
+    right: 14px;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
@@ -179,12 +178,12 @@
 /* Submit button */
 .sign form button[type="submit"] {
     width: 100%;
-    padding: 16px;
-    margin-top: 8px;
-    font-size: 15px;
+    padding: 14px;
+    margin-top: 4px;
+    font-size: 14px;
     font-weight: 600;
     font-family: inherit;
-    border-radius: 12px;
+    border-radius: 10px;
     border: none;
     cursor: pointer;
     background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
@@ -228,12 +227,12 @@
 .sign form .forget_password {
     width: 100%;
     text-align: right;
-    margin-top: -8px;
+    margin-top: -6px;
 }
 
 .sign form .forget_password a {
     color: rgba(255, 255, 255, 0.5);
-    font-size: 13px;
+    font-size: 12px;
     text-decoration: none;
     transition: color 0.3s ease;
     cursor: pointer;
@@ -246,12 +245,12 @@
 /* Signup/Signin link */
 .sign .signup-link {
     text-align: center;
-    margin-top: 24px;
+    margin-top: 20px;
 }
 
 .sign .signup-link p {
     color: rgba(255, 255, 255, 0.5);
-    font-size: 14px;
+    font-size: 13px;
     margin: 0;
 }
 
@@ -270,12 +269,12 @@
 .sign .hr_or_hr {
     display: flex;
     align-items: center;
-    gap: 16px;
-    margin: 24px 0;
+    gap: 12px;
+    margin: 20px 0;
 }
 
 .sign .hr_or_hr p {
-    font-size: 13px;
+    font-size: 12px;
     color: rgba(255, 255, 255, 0.4);
     margin: 0;
     white-space: nowrap;
@@ -290,22 +289,22 @@
 /* Google button */
 .sign .google-button {
     width: 100%;
-    border-radius: 12px;
+    border-radius: 10px;
     overflow: hidden;
 }
 
 .sign .custom-google-button {
     width: 100%;
-    padding: 14px;
+    padding: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 10px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
+    border-radius: 10px;
     background: rgba(255, 255, 255, 0.05);
     color: #ffffff;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     font-family: inherit;
     cursor: pointer;
@@ -318,28 +317,28 @@
 }
 
 .sign .custom-google-button .google-icon {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
 }
 
 /* Error and Success messages */
 .sign .errorndsucc {
     width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 .sign .err,
 .sign .suc {
     margin: 0;
-    padding: 14px 16px;
-    font-size: 13px;
-    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 12px;
+    border-radius: 10px;
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .sign .visible {
@@ -371,7 +370,7 @@
 .sign .password-strength {
     display: flex;
     gap: 4px;
-    margin-top: 8px;
+    margin-top: 6px;
 }
 
 .sign .password-strength .strength-bar {
@@ -403,11 +402,11 @@
 .sign form button[type="submit"].loading::after {
     content: '';
     position: absolute;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     top: 50%;
     left: 50%;
-    margin: -10px 0 0 -10px;
+    margin: -9px 0 0 -9px;
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-top-color: white;
     border-radius: 50%;
@@ -428,7 +427,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    border-radius: 24px;
+    border-radius: 20px;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     opacity: 0.03;
     pointer-events: none;
@@ -437,34 +436,47 @@
 /* Mobile responsiveness */
 @media (max-width: 480px) {
     .sign {
-        padding: 16px;
+        padding: 70px 16px 16px 16px;
     }
 
     .sign .sign_google {
-        padding: 32px 24px;
-        border-radius: 20px;
+        padding: 28px 20px;
+        border-radius: 16px;
     }
 
     .sign .sign-up h1 {
-        font-size: 28px;
+        font-size: 24px;
+    }
+
+    .sign .sign-up {
+        margin-bottom: 20px;
     }
 
     .sign form input {
-        padding: 14px 14px 14px 44px;
-        font-size: 14px;
+        padding: 12px 12px 12px 40px;
+        font-size: 13px;
     }
 
     .sign form button[type="submit"] {
-        padding: 14px;
+        padding: 12px;
+        font-size: 13px;
+    }
+
+    .sign .hr_or_hr {
+        margin: 16px 0;
+    }
+
+    .sign .signup-link {
+        margin-top: 16px;
     }
 }
 
 @media (max-width: 360px) {
     .sign .sign_google {
-        padding: 28px 20px;
+        padding: 24px 16px;
     }
 
     .sign .sign-up h1 {
-        font-size: 24px;
+        font-size: 22px;
     }
 }
