@@ -57,11 +57,12 @@ const SlideMenu = ({
         <div className={`slidemenu ${isToggle ? 'toggle' : ''}`}>
             <div className="mob_top_icons">
                 <div className="close_menu">
-                    <img
-                        className='menuicon'
-                        onClick={handleToggle}
-                        src={MenuIcon}
-                        alt="" />
+                    <span className='menuicon' onClick={handleToggle}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </span>
                 </div>
                 <div className="mob_icons">
                     <li className='userprofile-show'>
@@ -74,8 +75,8 @@ const SlideMenu = ({
                                 )}
                             </Link>
                         ) : (
-                            <Link to="/SignIn" ref={(el) => (linksRef.current[19] = el)} onClick={handleLinkClick} className="user-icon-link">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                            <Link to="/SignIn" ref={(el) => (linksRef.current[19] = el)} onClick={handleLinkClick} className="nav-icon-link">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                     <circle cx="12" cy="7" r="4"></circle>
                                 </svg>
@@ -88,16 +89,22 @@ const SlideMenu = ({
                                 {country}
                             </Link>
                         ) : (
-                            <Link to="/UserLocation" ref={(el) => (linksRef.current[18] = el)} onClick={handleLinkClick}>
-                                <img src={LocationIcon} className='locationicon' alt="" />
+                            <Link to="/UserLocation" ref={(el) => (linksRef.current[18] = el)} onClick={handleLinkClick} className="nav-icon-link">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                </svg>
                             </Link>
                         )}
                     </li>
-                    <li className='search-show'
+                    <li className='search-show nav-icon-link'
                         onClick={handleSearchClick}
                         ref={(el) => (linksRef.current[20] = el)}
                     >
-                        <img src={SearchIcon} className='icon searchicon' alt="" />
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
                     </li>
                 </div>
             </div>
