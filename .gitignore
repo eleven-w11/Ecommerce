@@ -169,3 +169,7 @@ Thumbs.db
 ehthumbs.db
 [Dd]esktop.ini
 >>>>>>> 22db2700b112c260606532a27f36f9623dd09a14
+-e 
+# Environment files
+*.env
+*.env.*
