@@ -20,6 +20,11 @@ const Checkout = () => {
     const [loading, setLoading] = useState(true);
     const [isProcessing, setIsProcessing] = useState(false);
 
+    // Authentication state
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [showSignInPopup, setShowSignInPopup] = useState(false);
+    const [authChecked, setAuthChecked] = useState(false);
+
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
