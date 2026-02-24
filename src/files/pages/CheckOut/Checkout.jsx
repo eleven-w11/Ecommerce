@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 import "../../styles/CheckOut/Checkout.css";
 import CheckoutCartReview from "./CheckoutCartReview";
 import CheckoutShipping from "./CheckoutShipping";
 import CheckoutPayment from "./CheckoutPayment";
+import SignInPopup from "./SignInPopup";
 import Footer from "../Footer";
 
 const Checkout = () => {
