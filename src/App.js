@@ -15,10 +15,10 @@ import ProductView from './files/pages/ProductView';
 import ScrollToTop from "./files/pages/ScrollToTop";
 import Footer from './files/pages/Footer';
 import Cart from './files/pages/Cart';
-import AllProducts from './files/pages/AllProducts';
 import Google from './files/pages/Google';
 import SearchResults from './files/pages/NavBar/SearchResults';
 import Checkout from './files/pages/CheckOut/Checkout';
+import OrderConfirmation from './files/pages/OrderConfirmation';
 import AboutUs from './files/pages/AboutUs';
 import ContactUs from './files/pages/ContactUs';
 // Chat imports
