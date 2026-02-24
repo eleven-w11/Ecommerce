@@ -4,8 +4,9 @@ import NavBar from './files/pages/NavBar/NavBar';
 import UserLocation from './files/pages/UserLocationInfo';
 import SignIn from './files/pages/SignIn';
 import SignUp from './files/pages/SignUp';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { io } from 'socket.io-client';
 import UserProfile from './files/pages/UserProfilePage';
 import TeSt from './files/pages/teSt';
 import TestHero from './files/pages/HeroSection';
@@ -36,8 +37,33 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [width, setWidth] = useState(window.innerWidth);
   const location = useLocation();
+  const socketRef = useRef(null);
 
   console.warn("app.js Say's", isAuthenticated);
+
+  // Initialize socket connection for visitor tracking
+  useEffect(() => {
+    // Connect to socket for visitor tracking
+    socketRef.current = io(process.env.REACT_APP_API_BASE_URL, {
+      path: '/api/socket.io/',
+      transports: ['websocket', 'polling'],
+      withCredentials: true
+    });
+
+    socketRef.current.on('connect', () => {
+      console.log('🟢 Visitor connected to socket');
+    });
+
+    socketRef.current.on('disconnect', () => {
+      console.log('🔴 Visitor disconnected from socket');
+    });
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth);
