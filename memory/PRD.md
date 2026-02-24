@@ -1,102 +1,87 @@
-# Real-Time Chat System - PRD
+# E-commerce WebVerse - Product Requirements Document
 
 ## Original Problem Statement
-Add real-time chat system between users and admin using Socket.IO to existing MERN ecommerce website (React + Node.js + Express + MongoDB + JWT authentication).
-
-## User Choices
-1. **File Storage**: Local file storage for uploads
-2. **Admin Identification**: Use ADMIN_EMAIL from .env (talha.eleven.w11@gmail.com)
-3. **Chat History**: Persistent (all messages saved in MongoDB)
-4. **UI Theme**: Match existing ecommerce theme
+Build an e-commerce application with checkout authentication flow, order saving to MongoDB, and order confirmation page.
 
 ## Architecture
-- **Frontend**: React (Create React App)
-- **Backend**: Node.js + Express (proxied through Python FastAPI for Emergent compatibility)
-- **Database**: MongoDB Atlas
-- **Real-time**: Socket.IO (via /api/socket.io/ path)
-- **Authentication**: JWT tokens via cookies
+- **Frontend**: React.js (Create React App)
+- **Backend**: Node.js/Express
+- **Database**: MongoDB
+- **Authentication**: JWT-based with cookies
+
+## User Personas
+1. **Shopper**: Browse products, add to cart, checkout
+2. **Registered User**: Has account, can view order history
+3. **Admin**: Manage products and view all orders
 
 ## Core Requirements
-- User ↔ Admin only communication (not user-to-user)
-- Real-time messaging with Socket.IO
-- Message status tracking (sent/delivered/seen)
-- Online/offline indicators
-- Typing indicators
-- File/image upload support
-- Mobile responsive UI
+- Product browsing and viewing
+- Shopping cart functionality
+- User authentication (Sign In/Sign Up)
+- Checkout with authentication check
+- Order saving to MongoDB
+- Order confirmation page
+- Redirect to previous page after authentication
 
-## Implemented Features (Feb 15, 2026)
+## What's Been Implemented
 
-### Frontend Components
-1. **Chat.jsx** (`/app/frontend/src/files/pages/Chat.jsx`)
-   - User-side chat interface
-   - Authentication check - shows "Sign In" prompt for guests
-   - Real-time messaging with Socket.IO
-   - Message status ticks (single/double/blue)
-   - Typing indicator
-   - File/image upload
-   - Auto-scroll to latest message
+### Feb 24, 2026
+1. **Sign-In Popup for Checkout** (`SignInPopup.jsx`)
+   - Shows popup when unauthenticated user visits checkout
+   - Direct sign-in from popup
+   - Links to full sign-in page or sign-up
 
-2. **UserList.jsx** (`/app/frontend/src/files/pages/admin/UserList.jsx`)
-   - Admin view of all chat users
-   - Sorted by last message time
-   - Shows unread count, online status
-   - Last message preview
+2. **Order Model** (`backend/models/Order.js`)
+   - Stores items, shipping address, payment method
+   - Tracks status: pending, confirmed, processing, shipped, delivered, cancelled
 
-3. **AdminChat.jsx** (`/app/frontend/src/files/pages/admin/AdminChat.jsx`)
-   - Admin chat interface with individual users
-   - Same features as user chat
+3. **Order API Routes** (`backend/routes/orderRoutes.js`)
+   - POST /api/orders/create - Create new order
+   - GET /api/orders/my-orders - Get user's orders
+   - GET /api/orders/:orderId - Get specific order
 
-### Backend Implementation
-1. **Message Model** (`/app/backend/models/Message.js`)
-   - senderId, receiverId, message, messageType, status, timestamps
+4. **Checkout Authentication Flow** (`Checkout.jsx`)
+   - Check auth on page load
+   - Show sign-in popup if not authenticated
+   - Hide checkout form until signed in
+   - Save order to MongoDB on payment
 
-2. **Chat Model** (`/app/backend/models/Chat.js`)
-   - participants, lastMessage, unreadCount
+5. **Redirect After Auth** (`SignIn.jsx`, `SignUp.jsx`)
+   - Stores current path in localStorage
+   - Returns user to checkout after signing in
 
-3. **Chat Routes** (`/app/backend/routes/chatRoutes.js`)
-   - POST /api/chat/send - Send message with optional file
-   - GET /api/chat/messages/:otherUserId - Get conversation
-   - GET /api/chat/admin - Get admin info
-   - GET /api/chat/users - Get all users with chats (admin only)
-   - PUT /api/chat/delivered/:senderId - Mark as delivered
-   - PUT /api/chat/seen/:senderId - Mark as seen
-   - GET /api/chat/is-admin - Check admin status
+6. **Order Confirmation Page** (`OrderConfirmation.jsx`)
+   - Displays order details, items, shipping, payment
+   - Shows order status with color-coded badge
+   - Print functionality
 
-4. **Socket.IO Events** (in server.js)
-   - register - User connects
-   - sendMessage - Real-time message
-   - typing - Typing indicator
-   - markSeen - Read receipts
-   - userOnline - Online status
+7. **SlideMenu Update** (`SlideMenu.jsx`)
+   - Added "My Order" link for authenticated users
+   - Only shows when user has pending order
+   - Removed Man/Woman dropdown categories
 
-### Routes Added to App.js
-- `/Chat` - User chat page
-- `/UserList` - Admin user list
-- `/AdminChat/:odirUserId` - Admin chat with specific user
+8. **Removed Pages**
+   - ManTop, ManBottom, ManShoes
+   - WomanTop, WomanBottom, WomanShoes, WomanBags, WomanAccessories
 
-## Remaining Backlog
+## Prioritized Backlog
 
 ### P0 (Critical)
-- None identified
+- [x] Checkout authentication check
+- [x] Order saving to MongoDB
+- [x] Order confirmation page
 
 ### P1 (Important)
-- Add chat icon/button on homepage for easy access
-- Push notifications for new messages
-- Message search functionality
+- [ ] Order history page in user profile
+- [ ] Email notifications on order
+- [ ] Admin order management
 
-### P2 (Nice to have)
-- Chat sound notifications
-- Message reactions/emojis
-- Message editing/deletion
-- Group chat support (if needed)
+### P2 (Nice to Have)
+- [ ] Order tracking
+- [ ] Invoice PDF generation
+- [ ] Multiple shipping addresses
 
 ## Next Tasks
-1. Test with actual user login to verify full chat flow
-2. Add chat access button/icon to navigation
-3. Consider adding notification system
-
-## Technical Notes
-- Socket.IO uses `/api/socket.io/` path for Kubernetes ingress compatibility
-- Python FastAPI proxy handles Node.js backend for Emergent platform
-- File uploads stored in `/app/backend/uploads/chat/`
+1. Test full checkout flow end-to-end
+2. Add order history section to UserProfile
+3. Implement admin order management
