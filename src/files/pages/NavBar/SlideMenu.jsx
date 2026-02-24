@@ -2,9 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import MenuIcon from "../../images/menu.png";
-import SearchIcon from "../../images/search.png";
-import LocationIcon from "../../images/location.png";
 import '../../styles/NavBar/NavBar.css';
 
 const SlideMenu = ({
