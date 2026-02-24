@@ -575,11 +575,6 @@ nav .userimg {
         display: block;
     }
 
-    .slidemenu .search-show .searchicon {
-        width: 25px;
-        margin-top: 3px;
-    }
-
     .slidemenu .mob_icons {
         justify-content: space-evenly;
     }
