@@ -47,6 +47,45 @@ const Checkout = () => {
     const [shippingValidated, setShippingValidated] = useState(false);
 
     // --------------------------
+    // 👉 Check Authentication
+    // --------------------------
+    useEffect(() => {
+        const checkAuth = async () => {
+            try {
+                const response = await axios.get(
+                    `${process.env.REACT_APP_API_BASE_URL}/api/verifytoken`,
+                    { withCredentials: true }
+                );
+
+                if (response.data && response.data.success && response.data.userId) {
+                    setIsAuthenticated(true);
+                } else {
+                    setIsAuthenticated(false);
+                    setShowSignInPopup(true);
+                }
+            } catch (error) {
+                setIsAuthenticated(false);
+                setShowSignInPopup(true);
+            } finally {
+                setAuthChecked(true);
+            }
+        };
+        checkAuth();
+    }, []);
+
+    // Handle successful sign in from popup
+    const handleSignInSuccess = (user) => {
+        setIsAuthenticated(true);
+        setShowSignInPopup(false);
+    };
+
+    // Handle popup close
+    const handlePopupClose = () => {
+        setShowSignInPopup(false);
+        // If user closes popup without signing in, they can still browse but can't complete order
+    };
+
+    // --------------------------
     // 👉 Responsive Screens
     // --------------------------
     const [isDesktop, setIsDesktop] = useState(window.innerWidth > 750);
