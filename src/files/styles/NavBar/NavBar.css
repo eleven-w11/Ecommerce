@@ -697,26 +697,72 @@ nav .userimg {
     50% { opacity: 0.7; }
 }
 
-/* User Icon Link SVG Styling */
-.user-icon-link {
+/* Nav Icon Link SVG Styling */
+.nav-icon-link {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 6px;
-    border-radius: 50%;
-    transition: all 0.3s ease;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform-origin: center;
 }
 
-.user-icon-link svg {
+.nav-icon-link svg {
     color: #333;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.user-icon-link:hover {
-    background: rgba(102, 126, 234, 0.1);
+.nav-icon-link:hover {
+    transform: scale(1.15);
 }
 
-.user-icon-link:hover svg {
-    color: #667eea;
+.nav-icon-link:hover svg {
+    filter: brightness(1.2);
+}
+
+/* Menu icon as span with SVG */
+nav .menuicon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform-origin: center;
+}
+
+nav .menuicon svg {
+    color: #333;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+nav .menuicon:hover {
+    transform: scale(1.15);
+}
+
+nav .menuicon:hover svg {
+    filter: brightness(1.2);
+}
+
+/* Slide menu close icon */
+.slidemenu .menuicon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform-origin: center;
+}
+
+.slidemenu .menuicon svg {
+    color: #333;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.slidemenu .menuicon:hover {
+    transform: scale(1.15);
+}
+
+.slidemenu .menuicon:hover svg {
+    filter: brightness(1.2);
 }
 }
