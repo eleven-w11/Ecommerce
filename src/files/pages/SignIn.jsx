@@ -190,7 +190,7 @@ const SignIn = ({ onSignIn }) => {
 
                 {/* Sign Up Link */}
                 <div className="signup-link">
-                    <p>Don't have an account? <Link to="/SignUp">Create one</Link></p>
+                    <p>Don't have an account? <Link to="/SignUp">Sign up</Link></p>
                 </div>
 
                 {/* Divider */}
