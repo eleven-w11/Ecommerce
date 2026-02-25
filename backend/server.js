@@ -68,7 +68,32 @@ const onlineUsers = new Map(); // Map<userId, Set<socketId>>
 const socketToUser = new Map(); // Map<socketId, userId>
 
 // Active site visitors tracking (all visitors, not just logged in)
-let activeVisitors = new Set(); // Set of all connected socket IDs
+let activeVisitors = new Set(); // Set of socket IDs where page is VISIBLE
+let connectedSockets = new Set(); // Set of all connected socket IDs
+
+// Heartbeat tracking - to detect browser close without proper disconnect
+const lastHeartbeat = new Map(); // Map<socketId, timestamp>
+const HEARTBEAT_TIMEOUT = 10000; // 10 seconds - if no heartbeat, consider inactive
+
+// Cleanup stale connections every 5 seconds
+setInterval(() => {
+    const now = Date.now();
+    let removed = false;
+    
+    lastHeartbeat.forEach((timestamp, socketId) => {
+        if (now - timestamp > HEARTBEAT_TIMEOUT) {
+            // No heartbeat received, remove from active visitors
+            activeVisitors.delete(socketId);
+            lastHeartbeat.delete(socketId);
+            removed = true;
+            console.log(`⏰ Heartbeat timeout for socket ${socketId}`);
+        }
+    });
+    
+    if (removed) {
+        io.emit("visitorCount", { count: activeVisitors.size });
+    }
+}, 5000);
 
 // Get admin ID
 const getAdminId = async () => {
