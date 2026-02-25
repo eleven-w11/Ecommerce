@@ -255,7 +255,10 @@ const AdminPanel = () => {
                         <div className="visitors-count-large">
                             <div className="count-number">{activeVisitors}</div>
                             <div className="count-label">
-                                {activeVisitors === 1 ? 'Person' : 'People'} on your site right now
+                                {activeVisitors === 1 ? 'Person' : 'People'} actively viewing your site
+                            </div>
+                            <div className="count-sublabel">
+                                Only counts users with the site in their active browser tab
                             </div>
                         </div>
                         <div className="visitors-visual">
