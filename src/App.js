@@ -52,13 +52,50 @@ function App() {
 
     socketRef.current.on('connect', () => {
       console.log('🟢 Visitor connected to socket');
+      
+      // Send initial visibility state
+      const isVisible = document.visibilityState === 'visible';
+      socketRef.current.emit('visibilityChange', { isVisible });
     });
 
     socketRef.current.on('disconnect', () => {
       console.log('🔴 Visitor disconnected from socket');
     });
 
+    // Handle page visibility changes
+    const handleVisibilityChange = () => {
+      const isVisible = document.visibilityState === 'visible';
+      console.log(`👁️ Page visibility changed: ${isVisible ? 'VISIBLE' : 'HIDDEN'}`);
+      
+      if (socketRef.current?.connected) {
+        socketRef.current.emit('visibilityChange', { isVisible });
+      }
+    };
+
+    // Listen for visibility changes
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Send heartbeat every 5 seconds to let server know we're still here
+    const heartbeatInterval = setInterval(() => {
+      if (socketRef.current?.connected && document.visibilityState === 'visible') {
+        socketRef.current.emit('heartbeat');
+      }
+    }, 5000);
+
+    // Handle page unload (beforeunload) - send visibility hidden
+    const handleBeforeUnload = () => {
+      if (socketRef.current?.connected) {
+        socketRef.current.emit('visibilityChange', { isVisible: false });
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
     return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      clearInterval(heartbeatInterval);
+      
       if (socketRef.current) {
         socketRef.current.disconnect();
       }

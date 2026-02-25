@@ -68,7 +68,32 @@ const onlineUsers = new Map(); // Map<userId, Set<socketId>>
 const socketToUser = new Map(); // Map<socketId, userId>
 
 // Active site visitors tracking (all visitors, not just logged in)
-let activeVisitors = new Set(); // Set of all connected socket IDs
+let activeVisitors = new Set(); // Set of socket IDs where page is VISIBLE
+let connectedSockets = new Set(); // Set of all connected socket IDs
+
+// Heartbeat tracking - to detect browser close without proper disconnect
+const lastHeartbeat = new Map(); // Map<socketId, timestamp>
+const HEARTBEAT_TIMEOUT = 10000; // 10 seconds - if no heartbeat, consider inactive
+
+// Cleanup stale connections every 5 seconds
+setInterval(() => {
+    const now = Date.now();
+    let removed = false;
+    
+    lastHeartbeat.forEach((timestamp, socketId) => {
+        if (now - timestamp > HEARTBEAT_TIMEOUT) {
+            // No heartbeat received, remove from active visitors
+            activeVisitors.delete(socketId);
+            lastHeartbeat.delete(socketId);
+            removed = true;
+            console.log(`⏰ Heartbeat timeout for socket ${socketId}`);
+        }
+    });
+    
+    if (removed) {
+        io.emit("visitorCount", { count: activeVisitors.size });
+    }
+}, 5000);
 
 // Get admin ID
 const getAdminId = async () => {
@@ -81,11 +106,35 @@ const getAdminId = async () => {
 io.on("connection", (socket) => {
     console.log("🟢 New client connected:", socket.id);
     
-    // Track all visitors
-    activeVisitors.add(socket.id);
+    // Track connected socket (but not active yet until visibility confirmed)
+    connectedSockets.add(socket.id);
     
-    // Broadcast updated visitor count to all admins
-    io.emit("visitorCount", { count: activeVisitors.size });
+    // Initialize heartbeat
+    lastHeartbeat.set(socket.id, Date.now());
+
+    // Handle visibility change from client
+    socket.on("visibilityChange", ({ isVisible }) => {
+        if (isVisible) {
+            activeVisitors.add(socket.id);
+            lastHeartbeat.set(socket.id, Date.now());
+            console.log(`👁️ Socket ${socket.id} is now VISIBLE`);
+        } else {
+            activeVisitors.delete(socket.id);
+            console.log(`👁️ Socket ${socket.id} is now HIDDEN`);
+        }
+        // Broadcast updated count
+        io.emit("visitorCount", { count: activeVisitors.size });
+    });
+
+    // Heartbeat to detect browser close
+    socket.on("heartbeat", () => {
+        lastHeartbeat.set(socket.id, Date.now());
+        // If page is visible, ensure they're in active visitors
+        if (!activeVisitors.has(socket.id)) {
+            // They might have sent heartbeat before visibility event
+            // Don't add automatically - wait for explicit visibilityChange
+        }
+    });
 
     // User registers with their ID
     socket.on("register", async ({ userId, token }) => {
@@ -284,8 +333,10 @@ io.on("connection", (socket) => {
 
     // Disconnect
     socket.on("disconnect", () => {
-        // Remove from active visitors
+        // Remove from all tracking sets
         activeVisitors.delete(socket.id);
+        connectedSockets.delete(socket.id);
+        lastHeartbeat.delete(socket.id);
         
         // Broadcast updated visitor count
         io.emit("visitorCount", { count: activeVisitors.size });
