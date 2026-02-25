@@ -333,8 +333,10 @@ io.on("connection", (socket) => {
 
     // Disconnect
     socket.on("disconnect", () => {
-        // Remove from active visitors
+        // Remove from all tracking sets
         activeVisitors.delete(socket.id);
+        connectedSockets.delete(socket.id);
+        lastHeartbeat.delete(socket.id);
         
         // Broadcast updated visitor count
         io.emit("visitorCount", { count: activeVisitors.size });
