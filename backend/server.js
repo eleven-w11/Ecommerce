@@ -106,11 +106,35 @@ const getAdminId = async () => {
 io.on("connection", (socket) => {
     console.log("🟢 New client connected:", socket.id);
     
-    // Track all visitors
-    activeVisitors.add(socket.id);
+    // Track connected socket (but not active yet until visibility confirmed)
+    connectedSockets.add(socket.id);
     
-    // Broadcast updated visitor count to all admins
-    io.emit("visitorCount", { count: activeVisitors.size });
+    // Initialize heartbeat
+    lastHeartbeat.set(socket.id, Date.now());
+
+    // Handle visibility change from client
+    socket.on("visibilityChange", ({ isVisible }) => {
+        if (isVisible) {
+            activeVisitors.add(socket.id);
+            lastHeartbeat.set(socket.id, Date.now());
+            console.log(`👁️ Socket ${socket.id} is now VISIBLE`);
+        } else {
+            activeVisitors.delete(socket.id);
+            console.log(`👁️ Socket ${socket.id} is now HIDDEN`);
+        }
+        // Broadcast updated count
+        io.emit("visitorCount", { count: activeVisitors.size });
+    });
+
+    // Heartbeat to detect browser close
+    socket.on("heartbeat", () => {
+        lastHeartbeat.set(socket.id, Date.now());
+        // If page is visible, ensure they're in active visitors
+        if (!activeVisitors.has(socket.id)) {
+            // They might have sent heartbeat before visibility event
+            // Don't add automatically - wait for explicit visibilityChange
+        }
+    });
 
     // User registers with their ID
     socket.on("register", async ({ userId, token }) => {
