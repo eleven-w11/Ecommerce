@@ -3,6 +3,49 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const Order = require("../models/Order");
 const User = require("../models/StoreUser");
+const VisitorStats = require("../models/VisitorStats");
+
+// Helper to get today's date
+const getTodayDate = () => {
+    const now = new Date();
+    return now.toISOString().split('T')[0];
+};
+
+// Helper to record order stat
+const recordOrderStat = async () => {
+    try {
+        const today = getTodayDate();
+        const currentHour = new Date().getHours();
+
+        let stats = await VisitorStats.findOne({ date: today });
+
+        if (!stats) {
+            stats = new VisitorStats({
+                date: today,
+                totalVisitors: 0,
+                uniqueVisitors: [],
+                ordersReceived: 0,
+                peakVisitors: 0,
+                hourlyStats: Array.from({ length: 24 }, (_, i) => ({
+                    hour: i,
+                    visitors: 0,
+                    orders: 0
+                }))
+            });
+        }
+
+        stats.ordersReceived += 1;
+
+        const hourIndex = stats.hourlyStats.findIndex(h => h.hour === currentHour);
+        if (hourIndex !== -1) {
+            stats.hourlyStats[hourIndex].orders += 1;
+        }
+
+        await stats.save();
+    } catch (error) {
+        console.error("Error recording order stat:", error);
+    }
+};
 
 // Middleware to verify token
 const verifyToken = (req, res, next) => {
