@@ -15,6 +15,7 @@ const server = http.createServer(app);
 const Message = require("./models/Message");
 const Chat = require("./models/Chat");
 const User = require("./models/StoreUser");
+const VisitorStats = require("./models/VisitorStats");
 
 // ✅ Allowed origins
 const allowedOrigins = [
