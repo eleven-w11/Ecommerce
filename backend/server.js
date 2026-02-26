@@ -76,6 +76,69 @@ let connectedSockets = new Set(); // Set of all connected socket IDs
 const lastHeartbeat = new Map(); // Map<socketId, timestamp>
 const HEARTBEAT_TIMEOUT = 10000; // 10 seconds - if no heartbeat, consider inactive
 
+// Helper function to get today's date
+const getTodayDate = () => {
+    const now = new Date();
+    return now.toISOString().split('T')[0];
+};
+
+// Helper function to record visitor stat
+const recordVisitorStat = async (socketId) => {
+    try {
+        const today = getTodayDate();
+        const currentHour = new Date().getHours();
+
+        let stats = await VisitorStats.findOne({ date: today });
+
+        if (!stats) {
+            stats = new VisitorStats({
+                date: today,
+                totalVisitors: 0,
+                uniqueVisitors: [],
+                ordersReceived: 0,
+                peakVisitors: 0,
+                hourlyStats: Array.from({ length: 24 }, (_, i) => ({
+                    hour: i,
+                    visitors: 0,
+                    orders: 0
+                }))
+            });
+        }
+
+        // Increment total visitors
+        stats.totalVisitors += 1;
+
+        // Add unique visitor
+        if (socketId && !stats.uniqueVisitors.includes(socketId)) {
+            stats.uniqueVisitors.push(socketId);
+        }
+
+        // Update hourly stats
+        const hourIndex = stats.hourlyStats.findIndex(h => h.hour === currentHour);
+        if (hourIndex !== -1) {
+            stats.hourlyStats[hourIndex].visitors += 1;
+        }
+
+        await stats.save();
+    } catch (error) {
+        console.error("Error recording visitor stat:", error);
+    }
+};
+
+// Helper function to update peak visitors
+const updatePeakVisitors = async (count) => {
+    try {
+        const today = getTodayDate();
+        await VisitorStats.findOneAndUpdate(
+            { date: today },
+            { $max: { peakVisitors: count } },
+            { upsert: true, setDefaultsOnInsert: true }
+        );
+    } catch (error) {
+        console.error("Error updating peak visitors:", error);
+    }
+};
+
 // Cleanup stale connections every 5 seconds
 setInterval(() => {
     const now = Date.now();
