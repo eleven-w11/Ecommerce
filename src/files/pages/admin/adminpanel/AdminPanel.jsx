@@ -66,10 +66,21 @@ const AdminPanel = () => {
                 { withCredentials: true }
             ).catch(() => ({ data: { users: [] } }));
 
+            // Fetch orders count
+            const ordersRes = await axios.get(
+                `${process.env.REACT_APP_API_BASE_URL}/api/admin/orders`,
+                { withCredentials: true }
+            ).catch(() => ({ data: { orders: [] } }));
+
+            const orders = ordersRes.data?.orders || [];
+            const pendingOrders = orders.filter(o => o.status === 'pending').length;
+
             setStats(prev => ({
                 ...prev,
                 totalProducts: productsRes.data?.products?.length || 0,
-                totalUsers: usersRes.data?.users?.length || 0
+                totalUsers: usersRes.data?.users?.length || 0,
+                totalOrders: orders.length,
+                pendingOrders: pendingOrders
             }));
 
         } catch (error) {
