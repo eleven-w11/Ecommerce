@@ -138,6 +138,9 @@ router.post("/create", verifyToken, async (req, res) => {
 
         await newOrder.save();
 
+        // Record order in visitor stats
+        await recordOrderStat();
+
         res.status(201).json({
             success: true,
             message: "Order created successfully",
