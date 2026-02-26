@@ -177,11 +177,17 @@ io.on("connection", (socket) => {
     lastHeartbeat.set(socket.id, Date.now());
 
     // Handle visibility change from client
-    socket.on("visibilityChange", ({ isVisible }) => {
+    socket.on("visibilityChange", async ({ isVisible }) => {
         if (isVisible) {
             activeVisitors.add(socket.id);
             lastHeartbeat.set(socket.id, Date.now());
             console.log(`👁️ Socket ${socket.id} is now VISIBLE`);
+            
+            // Record visitor stat
+            await recordVisitorStat(socket.id);
+            
+            // Update peak visitors
+            await updatePeakVisitors(activeVisitors.size);
         } else {
             activeVisitors.delete(socket.id);
             console.log(`👁️ Socket ${socket.id} is now HIDDEN`);
