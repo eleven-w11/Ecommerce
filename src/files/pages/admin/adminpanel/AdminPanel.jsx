@@ -96,7 +96,7 @@ const AdminPanel = () => {
                     </div>
                 </div>
                 
-                <nav className="sidebar-nav">
+                {/* <nav className="sidebar-nav">
                     <div className="nav-section">
                         <div className="nav-section-title">Main</div>
                         <div className="nav-item active">
@@ -143,7 +143,7 @@ const AdminPanel = () => {
                             <span>Settings</span>
                         </div>
                     </div>
-                </nav>
+                </nav> */}
 
                 <div className="sidebar-footer">
                     <Link to="/" className="nav-item">
@@ -156,19 +156,10 @@ const AdminPanel = () => {
                 </div>
             </aside>
 
-            {/* Main Content */}
             <main className="admin-main">
-                {/* Header */}
                 <header className="admin-header">
                     <div className="header-left">
                         <h1>Dashboard</h1>
-                        <p>Welcome back, Admin</p>
-                    </div>
-                    <div className="header-right">
-                        <div className={`connection-status ${isConnected ? 'connected' : 'disconnected'}`}>
-                            <span className="status-dot"></span>
-                            {isConnected ? 'Live' : 'Offline'}
-                        </div>
                     </div>
                 </header>
 
@@ -185,14 +176,14 @@ const AdminPanel = () => {
                                     <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                                 </svg>
                             </div>
-                            <div className="live-indicator">
+                            {/* <div className="live-indicator">
                                 <span className="live-dot"></span>
                                 LIVE
-                            </div>
+                            </div> */}
                         </div>
                         <div className="stat-value">{formatNumber(activeVisitors)}</div>
                         <div className="stat-label">Active Visitors</div>
-                        <div className="stat-subtitle">Currently browsing the site</div>
+                        {/* <div className="stat-subtitle">Currently browsing the site</div> */}
                     </div>
 
                     {/* Total Products */}
@@ -207,7 +198,7 @@ const AdminPanel = () => {
                             </div>
                         </div>
                         <div className="stat-value">{formatNumber(stats.totalProducts)}</div>
-                        <div className="stat-label">Total Products</div>
+                        <div className="stat-label">Products</div>
                     </div>
 
                     {/* Total Users */}
@@ -221,7 +212,7 @@ const AdminPanel = () => {
                             </div>
                         </div>
                         <div className="stat-value">{formatNumber(stats.totalUsers)}</div>
-                        <div className="stat-label">Registered Users</div>
+                        <div className="stat-label">Users</div>
                     </div>
 
                     {/* Messages */}
@@ -236,12 +227,12 @@ const AdminPanel = () => {
                         <div className="stat-value">
                             <Link to="/UserList" className="stat-link">View</Link>
                         </div>
-                        <div className="stat-label">Chat Messages</div>
+                        <div className="stat-label">Messages</div>
                     </div>
                 </div>
 
                 {/* Active Visitors Detail Section */}
-                <div className="visitors-detail-section">
+                {/* <div className="visitors-detail-section">
                     <div className="section-header">
                         <h2>
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -290,7 +281,7 @@ const AdminPanel = () => {
                             </span>
                         </div>
                     </div>
-                </div>
+                </div> */}
 
                 {/* Quick Actions */}
                 <div className="quick-actions-section">
