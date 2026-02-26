@@ -185,6 +185,10 @@ function App() {
         
         {/* Admin Panel */}
         <Route path="/AdminPanel" element={<AdminPanel />} />
+        <Route path="/AdminOrders" element={<AdminOrders />} />
+        <Route path="/AdminUsers" element={<AdminUsers />} />
+        <Route path="/AdminProducts" element={<AdminProducts />} />
+        <Route path="/AdminVisitors" element={<AdminVisitors />} />
       </Routes>
     </div>
   );
