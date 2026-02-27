@@ -393,7 +393,7 @@ const Chat = () => {
     // Loading state
     if (isLoading) {
         return (
-            <div className="chat-loader-container" data-testid="chat-loader">
+            <div className="user-chat-loader" data-testid="chat-loader">
                 <div className="loader">
                     <span></span>
                     <span></span>
@@ -406,7 +406,7 @@ const Chat = () => {
     // Not authenticated
     if (!isAuthenticated) {
         return (
-            <div className="chat-not-auth" data-testid="chat-not-auth">
+            <div className="user-chat-not-auth" data-testid="chat-not-auth">
                 <div className="not-auth-content">
                     <div className="not-auth-icon">💬</div>
                     <h2>Please Sign In to Start Chat</h2>
@@ -423,7 +423,7 @@ const Chat = () => {
     }
 
     return (
-        <div className="chat-container" data-testid="chat-container">
+        <div className="user-chat" data-testid="chat-container">
             {/* Error Message */}
             {error && (
                 <div className="chat-error" data-testid="chat-error">
