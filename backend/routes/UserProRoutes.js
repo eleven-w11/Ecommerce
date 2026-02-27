@@ -14,13 +14,17 @@ router.get("/profile", verifyPath, async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
+        // Check if user is admin
+        const isAdmin = user.email === process.env.ADMIN_EMAIL;
+
         res.json({
             success: true,
             _id: user._id,
             name: user.name,
             email: user.email,
             image: user.image,
-            role: user.role
+            role: user.role,
+            isAdmin
         });
 
 
