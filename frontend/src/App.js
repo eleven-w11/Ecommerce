@@ -153,10 +153,20 @@ function App() {
   const handleSignIn = () => setIsAuthenticated(true);
   const handleSignUp = () => setIsAuthenticated(true);
   const handleSignOut = () => setIsAuthenticated(false);
+  
+  // Handle One Tap login success
+  const handleOneTapSuccess = (user) => {
+    setIsAuthenticated(true);
+  };
+
+  // Check if One Tap should show on current page
+  const shouldShowOneTap = !isAuthenticated && 
+    !hideOneTapRoutes.some(route => location.pathname.startsWith(route));
 
   return (
     <div>
       {shouldShowNavBar && <NavBar Authentication={isAuthenticated} />}
+      {shouldShowOneTap && <GoogleOneTap onLoginSuccess={handleOneTapSuccess} />}
       <ScrollToTop />
       <Routes>
         <Route path="/" element={
