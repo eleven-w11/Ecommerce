@@ -1,89 +1,29 @@
-/* Admin Orders */
-.admin-page {
-    min-height: 100vh;
-    background: #0a0a0a;
-    color: #fff;
-}
+/* Admin Orders - Scoped Styles */
+@import './AdminBase.css';
 
-.admin-nav {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 15px 20px;
-    background: #111;
-    border-bottom: 1px solid #222;
-}
-
-.admin-brand {
-    font-size: 16px;
-    font-weight: 600;
-    color: #fff;
-    text-decoration: none;
-    margin-right: auto;
-}
-
-.admin-links {
-    display: flex;
-    gap: 5px;
-}
-
-.admin-links a {
-    padding: 8px 14px;
-    color: #888;
-    text-decoration: none;
-    font-size: 14px;
-    border-radius: 5px;
-}
-
-.admin-links a:hover {
-    color: #fff;
-    background: #1a1a1a;
-}
-
-.admin-links a.active {
-    color: #fff;
-    background: #6366f1;
-}
-
-.back-link {
-    color: #666;
-    text-decoration: none;
-    font-size: 13px;
-}
-
-.back-link:hover {
-    color: #fff;
-}
-
-.admin-body {
-    padding: 30px;
+/* Orders specific styles - scoped under .admin-orders */
+.admin-orders .admin-body {
     max-width: 800px;
-    margin: 0 auto;
 }
 
-.admin-body h1 {
-    font-size: 22px;
-    margin: 0 0 20px 0;
-}
-
-.order-list {
+.admin-orders .order-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.order-card {
+.admin-orders .order-card {
     background: #111;
     border: 1px solid #222;
     border-radius: 8px;
     overflow: hidden;
 }
 
-.order-card.expanded {
+.admin-orders .order-card.expanded {
     border-color: #6366f1;
 }
 
-.order-row {
+.admin-orders .order-row {
     display: flex;
     align-items: center;
     gap: 15px;
@@ -91,11 +31,11 @@
     cursor: pointer;
 }
 
-.order-row:hover {
+.admin-orders .order-row:hover {
     background: #1a1a1a;
 }
 
-.order-id {
+.admin-orders .order-id {
     font-family: monospace;
     font-size: 13px;
     color: #888;
@@ -104,24 +44,24 @@
     border-radius: 4px;
 }
 
-.order-info {
+.admin-orders .order-info {
     flex: 1;
     min-width: 0;
 }
 
-.order-info strong {
+.admin-orders .order-info strong {
     display: block;
     font-size: 14px;
 }
 
-.order-info span {
+.admin-orders .order-info span {
     display: block;
     font-size: 14px;
     color: #22c55e;
     font-weight: 600;
 }
 
-.status-badge {
+.admin-orders .status-badge {
     font-size: 11px;
     font-weight: 600;
     padding: 4px 10px;
@@ -129,46 +69,41 @@
     text-transform: uppercase;
 }
 
-.arrow {
-    color: #666;
-    font-size: 10px;
-}
-
-.order-details {
+.admin-orders .order-details {
     padding: 15px;
     border-top: 1px solid #222;
     background: #0a0a0a;
 }
 
-.detail-row {
+.admin-orders .detail-row {
     display: flex;
     justify-content: space-between;
     padding: 8px 0;
     border-bottom: 1px solid #1a1a1a;
 }
 
-.detail-row strong {
+.admin-orders .detail-row strong {
     color: #888;
     font-size: 13px;
 }
 
-.detail-row span {
+.admin-orders .detail-row span {
     font-size: 13px;
 }
 
-.status-update {
+.admin-orders .status-update {
     margin-top: 15px;
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.status-update strong {
+.admin-orders .status-update strong {
     font-size: 13px;
     color: #888;
 }
 
-.status-update select {
+.admin-orders .status-update select {
     padding: 8px 12px;
     background: #111;
     border: 1px solid #222;
@@ -178,28 +113,14 @@
     cursor: pointer;
 }
 
-.status-update select:focus {
+.admin-orders .status-update select:focus {
     outline: none;
     border-color: #6366f1;
 }
 
-.loading, .empty {
-    text-align: center;
-    padding: 50px;
-    color: #666;
-}
-
+/* Responsive */
 @media (max-width: 768px) {
-    .admin-nav {
-        flex-wrap: wrap;
-    }
-    .admin-links {
-        order: 3;
-        width: 100%;
-        margin-top: 10px;
-        flex-wrap: wrap;
-    }
-    .order-row {
+    .admin-orders .order-row {
         flex-wrap: wrap;
     }
 }
