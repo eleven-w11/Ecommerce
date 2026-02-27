@@ -19,7 +19,7 @@
     "integration_issues": [
       {
         "flow": "All API calls",
-        "issue": "External preview URL (https://34e386bc-c14a-4f28-a16b-3cfba5796af9.preview.emergentagent.com) not responding",
+        "issue": "External preview URL (https://panel-revamp-1.preview.emergentagent.com) not responding",
         "impact": "Frontend cannot make API calls - shows 'No users found', 'No products found' etc.",
         "root_cause": "Infrastructure issue - preview environment not starting up"
       },

@@ -6,7 +6,7 @@ import json
 from datetime import datetime
 
 class ChatSystemAPITester:
-    def __init__(self, base_url="https://visitor-analytics-11.preview.emergentagent.com"):
+    def __init__(self, base_url="https://panel-revamp-1.preview.emergentagent.com"):
         self.base_url = base_url
         self.session = requests.Session()
         self.user_token = None
