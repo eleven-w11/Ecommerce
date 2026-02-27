@@ -105,7 +105,7 @@ const SignUp = ({ onSignUp }) => {
                     localStorage.removeItem("redirectAfterAuth");
                     navigate(redirectPath);
                 } else if (isAdmin) {
-                    navigate("/UserList");
+                    navigate("/AdminPanel");
                 } else {
                     navigate("/UserProfile");
                 }
