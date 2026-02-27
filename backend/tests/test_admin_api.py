@@ -9,8 +9,8 @@ import os
 # Get base URL from environment - using localhost:8001 for testing
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:8001')
 
-# Test credentials
-ADMIN_EMAIL = "admin@admin.com"
+# Test credentials - using test admin account
+ADMIN_EMAIL = "testadmin@admin.com"
 ADMIN_PASSWORD = "admin123"
 TEST_USER_EMAIL = "testuser@test.com"
 TEST_USER_PASSWORD = "test123"
