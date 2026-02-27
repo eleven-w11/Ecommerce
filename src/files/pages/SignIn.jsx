@@ -53,7 +53,7 @@ const SignIn = ({ onSignIn }) => {
                     localStorage.removeItem("redirectAfterAuth");
                     navigate(redirectPath);
                 } else if (isAdmin) {
-                    navigate("/UserList");
+                    navigate("/AdminPanel");
                 } else {
                     navigate("/UserProfile");
                 }
