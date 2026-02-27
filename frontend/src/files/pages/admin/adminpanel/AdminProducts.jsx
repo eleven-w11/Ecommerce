@@ -192,7 +192,7 @@ const AdminProducts = () => {
                     </div>
                 </div>
                 
-                <nav className="sidebar-nav">
+                <div className="sidebar-nav">
                     <div className="nav-section">
                         <div className="nav-section-title">Main Menu</div>
                         <Link to="/AdminPanel" className="nav-item">
@@ -240,7 +240,7 @@ const AdminProducts = () => {
                             <span>Messages</span>
                         </Link>
                     </div>
-                </nav>
+                </div>
 
                 <div className="sidebar-footer">
                     <Link to="/" className="nav-item">
