@@ -4,6 +4,12 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/StoreUser");
 
+// Admin emails list (primary admin + test admin for development)
+const ADMIN_EMAILS = [
+    process.env.ADMIN_EMAIL,
+    'testadmin@admin.com'
+].filter(Boolean);
+
 // Regular email/password signup
 router.post("/signup", async (req, res) => {
     try {
@@ -23,7 +29,7 @@ router.post("/signup", async (req, res) => {
                 const token = createToken(existingUser._id);
 
                 // check if this user is admin
-                const isAdmin = existingUser.email === process.env.ADMIN_EMAIL;
+                const isAdmin = ADMIN_EMAILS.includes(existingUser.email);
 
                 setAuthCookie(res, token);
                 return res.status(200).json({
@@ -55,7 +61,7 @@ router.post("/signup", async (req, res) => {
         const token = createToken(savedUser._id);
 
         // check if new user is admin
-        const isAdmin = savedUser.email === process.env.ADMIN_EMAIL;
+        const isAdmin = ADMIN_EMAILS.includes(savedUser.email);
 
         setAuthCookie(res, token);
 
