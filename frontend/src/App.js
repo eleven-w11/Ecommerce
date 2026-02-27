@@ -31,7 +31,6 @@ import AdminPanel from './files/pages/admin/adminpanel/AdminPanel';
 import AdminOrders from './files/pages/admin/adminpanel/AdminOrders';
 import AdminUsers from './files/pages/admin/adminpanel/AdminUsers';
 import AdminProducts from './files/pages/admin/adminpanel/AdminProducts';
-import AdminVisitors from './files/pages/admin/adminpanel/AdminVisitors';
 // Admin Protection
 import AdminProtectedRoute from './files/components/AdminProtectedRoute';
 // Google One Tap
