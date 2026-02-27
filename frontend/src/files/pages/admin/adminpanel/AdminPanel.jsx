@@ -128,7 +128,7 @@ const AdminPanel = () => {
                     </div>
                 </div>
                 
-                <nav className="sidebar-nav">
+                <div className="sidebar-nav">
                     <div className="nav-section">
                         <div className="nav-section-title">Main Menu</div>
                         {menuItems.map((item) => (
@@ -147,7 +147,7 @@ const AdminPanel = () => {
                             </Link>
                         ))}
                     </div>
-                </nav>
+                </div>
 
                 <div className="sidebar-footer">
                     <Link to="/" className="nav-item">
