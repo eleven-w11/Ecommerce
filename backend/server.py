@@ -84,7 +84,8 @@ app.add_middleware(
 )
 
 # HTTP client for proxying with longer timeout
-http_client = httpx.AsyncClient(timeout=60.0, follow_redirects=True)
+# Disable cookie persistence to prevent auth leakage between requests
+http_client = httpx.AsyncClient(timeout=60.0, follow_redirects=True, cookies=None)
 
 async def proxy_request(request: Request, path: str):
     """Generic proxy function"""
