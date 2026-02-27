@@ -114,3 +114,20 @@ Build a full-stack e-commerce application with comprehensive admin panel functio
 
 ## Last Updated
 December 27, 2025
+
+## CSS Architecture
+All CSS files use scoped class naming to prevent conflicts:
+- `.admin-page .admin-dashboard` - Admin Dashboard
+- `.admin-page .admin-products` - Admin Products
+- `.admin-page .admin-users` - Admin Users
+- `.admin-page .admin-orders` - Admin Orders
+- `.adminchat-container` - Admin Chat
+- `.userlist-container` - User List Chat
+- `.user-chat` - User Chat
+- `.sign` - Sign In/Up pages
+- `.user-profile-container` - User Profile
+- `.cart-page` - Cart
+- `.product-view-page` - Product View
+- `.modern_checkout` - Checkout
+
+Shared admin styles are in `AdminBase.css` and imported by all admin page CSS files.
