@@ -3,6 +3,12 @@ const User = require("../models/StoreUser");
 const verifyPath = require("../middleware/verifyPath");
 const router = express.Router();
 
+// Admin emails list (primary admin + test admin for development)
+const ADMIN_EMAILS = [
+    process.env.ADMIN_EMAIL,
+    'testadmin@admin.com'
+].filter(Boolean);
+
 router.get("/profile", verifyPath, async (req, res) => {
     try {
         console.log("✅ /profile route hit");
@@ -15,7 +21,7 @@ router.get("/profile", verifyPath, async (req, res) => {
         }
 
         // Check if user is admin
-        const isAdmin = user.email === process.env.ADMIN_EMAIL;
+        const isAdmin = ADMIN_EMAILS.includes(user.email);
 
         res.json({
             success: true,
