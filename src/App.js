@@ -182,15 +182,15 @@ function App() {
         
         {/* Chat Routes */}
         <Route path="/Chat" element={<Chat />} />
-        <Route path="/UserList" element={<UserList />} />
-        <Route path="/AdminChat/:odirUserId" element={<AdminChat />} />
+        <Route path="/UserList" element={<AdminProtectedRoute><UserList /></AdminProtectedRoute>} />
+        <Route path="/AdminChat/:odirUserId" element={<AdminProtectedRoute><AdminChat /></AdminProtectedRoute>} />
         
-        {/* Admin Panel */}
-        <Route path="/AdminPanel" element={<AdminPanel />} />
-        <Route path="/AdminOrders" element={<AdminOrders />} />
-        <Route path="/AdminUsers" element={<AdminUsers />} />
-        <Route path="/AdminProducts" element={<AdminProducts />} />
-        <Route path="/AdminVisitors" element={<AdminVisitors />} />
+        {/* Admin Panel - All Protected */}
+        <Route path="/AdminPanel" element={<AdminProtectedRoute><AdminPanel /></AdminProtectedRoute>} />
+        <Route path="/AdminOrders" element={<AdminProtectedRoute><AdminOrders /></AdminProtectedRoute>} />
+        <Route path="/AdminUsers" element={<AdminProtectedRoute><AdminUsers /></AdminProtectedRoute>} />
+        <Route path="/AdminProducts" element={<AdminProtectedRoute><AdminProducts /></AdminProtectedRoute>} />
+        <Route path="/AdminVisitors" element={<AdminProtectedRoute><AdminVisitors /></AdminProtectedRoute>} />
       </Routes>
     </div>
   );
