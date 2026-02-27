@@ -85,7 +85,7 @@ const SignIn = ({ onSignIn }) => {
             setTimeout(() => navigate(redirectPath), 1500);
         } else if (userData.isAdmin) {
             setSuccess("Welcome Admin! Redirecting...");
-            setTimeout(() => navigate("/UserList"), 1500);
+            setTimeout(() => navigate("/AdminPanel"), 1500);
         } else {
             setSuccess("Welcome! Redirecting...");
             setTimeout(() => navigate("/UserProfile"), 1500);
