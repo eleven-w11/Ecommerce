@@ -119,9 +119,9 @@ function App() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const shouldShowNavBar = !(width < 600 && hideNavBarRoutes.some(route =>
-    location.pathname.startsWith(route.replace(':userId', ''))
-  ));
+  // Hide navbar completely on admin routes, or on mobile for chat routes
+  const shouldShowNavBar = !isAdminRoute(location.pathname) && 
+    !(width < 600 && location.pathname.startsWith('/Chat'));
 
   useEffect(() => {
     const checkAuth = async () => {
