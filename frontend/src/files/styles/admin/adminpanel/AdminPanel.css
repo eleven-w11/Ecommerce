@@ -1,84 +1,14 @@
-/* Admin Panel - Simple Clean */
-.admin-page {
-    min-height: 100vh;
-    background: #0a0a0a;
-    color: #fff;
-}
+/* Admin Panel Dashboard - Scoped Styles */
+@import './AdminBase.css';
 
-.admin-nav {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 15px 20px;
-    background: #111;
-    border-bottom: 1px solid #222;
-}
-
-.admin-brand {
-    font-size: 16px;
-    font-weight: 600;
-    color: #fff;
-    text-decoration: none;
-    margin-right: auto;
-}
-
-.admin-links {
-    display: flex;
-    gap: 5px;
-}
-
-.admin-links a {
-    padding: 8px 14px;
-    color: #888;
-    text-decoration: none;
-    font-size: 14px;
-    border-radius: 5px;
-}
-
-.admin-links a:hover {
-    color: #fff;
-    background: #1a1a1a;
-}
-
-.admin-links a.active {
-    color: #fff;
-    background: #6366f1;
-}
-
-.back-link {
-    color: #666;
-    text-decoration: none;
-    font-size: 13px;
-}
-
-.back-link:hover {
-    color: #fff;
-}
-
-.admin-body {
-    padding: 30px;
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.admin-body h1 {
-    font-size: 22px;
-    margin: 0 0 25px 0;
-}
-
-.admin-body h2 {
-    font-size: 16px;
-    margin: 30px 0 15px 0;
-    color: #888;
-}
-
-.stats-grid {
+/* Dashboard specific styles - scoped under .admin-dashboard */
+.admin-dashboard .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 15px;
 }
 
-.stat-box {
+.admin-dashboard .stat-box {
     background: #111;
     border: 1px solid #222;
     border-radius: 8px;
@@ -86,26 +16,26 @@
     text-align: center;
 }
 
-.stat-num {
+.admin-dashboard .stat-num {
     display: block;
     font-size: 28px;
     font-weight: 700;
 }
 
-.stat-text {
+.admin-dashboard .stat-text {
     display: block;
     font-size: 13px;
     color: #666;
     margin-top: 5px;
 }
 
-.quick-links {
+.admin-dashboard .quick-links {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
 }
 
-.quick-link {
+.admin-dashboard .quick-link {
     display: block;
     padding: 15px;
     background: #111;
@@ -117,37 +47,21 @@
     font-size: 14px;
 }
 
-.quick-link:hover {
+.admin-dashboard .quick-link:hover {
     border-color: #6366f1;
 }
 
-.loading {
-    text-align: center;
-    padding: 50px;
-    color: #666;
-}
-
+/* Responsive */
 @media (max-width: 768px) {
-    .admin-nav {
-        flex-wrap: wrap;
-    }
-    
-    .admin-links {
-        order: 3;
-        width: 100%;
-        margin-top: 10px;
-        flex-wrap: wrap;
-    }
-    
-    .stats-grid,
-    .quick-links {
+    .admin-dashboard .stats-grid,
+    .admin-dashboard .quick-links {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (max-width: 480px) {
-    .stats-grid,
-    .quick-links {
+    .admin-dashboard .stats-grid,
+    .admin-dashboard .quick-links {
         grid-template-columns: 1fr;
     }
 }
