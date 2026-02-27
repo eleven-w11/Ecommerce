@@ -50,7 +50,7 @@ const AdminPanel = () => {
     };
 
     return (
-        <div className="admin-page">
+        <div className="admin-page admin-dashboard">
             <nav className="admin-nav">
                 <Link to="/AdminPanel" className="admin-brand">Admin Panel</Link>
                 <div className="admin-links">
