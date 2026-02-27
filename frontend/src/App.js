@@ -35,8 +35,13 @@ import AdminVisitors from './files/pages/admin/adminpanel/AdminVisitors';
 // Admin Protection
 import AdminProtectedRoute from './files/components/AdminProtectedRoute';
 
-// Routes where navbar should be hidden on mobile
+// Routes where navbar should be completely hidden (admin pages)
 const hideNavBarRoutes = ['/Chat', '/UserList', '/AdminChat', '/AdminPanel', '/AdminOrders', '/AdminUsers', '/AdminProducts', '/AdminVisitors'];
+
+// Check if current route is an admin route
+const isAdminRoute = (pathname) => {
+  return hideNavBarRoutes.some(route => pathname.startsWith(route.replace(':userId', '')));
+};
 
 
 function App() {
