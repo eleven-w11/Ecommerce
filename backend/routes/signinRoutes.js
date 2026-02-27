@@ -5,6 +5,12 @@ const jwt = require("jsonwebtoken");
 const dayjs = require("dayjs");
 const User = require("../models/StoreUser");
 
+// Admin emails list (primary admin + test admin for development)
+const ADMIN_EMAILS = [
+    process.env.ADMIN_EMAIL,
+    'testadmin@admin.com'
+].filter(Boolean);
+
 router.post("/signin", async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -40,7 +46,7 @@ router.post("/signin", async (req, res) => {
                 maxAge: 3600000, // 1 hour
             });
 
-            const isAdmin = existingUser.email === process.env.ADMIN_EMAIL;
+            const isAdmin = ADMIN_EMAILS.includes(existingUser.email);
 
             return res.status(200).json({
                 success: true,
