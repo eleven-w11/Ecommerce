@@ -1,87 +1,115 @@
-# E-commerce WebVerse - Product Requirements Document
+# E-Commerce Admin Panel - Product Requirements Document
 
 ## Original Problem Statement
-Build an e-commerce application with checkout authentication flow, order saving to MongoDB, and order confirmation page.
+Build a comprehensive admin panel for an e-commerce application with:
+1. **View Orders**: Display all-time order records with complete user details
+2. **Users Section**: Show all-time login information for all users (profile name, email, timestamp for every login)
+3. **Products Section**: Admin page to display products with Edit/Delete/Add functionality using modals
+4. **Active Visitors Record**: Track and display daily visitor and order counts with historical data
+5. **User Image Storage**: Download and store Google user profile images locally
+6. **UI Updates**: Improve UI for user list, user profile, and contact us pages
+7. **Real-time Visitor Count**: Implement real-time visitor tracking on admin panel
 
 ## Architecture
-- **Frontend**: React.js (Create React App)
-- **Backend**: Node.js/Express
-- **Database**: MongoDB
-- **Authentication**: JWT-based with cookies
-
-## User Personas
-1. **Shopper**: Browse products, add to cart, checkout
-2. **Registered User**: Has account, can view order history
-3. **Admin**: Manage products and view all orders
-
-## Core Requirements
-- Product browsing and viewing
-- Shopping cart functionality
-- User authentication (Sign In/Sign Up)
-- Checkout with authentication check
-- Order saving to MongoDB
-- Order confirmation page
-- Redirect to previous page after authentication
+```
+/app/
+├── backend/
+│   ├── middleware/
+│   ├── models/ (StoreUser.js, Product.js, Order.js, VisitorStats.js)
+│   ├── routes/ (adminRoutes.js, productRoutes.js, signinRoutes.js, etc.)
+│   ├── server.js (Node.js Express + Socket.IO)
+│   └── server.py (FastAPI proxy to Node.js)
+├── frontend/ (React app)
+│   ├── src/
+│   │   ├── files/pages/admin/adminpanel/
+│   │   │   ├── AdminPanel.jsx
+│   │   │   ├── AdminOrders.jsx
+│   │   │   ├── AdminUsers.jsx
+│   │   │   ├── AdminProducts.jsx
+│   │   │   └── AdminVisitors.jsx
+│   │   └── App.js
+│   └── package.json
+└── memory/
+    └── PRD.md
+```
 
 ## What's Been Implemented
 
-### Feb 24, 2026
-1. **Sign-In Popup for Checkout** (`SignInPopup.jsx`)
-   - Shows popup when unauthenticated user visits checkout
-   - Direct sign-in from popup
-   - Links to full sign-in page or sign-up
+### Session: 2026-02-27
 
-2. **Order Model** (`backend/models/Order.js`)
-   - Stores items, shipping address, payment method
-   - Tracks status: pending, confirmed, processing, shipped, delivered, cancelled
+#### Completed Features:
+1. **Login History Tracking (P0 - Blocker Fixed)**
+   - Updated `/app/backend/routes/signinRoutes.js` to record login timestamps in `loginHistory` array
+   - Both local signin and Google OAuth now track login history
+   - Each login creates a new timestamp entry in the format "DD-MM-YYYY HH:mm:ss"
 
-3. **Order API Routes** (`backend/routes/orderRoutes.js`)
-   - POST /api/orders/create - Create new order
-   - GET /api/orders/my-orders - Get user's orders
-   - GET /api/orders/:orderId - Get specific order
+2. **Admin Panel Dashboard**
+   - Updated Quick Actions to link to all admin pages (Products, Orders, Users, Analytics, Messages)
+   - Added data-testid attributes for testing
 
-4. **Checkout Authentication Flow** (`Checkout.jsx`)
-   - Check auth on page load
-   - Show sign-in popup if not authenticated
-   - Hide checkout form until signed in
-   - Save order to MongoDB on payment
+3. **Admin Users Page**
+   - Displays all users with their complete login history
+   - Search functionality by name/email
+   - Expandable cards showing login timestamps
+   - Google user indicator
 
-5. **Redirect After Auth** (`SignIn.jsx`, `SignUp.jsx`)
-   - Stores current path in localStorage
-   - Returns user to checkout after signing in
+4. **Admin Products Page**
+   - Modal-based Add/Edit/Delete functionality
+   - Product grid with images, prices, categories
+   - Search functionality
+   - Form fields: name, price, discounted price, category, description, images
 
-6. **Order Confirmation Page** (`OrderConfirmation.jsx`)
-   - Displays order details, items, shipping, payment
-   - Shows order status with color-coded badge
-   - Print functionality
+5. **Admin Orders Page**
+   - Displays all orders with user details
+   - Status management (pending, confirmed, processing, shipped, delivered, cancelled)
+   - Shipping address and order items display
 
-7. **SlideMenu Update** (`SlideMenu.jsx`)
-   - Added "My Order" link for authenticated users
-   - Only shows when user has pending order
-   - Removed Man/Woman dropdown categories
+6. **Admin Visitors Page**
+   - Real-time active visitor count via Socket.IO
+   - Today's statistics (total visits, unique visitors, orders, peak concurrent)
+   - Hourly activity chart
+   - All-time statistics
+   - Historical records (last 30 days)
 
-8. **Removed Pages**
-   - ManTop, ManBottom, ManShoes
-   - WomanTop, WomanBottom, WomanShoes, WomanBags, WomanAccessories
+7. **Security Fix**
+   - Fixed httpx cookie caching vulnerability in server.py proxy
+   - Each request now creates a fresh httpx client to prevent auth leakage
 
-## Prioritized Backlog
+8. **Deployment Fix**
+   - Fixed package.json start script to use `react-scripts start` instead of concurrently
 
-### P0 (Critical)
-- [x] Checkout authentication check
-- [x] Order saving to MongoDB
-- [x] Order confirmation page
+### Backend API Endpoints (All Tested & Working):
+- `GET /api/admin/users` - All users with login history
+- `GET /api/admin/users/:id` - Single user details
+- `GET /api/admin/orders` - All orders with user info
+- `PUT /api/admin/orders/:orderId/status` - Update order status
+- `GET /api/admin/products` - All products
+- `POST /api/admin/products` - Create product
+- `PUT /api/admin/products/:id` - Update product
+- `DELETE /api/admin/products/:id` - Delete product
+- `GET /api/admin/visitor-stats` - Visitor analytics
 
-### P1 (Important)
-- [ ] Order history page in user profile
-- [ ] Email notifications on order
-- [ ] Admin order management
+### Database Models:
+- `StoreUser`: { name, email, password, image, googleId, loginHistory: [String] }
+- `Order`: { orderId, userId, items, shippingAddress, paymentMethod, status, totalAmount }
+- `Product`: { product_name, product_price, dis_product_price, p_type, p_des, images }
+- `VisitorStats`: { date, totalVisitors, uniqueVisitors, ordersReceived, peakVisitors, hourlyStats }
 
-### P2 (Nice to Have)
-- [ ] Order tracking
-- [ ] Invoice PDF generation
-- [ ] Multiple shipping addresses
+## Test Credentials
+- **Admin User**: admin@admin.com / admin123
+- **Test User**: testuser@test.com / test123
 
-## Next Tasks
-1. Test full checkout flow end-to-end
-2. Add order history section to UserProfile
-3. Implement admin order management
+## Known Issues
+1. External preview URL (https://34e386bc-c14a-4f28-a16b-3cfba5796af9.preview.emergentagent.com) experiencing connectivity issues - platform infrastructure problem
+2. Minor React Hook dependency warnings in admin pages (cosmetic, not affecting functionality)
+
+## Future Tasks / Backlog
+1. **Refactoring**: Extract `getImageUrl` helper into shared utility file (src/utils/imageUtils.js)
+2. **Database Query Optimization**: Add pagination/limits to admin queries for scalability
+3. **UI Polish**: Additional animations and loading states
+4. **Product Images**: Align frontend image array format with backend schema
+
+## Testing
+- Backend: 100% (20/20 tests passed)
+- Frontend: 85% (UI renders correctly, integration blocked by external URL)
+- Test report: `/app/test_reports/iteration_3.json`
