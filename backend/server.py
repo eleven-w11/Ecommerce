@@ -163,7 +163,8 @@ async def root():
 async def health():
     """Health check"""
     try:
-        response = await http_client.get(f"{NODE_URL}/api/health", timeout=5.0)
-        return {"proxy": "ok", "nodejs": response.json()}
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            response = await client.get(f"{NODE_URL}/api/health")
+            return {"proxy": "ok", "nodejs": response.json()}
     except:
         return {"proxy": "ok", "nodejs": "starting"}
