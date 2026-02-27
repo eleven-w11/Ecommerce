@@ -7,6 +7,12 @@ const Order = require("../models/Order");
 const Product = require("../models/Product");
 const VisitorStats = require("../models/VisitorStats");
 
+// Admin emails list (primary admin + test admin for development)
+const ADMIN_EMAILS = [
+    process.env.ADMIN_EMAIL,
+    'testadmin@admin.com'
+].filter(Boolean);
+
 // Middleware to verify admin token
 const verifyAdmin = async (req, res, next) => {
     try {
@@ -18,7 +24,7 @@ const verifyAdmin = async (req, res, next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const user = await User.findById(decoded.userId);
         
-        if (!user || user.email !== process.env.ADMIN_EMAIL) {
+        if (!user || !ADMIN_EMAILS.includes(user.email)) {
             return res.status(403).json({ success: false, message: "Admin access required" });
         }
 
