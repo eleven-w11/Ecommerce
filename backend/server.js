@@ -21,7 +21,7 @@ const VisitorStats = require("./models/VisitorStats");
 const allowedOrigins = [
     "https://ecommerce-vu3m.onrender.com",
     "http://localhost:3000",
-    "https://aaa48806-5355-4f41-a0f0-54d03ee1a5a4.preview.emergentagent.com",
+    "https://visitor-analytics-11.preview.emergentagent.com",
     process.env.APP_URL
 ].filter(Boolean);
 
