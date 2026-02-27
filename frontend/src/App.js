@@ -210,7 +210,6 @@ function App() {
         <Route path="/AdminOrders" element={<AdminProtectedRoute><AdminOrders /></AdminProtectedRoute>} />
         <Route path="/AdminUsers" element={<AdminProtectedRoute><AdminUsers /></AdminProtectedRoute>} />
         <Route path="/AdminProducts" element={<AdminProtectedRoute><AdminProducts /></AdminProtectedRoute>} />
-        <Route path="/AdminVisitors" element={<AdminProtectedRoute><AdminVisitors /></AdminProtectedRoute>} />
       </Routes>
     </div>
   );
