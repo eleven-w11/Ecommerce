@@ -180,13 +180,15 @@ const GoogleOneTap = ({ isAuthenticated, onSignIn }) => {
         };
     }, [isAuthenticated, handleCredentialResponse, location.pathname, showPrompt]);
 
-    // Re-trigger prompt when navigating to SignIn page
+    // Re-trigger prompt when navigating to priority pages
     useEffect(() => {
         if (isAuthenticated) return;
         
-        const isAuthPage = location.pathname === '/SignIn' || location.pathname === '/SignUp';
-        if (isAuthPage && window.google?.accounts?.id && isGoogleInitialized) {
-            showPrompt(ONE_TAP_CONFIG.DELAY_ON_AUTH_PAGES);
+        const isPriorityPage = ONE_TAP_CONFIG.PRIORITY_PAGES.some(page => 
+            location.pathname === page || location.pathname.startsWith(page)
+        );
+        if (isPriorityPage && window.google?.accounts?.id && isGoogleInitialized) {
+            showPrompt(ONE_TAP_CONFIG.DELAY_ON_PRIORITY_PAGES);
         }
     }, [location.pathname, isAuthenticated, showPrompt]);
 
