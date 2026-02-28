@@ -50,8 +50,9 @@ const AdminPanel = () => {
     };
 
     return (
-        <div className="admin-page admin-dashboard">
-            <nav className="admin-nav">
+        <div className="admin-page admin-dashboard" data-testid="admin-dashboard">
+            {/* Top Navigation Bar */}
+            <nav className="admin-nav" data-testid="admin-nav">
                 <Link to="/AdminPanel" className="admin-brand">Admin Panel</Link>
                 <div className="admin-links">
                     {navItems.map((item) => (
@@ -59,46 +60,65 @@ const AdminPanel = () => {
                             key={item.path}
                             to={item.path}
                             className={location.pathname === item.path ? 'active' : ''}
+                            data-testid={`nav-${item.label.toLowerCase()}`}
                         >
                             {item.label}
                         </Link>
                     ))}
                 </div>
-                <Link to="/" className="back-link">← Back to Store</Link>
+                <Link to="/" className="back-link" data-testid="back-to-store">← Back to Store</Link>
             </nav>
 
-            <div className="admin-body">
+            {/* Full Width Content */}
+            <div className="admin-body" data-testid="admin-body">
                 <h1>Dashboard</h1>
 
                 {loading ? (
-                    <div className="loading">Loading...</div>
+                    <div className="loading" data-testid="loading">Loading...</div>
                 ) : (
                     <>
-                        <div className="stats-grid">
-                            <div className="stat-box">
+                        {/* Stats Grid - 3 cards only (removed Active Visitors) */}
+                        <div className="stats-grid" data-testid="stats-grid">
+                            <div className="stat-box" data-testid="stat-users">
                                 <span className="stat-num">{stats.totalUsers}</span>
-                                <span className="stat-text">Users</span>
+                                <span className="stat-text">Total Users</span>
                             </div>
-                            <div className="stat-box">
+                            <div className="stat-box" data-testid="stat-products">
                                 <span className="stat-num">{stats.totalProducts}</span>
                                 <span className="stat-text">Products</span>
                             </div>
-                            <div className="stat-box">
+                            <div className="stat-box" data-testid="stat-orders">
                                 <span className="stat-num">{stats.totalOrders}</span>
-                                <span className="stat-text">Orders</span>
-                            </div>
-                            <div className="stat-box">
-                                <span className="stat-num">{stats.pendingOrders}</span>
-                                <span className="stat-text">Pending</span>
+                                <span className="stat-text">Total Orders</span>
+                                {stats.pendingOrders > 0 && (
+                                    <span className="pending-badge">{stats.pendingOrders} pending</span>
+                                )}
                             </div>
                         </div>
 
-                        <h2>Quick Links</h2>
-                        <div className="quick-links">
-                            <Link to="/AdminProducts" className="quick-link">Manage Products</Link>
-                            <Link to="/AdminOrders" className="quick-link">View Orders</Link>
-                            <Link to="/AdminUsers" className="quick-link">View Users</Link>
-                            <Link to="/UserList" className="quick-link">Messages</Link>
+                        {/* Quick Actions - 4 cards only (removed Analytics & Visitors) */}
+                        <h2>Quick Actions</h2>
+                        <div className="quick-links" data-testid="quick-links">
+                            <Link to="/AdminProducts" className="quick-link" data-testid="link-products">
+                                <span className="link-icon">📦</span>
+                                <span className="link-title">Manage Products</span>
+                                <span className="link-desc">Add, edit or remove products</span>
+                            </Link>
+                            <Link to="/AdminOrders" className="quick-link" data-testid="link-orders">
+                                <span className="link-icon">🛒</span>
+                                <span className="link-title">View Orders</span>
+                                <span className="link-desc">Process and track orders</span>
+                            </Link>
+                            <Link to="/AdminUsers" className="quick-link" data-testid="link-users">
+                                <span className="link-icon">👥</span>
+                                <span className="link-title">User Management</span>
+                                <span className="link-desc">View user activity and history</span>
+                            </Link>
+                            <Link to="/UserList" className="quick-link" data-testid="link-messages">
+                                <span className="link-icon">💬</span>
+                                <span className="link-title">Customer Messages</span>
+                                <span className="link-desc">Respond to customer inquiries</span>
+                            </Link>
                         </div>
                     </>
                 )}
