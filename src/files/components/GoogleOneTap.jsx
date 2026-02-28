@@ -9,8 +9,8 @@ const GoogleOneTap = ({ isAuthenticated, onSignIn }) => {
     const handleCredentialResponse = useCallback(async (response) => {
         try {
             const result = await axios.post(
-                `${process.env.REACT_APP_API_BASE_URL}/api/auth/google`,
-                { credential: response.credential },
+                `${process.env.REACT_APP_API_BASE_URL}/api/signup/google`,
+                { id_token: response.credential },
                 { withCredentials: true }
             );
 
