@@ -8,9 +8,11 @@ let isGoogleInitialized = false;
 // ⏱️ CONFIGURABLE SETTINGS
 const ONE_TAP_CONFIG = {
     // Delay before showing One Tap (in milliseconds)
-    // Set to 0 for immediate, or increase for delayed appearance
-    DELAY_ON_REGULAR_PAGES: 3000,  // 3 seconds delay on regular pages
-    DELAY_ON_AUTH_PAGES: 500,      // 0.5 second delay on SignIn/SignUp pages (show faster)
+    DELAY_ON_REGULAR_PAGES: 120000,  // 2 minutes delay on regular pages
+    DELAY_ON_PRIORITY_PAGES: 0,      // Immediate on SignIn, SignUp, Cart, Products pages
+    
+    // Pages where One Tap shows immediately
+    PRIORITY_PAGES: ['/SignIn', '/SignUp', '/Cart', '/BestSellingProducts', '/TopProducts', '/ProductView'],
     
     // Should One Tap auto-select the account if only one is available?
     AUTO_SELECT: false,
@@ -146,9 +148,11 @@ const GoogleOneTap = ({ isAuthenticated, onSignIn }) => {
             }
 
             // Determine delay based on current page
-            const isAuthPage = location.pathname === '/SignIn' || location.pathname === '/SignUp';
-            const delay = isAuthPage 
-                ? ONE_TAP_CONFIG.DELAY_ON_AUTH_PAGES 
+            const isPriorityPage = ONE_TAP_CONFIG.PRIORITY_PAGES.some(page => 
+                location.pathname === page || location.pathname.startsWith(page)
+            );
+            const delay = isPriorityPage 
+                ? ONE_TAP_CONFIG.DELAY_ON_PRIORITY_PAGES 
                 : ONE_TAP_CONFIG.DELAY_ON_REGULAR_PAGES;
 
             showPrompt(delay);
@@ -176,13 +180,15 @@ const GoogleOneTap = ({ isAuthenticated, onSignIn }) => {
         };
     }, [isAuthenticated, handleCredentialResponse, location.pathname, showPrompt]);
 
-    // Re-trigger prompt when navigating to SignIn page
+    // Re-trigger prompt when navigating to priority pages
     useEffect(() => {
         if (isAuthenticated) return;
         
-        const isAuthPage = location.pathname === '/SignIn' || location.pathname === '/SignUp';
-        if (isAuthPage && window.google?.accounts?.id && isGoogleInitialized) {
-            showPrompt(ONE_TAP_CONFIG.DELAY_ON_AUTH_PAGES);
+        const isPriorityPage = ONE_TAP_CONFIG.PRIORITY_PAGES.some(page => 
+            location.pathname === page || location.pathname.startsWith(page)
+        );
+        if (isPriorityPage && window.google?.accounts?.id && isGoogleInitialized) {
+            showPrompt(ONE_TAP_CONFIG.DELAY_ON_PRIORITY_PAGES);
         }
     }, [location.pathname, isAuthenticated, showPrompt]);
 
