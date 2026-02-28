@@ -8,9 +8,11 @@ let isGoogleInitialized = false;
 // ⏱️ CONFIGURABLE SETTINGS
 const ONE_TAP_CONFIG = {
     // Delay before showing One Tap (in milliseconds)
-    // Set to 0 for immediate, or increase for delayed appearance
-    DELAY_ON_REGULAR_PAGES: 3000,  // 3 seconds delay on regular pages
-    DELAY_ON_AUTH_PAGES: 500,      // 0.5 second delay on SignIn/SignUp pages (show faster)
+    DELAY_ON_REGULAR_PAGES: 120000,  // 2 minutes delay on regular pages
+    DELAY_ON_PRIORITY_PAGES: 0,      // Immediate on SignIn, SignUp, Cart, Products pages
+    
+    // Pages where One Tap shows immediately
+    PRIORITY_PAGES: ['/SignIn', '/SignUp', '/Cart', '/BestSellingProducts', '/TopProducts', '/ProductView'],
     
     // Should One Tap auto-select the account if only one is available?
     AUTO_SELECT: false,
