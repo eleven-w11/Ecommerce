@@ -157,6 +157,9 @@ function App() {
 
   return (
     <div>
+      {/* Google One Tap - Shows on every page when user is not signed in */}
+      <GoogleOneTap isAuthenticated={isAuthenticated} onSignIn={handleSignIn} />
+      
       {shouldShowNavBar && <NavBar Authentication={isAuthenticated} />}
       <ScrollToTop />
       <Routes>
