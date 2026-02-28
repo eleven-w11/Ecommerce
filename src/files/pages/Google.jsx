@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { getGoogleInitialized, setGoogleInitialized } from '../components/GoogleOneTap';
 
 const Google = ({ onSuccess, onError }) => {
     const googleButtonRef = useRef(null);
@@ -13,7 +14,7 @@ const Google = ({ onSuccess, onError }) => {
                     {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        credentials: "include", // 👈 token cookie store hoga
+                        credentials: "include",
                         body: JSON.stringify({ id_token: response.credential }),
                     }
                 );
@@ -33,35 +34,41 @@ const Google = ({ onSuccess, onError }) => {
         };
 
         const loadGoogleAuth = () => {
-            if (window.google) {
+            if (!window.google?.accounts?.id) {
+                setTimeout(loadGoogleAuth, 100);
+                return;
+            }
+
+            // Only initialize if not already done by GoogleOneTap
+            if (!getGoogleInitialized()) {
                 window.google.accounts.id.initialize({
                     client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
                     callback: handleCredentialResponse,
                     auto_select: false,
                 });
+                setGoogleInitialized(true);
+            }
 
-                // Render invisible button
+            // Always render the button
+            if (googleButtonRef.current) {
                 window.google.accounts.id.renderButton(googleButtonRef.current, {
                     type: "icon",
                     size: "large",
                     theme: "outline",
-                    width: "0", // invisible
+                    width: "0",
                 });
             }
         };
 
-        // Load Google script
-        if (!window.google) {
+        // Load Google script if not loaded
+        if (!document.getElementById('google-identity-script')) {
             const script = document.createElement("script");
+            script.id = 'google-identity-script';
             script.src = "https://accounts.google.com/gsi/client";
             script.async = true;
             script.defer = true;
             script.onload = loadGoogleAuth;
             document.body.appendChild(script);
-
-            return () => {
-                document.body.removeChild(script);
-            };
         } else {
             loadGoogleAuth();
         }
