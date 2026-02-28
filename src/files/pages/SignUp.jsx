@@ -105,7 +105,7 @@ const SignUp = ({ onSignUp }) => {
                     localStorage.removeItem("redirectAfterAuth");
                     navigate(redirectPath);
                 } else if (isAdmin) {
-                    navigate("/UserList");
+                    navigate("/AdminPanel");
                 } else {
                     navigate("/UserProfile");
                 }
@@ -134,7 +134,7 @@ const SignUp = ({ onSignUp }) => {
             setTimeout(() => navigate(redirectPath), 1500);
         } else if (userData.isAdmin) {
             setSuccess("Welcome Admin! Redirecting...");
-            setTimeout(() => navigate("/UserList"), 1500);
+            setTimeout(() => navigate("/AdminPanel"), 1500);
         } else {
             setSuccess("Welcome! Redirecting...");
             setTimeout(() => navigate("/UserProfile"), 1500);

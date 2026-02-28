@@ -1,0 +1,126 @@
+/* Admin Orders - Scoped Styles */
+@import './AdminBase.css';
+
+/* Orders specific styles - scoped under .admin-orders */
+.admin-orders .admin-body {
+    max-width: 800px;
+}
+
+.admin-orders .order-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.admin-orders .order-card {
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.admin-orders .order-card.expanded {
+    border-color: #6366f1;
+}
+
+.admin-orders .order-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 15px;
+    cursor: pointer;
+}
+
+.admin-orders .order-row:hover {
+    background: #1a1a1a;
+}
+
+.admin-orders .order-id {
+    font-family: monospace;
+    font-size: 13px;
+    color: #888;
+    background: #1a1a1a;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.admin-orders .order-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.admin-orders .order-info strong {
+    display: block;
+    font-size: 14px;
+}
+
+.admin-orders .order-info span {
+    display: block;
+    font-size: 14px;
+    color: #22c55e;
+    font-weight: 600;
+}
+
+.admin-orders .status-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.admin-orders .order-details {
+    padding: 15px;
+    border-top: 1px solid #222;
+    background: #0a0a0a;
+}
+
+.admin-orders .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #1a1a1a;
+}
+
+.admin-orders .detail-row strong {
+    color: #888;
+    font-size: 13px;
+}
+
+.admin-orders .detail-row span {
+    font-size: 13px;
+}
+
+.admin-orders .status-update {
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-orders .status-update strong {
+    font-size: 13px;
+    color: #888;
+}
+
+.admin-orders .status-update select {
+    padding: 8px 12px;
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.admin-orders .status-update select:focus {
+    outline: none;
+    border-color: #6366f1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-orders .order-row {
+        flex-wrap: wrap;
+    }
+}

@@ -74,17 +74,29 @@ async def lifespan(app: FastAPI):
 # Create FastAPI app
 app = FastAPI(lifespan=lifespan)
 
-# CORS configuration
+# CORS configuration - allow specific origins when using credentials
+ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:8001",
+    os.environ.get("APP_URL", ""),
+]
+# Filter out empty strings
+ALLOWED_ORIGINS = [o for o in ALLOWED_ORIGINS if o]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # HTTP client for proxying with longer timeout
-http_client = httpx.AsyncClient(timeout=60.0, follow_redirects=True)
+# Disable cookie storage completely to prevent auth leakage between requests
+
+async def get_http_client():
+    """Create a new client for each request to avoid cookie leakage"""
+    return httpx.AsyncClient(timeout=60.0, follow_redirects=True)
 
 async def proxy_request(request: Request, path: str):
     """Generic proxy function"""
@@ -93,44 +105,46 @@ async def proxy_request(request: Request, path: str):
     # Get request body
     body = await request.body()
     
-    # Forward headers
+    # Forward headers - but explicitly exclude cookies unless they're being forwarded from request
     headers = {}
     for key, value in request.headers.items():
         if key.lower() not in ['host', 'content-length']:
             headers[key] = value
     
-    try:
-        response = await http_client.request(
-            method=request.method,
-            url=url,
-            content=body,
-            headers=headers,
-            params=request.query_params
-        )
-        
-        # Build response headers
-        response_headers = {}
-        for key, value in response.headers.items():
-            if key.lower() not in ['content-encoding', 'content-length', 'transfer-encoding']:
-                response_headers[key] = value
-        
-        return Response(
-            content=response.content,
-            status_code=response.status_code,
-            headers=response_headers,
-            media_type=response.headers.get('content-type')
-        )
-    except httpx.ConnectError:
-        return JSONResponse(
-            status_code=503,
-            content={"error": "Node.js backend not available"}
-        )
-    except Exception as e:
-        print(f"Proxy error for {path}: {e}")
-        return JSONResponse(
-            status_code=500,
-            content={"error": str(e)}
-        )
+    # Create a fresh client for each request to avoid cookie accumulation
+    async with httpx.AsyncClient(timeout=60.0, follow_redirects=True) as client:
+        try:
+            response = await client.request(
+                method=request.method,
+                url=url,
+                content=body,
+                headers=headers,
+                params=request.query_params
+            )
+            
+            # Build response headers
+            response_headers = {}
+            for key, value in response.headers.items():
+                if key.lower() not in ['content-encoding', 'content-length', 'transfer-encoding']:
+                    response_headers[key] = value
+            
+            return Response(
+                content=response.content,
+                status_code=response.status_code,
+                headers=response_headers,
+                media_type=response.headers.get('content-type')
+            )
+        except httpx.ConnectError:
+            return JSONResponse(
+                status_code=503,
+                content={"error": "Node.js backend not available"}
+            )
+        except Exception as e:
+            print(f"Proxy error for {path}: {e}")
+            return JSONResponse(
+                status_code=500,
+                content={"error": str(e)}
+            )
 
 @app.api_route("/api/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"])
 async def proxy_api(request: Request, path: str):
@@ -157,7 +171,8 @@ async def root():
 async def health():
     """Health check"""
     try:
-        response = await http_client.get(f"{NODE_URL}/api/health", timeout=5.0)
-        return {"proxy": "ok", "nodejs": response.json()}
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            response = await client.get(f"{NODE_URL}/api/health")
+            return {"proxy": "ok", "nodejs": response.json()}
     except:
         return {"proxy": "ok", "nodejs": "starting"}

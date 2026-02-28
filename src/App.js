@@ -28,9 +28,15 @@ import UserList from './files/pages/admin/adminchat/UserList';
 import AdminChat from './files/pages/admin/adminchat/AdminChat';
 // Admin Panel
 import AdminPanel from './files/pages/admin/adminpanel/AdminPanel';
+import AdminOrders from './files/pages/admin/adminpanel/AdminOrders';
+import AdminUsers from './files/pages/admin/adminpanel/AdminUsers';
+import AdminProducts from './files/pages/admin/adminpanel/AdminProducts';
+import AdminVisitors from './files/pages/admin/adminpanel/AdminVisitors';
+// Admin Protection
+import AdminProtectedRoute from './files/components/AdminProtectedRoute';
 
 // Routes where navbar should be hidden on mobile
-const hideNavBarRoutes = ['/Chat', '/UserList', '/AdminChat', '/AdminPanel'];
+const hideNavBarRoutes = ['/Chat', '/UserList', '/AdminChat', '/AdminPanel', '/AdminOrders', '/AdminUsers', '/AdminProducts', '/AdminVisitors'];
 
 
 function App() {
@@ -52,13 +58,50 @@ function App() {
 
     socketRef.current.on('connect', () => {
       console.log('🟢 Visitor connected to socket');
+      
+      // Send initial visibility state
+      const isVisible = document.visibilityState === 'visible';
+      socketRef.current.emit('visibilityChange', { isVisible });
     });
 
     socketRef.current.on('disconnect', () => {
       console.log('🔴 Visitor disconnected from socket');
     });
 
+    // Handle page visibility changes
+    const handleVisibilityChange = () => {
+      const isVisible = document.visibilityState === 'visible';
+      console.log(`👁️ Page visibility changed: ${isVisible ? 'VISIBLE' : 'HIDDEN'}`);
+      
+      if (socketRef.current?.connected) {
+        socketRef.current.emit('visibilityChange', { isVisible });
+      }
+    };
+
+    // Listen for visibility changes
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Send heartbeat every 5 seconds to let server know we're still here
+    const heartbeatInterval = setInterval(() => {
+      if (socketRef.current?.connected && document.visibilityState === 'visible') {
+        socketRef.current.emit('heartbeat');
+      }
+    }, 5000);
+
+    // Handle page unload (beforeunload) - send visibility hidden
+    const handleBeforeUnload = () => {
+      if (socketRef.current?.connected) {
+        socketRef.current.emit('visibilityChange', { isVisible: false });
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
     return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      clearInterval(heartbeatInterval);
+      
       if (socketRef.current) {
         socketRef.current.disconnect();
       }
@@ -139,11 +182,15 @@ function App() {
         
         {/* Chat Routes */}
         <Route path="/Chat" element={<Chat />} />
-        <Route path="/UserList" element={<UserList />} />
-        <Route path="/AdminChat/:odirUserId" element={<AdminChat />} />
+        <Route path="/UserList" element={<AdminProtectedRoute><UserList /></AdminProtectedRoute>} />
+        <Route path="/AdminChat/:odirUserId" element={<AdminProtectedRoute><AdminChat /></AdminProtectedRoute>} />
         
-        {/* Admin Panel */}
-        <Route path="/AdminPanel" element={<AdminPanel />} />
+        {/* Admin Panel - All Protected */}
+        <Route path="/AdminPanel" element={<AdminProtectedRoute><AdminPanel /></AdminProtectedRoute>} />
+        <Route path="/AdminOrders" element={<AdminProtectedRoute><AdminOrders /></AdminProtectedRoute>} />
+        <Route path="/AdminUsers" element={<AdminProtectedRoute><AdminUsers /></AdminProtectedRoute>} />
+        <Route path="/AdminProducts" element={<AdminProtectedRoute><AdminProducts /></AdminProtectedRoute>} />
+        <Route path="/AdminVisitors" element={<AdminProtectedRoute><AdminVisitors /></AdminProtectedRoute>} />
       </Routes>
     </div>
   );
