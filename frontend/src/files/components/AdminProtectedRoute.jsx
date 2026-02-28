@@ -18,7 +18,9 @@ const AdminProtectedRoute = ({ children }) => {
 
                 if (response.data && response.data.email) {
                     setIsAuthenticated(true);
-                    setIsAdmin(response.data.isAdmin === true);
+                    // Check if user is admin
+                    const adminEmail = process.env.REACT_APP_ADMIN_EMAIL || 'admin@admin.com';
+                    setIsAdmin(response.data.isAdmin || response.data.email === adminEmail);
                 } else {
                     setIsAuthenticated(false);
                     setIsAdmin(false);
@@ -44,30 +46,10 @@ const AdminProtectedRoute = ({ children }) => {
                 height: '100vh',
                 background: '#0f0f23'
             }}>
-                <div className="loader" style={{ display: 'flex', gap: '8px' }}>
-                    <span style={{
-                        width: '12px',
-                        height: '12px',
-                        background: '#6366f1',
-                        borderRadius: '50%',
-                        animation: 'bounce 1.4s infinite ease-in-out'
-                    }}></span>
-                    <span style={{
-                        width: '12px',
-                        height: '12px',
-                        background: '#6366f1',
-                        borderRadius: '50%',
-                        animation: 'bounce 1.4s infinite ease-in-out',
-                        animationDelay: '-0.16s'
-                    }}></span>
-                    <span style={{
-                        width: '12px',
-                        height: '12px',
-                        background: '#6366f1',
-                        borderRadius: '50%',
-                        animation: 'bounce 1.4s infinite ease-in-out',
-                        animationDelay: '-0.32s'
-                    }}></span>
+                <div className="loader">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </div>
             </div>
         );

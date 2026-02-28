@@ -31,22 +31,21 @@ import AdminPanel from './files/pages/admin/adminpanel/AdminPanel';
 import AdminOrders from './files/pages/admin/adminpanel/AdminOrders';
 import AdminUsers from './files/pages/admin/adminpanel/AdminUsers';
 import AdminProducts from './files/pages/admin/adminpanel/AdminProducts';
+import AdminVisitors from './files/pages/admin/adminpanel/AdminVisitors';
 // Admin Protection
 import AdminProtectedRoute from './files/components/AdminProtectedRoute';
-// Google One Tap
-import GoogleOneTap from './files/components/GoogleOneTap';
 
-// Routes where navbar should be completely hidden (admin pages)
-const hideNavBarRoutes = ['/Chat', '/UserList', '/AdminChat', '/AdminPanel', '/AdminOrders', '/AdminUsers', '/AdminProducts', '/AdminVisitors'];
-
-// Check if current route is an admin route
-const isAdminRoute = (pathname) => {
-  return hideNavBarRoutes.some(route => pathname.startsWith(route.replace(':userId', '')));
-};
-
-// Routes where One Tap should NOT show (sign-in pages already have Google button)
-const hideOneTapRoutes = ['/SignIn', '/SignUp', '/UserProfile', '/AdminPanel', '/AdminOrders', '/AdminUsers', '/AdminProducts', '/AdminVisitors', '/UserList', '/AdminChat', '/Chat'];
-
+// Routes where navbar should be hidden (all admin pages and chat pages)
+const hideNavBarRoutes = [
+  '/Chat',
+  '/UserList',
+  '/AdminChat',
+  '/AdminPanel',
+  '/AdminOrders',
+  '/AdminUsers',
+  '/AdminProducts',
+  '/AdminVisitors'
+];
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -67,7 +66,7 @@ function App() {
 
     socketRef.current.on('connect', () => {
       console.log('🟢 Visitor connected to socket');
-      
+
       // Send initial visibility state
       const isVisible = document.visibilityState === 'visible';
       socketRef.current.emit('visibilityChange', { isVisible });
@@ -81,7 +80,7 @@ function App() {
     const handleVisibilityChange = () => {
       const isVisible = document.visibilityState === 'visible';
       console.log(`👁️ Page visibility changed: ${isVisible ? 'VISIBLE' : 'HIDDEN'}`);
-      
+
       if (socketRef.current?.connected) {
         socketRef.current.emit('visibilityChange', { isVisible });
       }
@@ -110,7 +109,7 @@ function App() {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('beforeunload', handleBeforeUnload);
       clearInterval(heartbeatInterval);
-      
+
       if (socketRef.current) {
         socketRef.current.disconnect();
       }
@@ -123,9 +122,10 @@ function App() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Hide navbar completely on admin routes, or on mobile for chat routes
-  const shouldShowNavBar = !isAdminRoute(location.pathname) && 
-    !(width < 600 && location.pathname.startsWith('/Chat'));
+  // Hide navbar on admin routes regardless of screen width
+  const shouldShowNavBar = !hideNavBarRoutes.some(route =>
+    location.pathname.startsWith(route.replace(':userId', '').replace(':odirUserId', ''))
+  );
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -152,26 +152,16 @@ function App() {
   const handleSignIn = () => setIsAuthenticated(true);
   const handleSignUp = () => setIsAuthenticated(true);
   const handleSignOut = () => setIsAuthenticated(false);
-  
-  // Handle One Tap login success
-  const handleOneTapSuccess = (user) => {
-    setIsAuthenticated(true);
-  };
-
-  // Check if One Tap should show on current page
-  const shouldShowOneTap = !isAuthenticated && 
-    !hideOneTapRoutes.some(route => location.pathname.startsWith(route));
 
   return (
     <div>
       {shouldShowNavBar && <NavBar Authentication={isAuthenticated} />}
-      {shouldShowOneTap && <GoogleOneTap onLoginSuccess={handleOneTapSuccess} />}
       <ScrollToTop />
       <Routes>
         <Route path="/" element={
           <>
             <div className="Home-Webverse">
-              
+
               <TestHero />
               <BestSellingProducts isBestSellingPage={false} />
               <TopProduct isTopProductsPage={false} />
@@ -198,17 +188,18 @@ function App() {
 
         <Route path="/Google" element={<Google />} />
         <Route path="/search" element={<SearchResults />} />
-        
+
         {/* Chat Routes */}
         <Route path="/Chat" element={<Chat />} />
         <Route path="/UserList" element={<AdminProtectedRoute><UserList /></AdminProtectedRoute>} />
         <Route path="/AdminChat/:odirUserId" element={<AdminProtectedRoute><AdminChat /></AdminProtectedRoute>} />
-        
+
         {/* Admin Panel - All Protected */}
         <Route path="/AdminPanel" element={<AdminProtectedRoute><AdminPanel /></AdminProtectedRoute>} />
         <Route path="/AdminOrders" element={<AdminProtectedRoute><AdminOrders /></AdminProtectedRoute>} />
         <Route path="/AdminUsers" element={<AdminProtectedRoute><AdminUsers /></AdminProtectedRoute>} />
         <Route path="/AdminProducts" element={<AdminProtectedRoute><AdminProducts /></AdminProtectedRoute>} />
+        <Route path="/AdminVisitors" element={<AdminProtectedRoute><AdminVisitors /></AdminProtectedRoute>} />
       </Routes>
     </div>
   );
