@@ -34,6 +34,8 @@ import AdminProducts from './files/pages/admin/adminpanel/AdminProducts';
 import AdminVisitors from './files/pages/admin/adminpanel/AdminVisitors';
 // Admin Protection
 import AdminProtectedRoute from './files/components/AdminProtectedRoute';
+// Google One Tap
+import GoogleOneTap from './files/components/GoogleOneTap';
 
 // Routes where navbar should be hidden (all admin pages and chat pages)
 const hideNavBarRoutes = [
@@ -155,6 +157,9 @@ function App() {
 
   return (
     <div>
+      {/* Google One Tap - Shows on every page when user is not signed in */}
+      <GoogleOneTap isAuthenticated={isAuthenticated} onSignIn={handleSignIn} />
+      
       {shouldShowNavBar && <NavBar Authentication={isAuthenticated} />}
       <ScrollToTop />
       <Routes>
