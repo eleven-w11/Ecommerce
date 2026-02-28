@@ -148,9 +148,11 @@ const GoogleOneTap = ({ isAuthenticated, onSignIn }) => {
             }
 
             // Determine delay based on current page
-            const isAuthPage = location.pathname === '/SignIn' || location.pathname === '/SignUp';
-            const delay = isAuthPage 
-                ? ONE_TAP_CONFIG.DELAY_ON_AUTH_PAGES 
+            const isPriorityPage = ONE_TAP_CONFIG.PRIORITY_PAGES.some(page => 
+                location.pathname === page || location.pathname.startsWith(page)
+            );
+            const delay = isPriorityPage 
+                ? ONE_TAP_CONFIG.DELAY_ON_PRIORITY_PAGES 
                 : ONE_TAP_CONFIG.DELAY_ON_REGULAR_PAGES;
 
             showPrompt(delay);
