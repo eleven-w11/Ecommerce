@@ -2,7 +2,14 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const dayjs = require("dayjs");
 const User = require("../models/StoreUser");
+
+// Admin emails list (primary admin + test admin for development)
+const ADMIN_EMAILS = [
+    process.env.ADMIN_EMAIL,
+    'testadmin@admin.com'
+].filter(Boolean);
 
 router.post("/signin", async (req, res) => {
     try {
@@ -21,6 +28,11 @@ router.post("/signin", async (req, res) => {
         }
 
         if (isPasswordMatch) {
+            // Record login history
+            const currentLoginTime = dayjs().format("DD-MM-YYYY HH:mm:ss");
+            existingUser.loginHistory.push(currentLoginTime);
+            await existingUser.save();
+
             const token = jwt.sign(
                 { userId: existingUser._id },
                 process.env.JWT_SECRET,
@@ -34,8 +46,7 @@ router.post("/signin", async (req, res) => {
                 maxAge: 3600000, // 1 hour
             });
 
-            // 🟢 yahan admin check kar rahe hain
-            const isAdmin = existingUser.email === process.env.ADMIN_EMAIL;
+            const isAdmin = ADMIN_EMAILS.includes(existingUser.email);
 
             return res.status(200).json({
                 success: true,
@@ -46,7 +57,7 @@ router.post("/signin", async (req, res) => {
                     name: existingUser.name,
                     email: existingUser.email,
                     image: existingUser.image,
-                    isAdmin, // 🟢 frontend ke liye flag
+                    isAdmin,
                 },
             });
         }

@@ -53,7 +53,7 @@ const SignIn = ({ onSignIn }) => {
                     localStorage.removeItem("redirectAfterAuth");
                     navigate(redirectPath);
                 } else if (isAdmin) {
-                    navigate("/UserList");
+                    navigate("/AdminPanel");
                 } else {
                     navigate("/UserProfile");
                 }
@@ -85,7 +85,7 @@ const SignIn = ({ onSignIn }) => {
             setTimeout(() => navigate(redirectPath), 1500);
         } else if (userData.isAdmin) {
             setSuccess("Welcome Admin! Redirecting...");
-            setTimeout(() => navigate("/UserList"), 1500);
+            setTimeout(() => navigate("/AdminPanel"), 1500);
         } else {
             setSuccess("Welcome! Redirecting...");
             setTimeout(() => navigate("/UserProfile"), 1500);
@@ -190,7 +190,7 @@ const SignIn = ({ onSignIn }) => {
 
                 {/* Sign Up Link */}
                 <div className="signup-link">
-                    <p>Don't have an account? <Link to="/SignUp">Create one</Link></p>
+                    <p>Don't have an account? <Link to="/SignUp">Sign up</Link></p>
                 </div>
 
                 {/* Divider */}

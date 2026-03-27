@@ -29,7 +29,13 @@ const UserProfile = ({ onSignOut }) => {
 
         if (response.data.success === false) {
           navigate("/SignIn");
+          return;
+        }
 
+        // If user is admin, redirect to AdminPanel
+        if (response.data.isAdmin) {
+          navigate("/AdminPanel");
+          return;
         }
 
         setUserData(response.data);

@@ -1,0 +1,434 @@
+.checkout-Payment-form-container {
+    width: 100%;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    background-color: white;
+    overflow: hidden;
+    /* padding: 10px; */
+}
+
+.checkout-Payment-form-container .modern-form {
+    space-y: 1.5rem;
+}
+
+.checkout-Payment-form-container .form-section {
+    /* border-bottom: 1px solid var(--border); */
+    /* background-color: red; */
+}
+
+/* .checkout-Payment-form-container .form-section:last-child {
+    border-bottom: none;
+} */
+
+
+.checkout-Payment-form-container .payment-options {
+    space-y: 0.75rem;
+    padding: 10px 20px;
+}
+
+.checkout-Payment-form-container .payment-card {
+    display: block;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    /* background-color: salmon; */
+    padding: 1.25rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 10px 0;
+}
+
+.checkout-Payment-form-container .payment-card:hover {
+    border-color: var(--primary);
+}
+
+.checkout-Payment-form-container .payment-card.selected {
+    border-color: var(--primary);
+    background: rgba(99, 102, 241, 0.05);
+}
+
+.checkout-Payment-form-container .payment-card input {
+    display: none;
+}
+
+.checkout-Payment-form-container .payment-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    /* background-color: chartreuse; */
+}
+
+.checkout-Payment-form-container .payment-icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.checkout-Payment-form-container .payment-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.checkout-Payment-form-container .payment-title {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 0.95rem;
+}
+
+.checkout-Payment-form-container .payment-desc {
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+.checkout-Payment-form-container .card-form {
+    /* margin-top: 1.25rem; */
+    padding: 1.25rem;
+    background: var(--secondary);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+}
+.checkout-Payment-form-container .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    /* background-color: red; */
+}
+
+.checkout-Payment-form-container .form-group {
+    margin-bottom: 1rem;
+}
+
+.checkout-Payment-form-container .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text);
+    font-size: 0.9rem;
+}
+
+.checkout-Payment-form-container .form-group input,
+.checkout-Payment-form-container .form-group select {
+    width: 100%;
+    padding: 0.875rem;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.checkout-Payment-form-container .form-group input:focus,
+.checkout-Payment-form-container .form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.checkout-Payment-form-container .form-group input.error {
+    border-color: var(--error);
+}
+
+.checkout-Payment-form-container .error-message {
+    color: var(--error);
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+.checkout-Payment-form-container .card-form .security-badges {
+    display: flex;
+    gap: 1rem;
+    padding: 20px 0px 0px 0px;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+    /* background-color: greenyellow; */
+}
+
+.checkout-Payment-form-container .card-form .badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-light);
+    flex: 1;
+    min-width: 120px;
+}
+
+.checkout-Payment-form-container .card-form .badge .icon {
+    font-size: 0.9rem;
+}
+
+/* Bank Transfer Styles */
+.checkout-Payment-form-container .bank-transfer-details {
+    background: #f8f9fa;
+    /* background-color: red; */
+    border-radius: 20px;
+    padding: 15px;
+    border: 1px solid #e9ecef;
+}
+
+.checkout-Payment-form-container .bank-transfer-header {
+    text-align: center;
+    /* margin-bottom: 2rem; */
+    /* background-color: green; */
+}
+
+.checkout-Payment-form-container .bank-transfer-header h3 {
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.checkout-Payment-form-container .bank-transfer-header p {
+    color: #666;
+    line-height: 1.5;
+}
+
+.checkout-Payment-form-container .bank-details-grid {
+    /* display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 15px 0 20px 0;
+    /* padding: ; */
+    /* margin-bottom: 2rem; */
+    /* background-c/olor: goldenrod; */
+}
+
+.checkout-Payment-form-container .qr-code-section {
+    text-align: center;
+    /* background-color: plum; */
+}
+
+.checkout-Payment-form-container .qr-code {
+    /* background: white; */
+    /* padding: 1.5rem; */
+    /* border-radius: 12px; */
+    /* border: 1px solid #dee2e6; */
+    /* margin-bottom: 1rem; */
+}
+
+.checkout-Payment-form-container .qr-code img {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    border-radius: 15px;
+}
+
+.checkout-Payment-form-container .qr-note {
+    color: #666;
+    font-size: 0.9rem;
+    font-style: italic;
+    margin: 10px 0;
+}
+
+.checkout-Payment-form-container .bank-info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.checkout-Payment-form-container .bank-detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.checkout-Payment-form-container .bank-detail-item.total-amount {
+    background: #e7f3ff;
+    /* border-color: #3498db; */
+    font-weight: 600;
+}
+
+.checkout-Payment-form-container .bank-label {
+    font-weight: 600;
+    color: #333;
+    margin: 0 10px 0 0;
+    cursor: copy;
+}
+
+.checkout-Payment-form-container .bank-value {
+    color: #6366f1;
+    font-weight: 500;
+}
+
+.checkout-Payment-form-container .transfer-instructions {
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    margin-bottom: 15px;
+}
+
+.checkout-Payment-form-container .transfer-instructions h4 {
+    color: #333;
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+}
+
+.checkout-Payment-form-container .transfer-instructions ul {
+    /* list-style: none; */
+    /* padding: 0; */
+    /* margin: 0; */
+}
+
+.checkout-Payment-form-container .transfer-instructions li {
+    padding: 0.5rem 0;
+    color: #555;
+    line-height: 1.5;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.checkout-Payment-form-container .transfer-instructions li:last-child {
+    border-bottom: none;
+}
+
+.checkout-Payment-form-container .transfer-instructions strong {
+    color: #6366f1;
+}
+
+.checkout-Payment-form-container .bank-security-note {
+    text-align: center;
+    padding: 1rem;
+    /* background: #e7f3ff; */
+    border-radius: 8px;
+    border: 1px solid #3498db;
+    /* background-color: darkblue; */
+}
+
+.checkout-Payment-form-container .security-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #3498db;
+    /* background-color: darkorange; */
+}
+
+.checkout-Payment-form-container .bank-security-note p {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Buttons */
+.checkout-Payment-form-container .modern-btn {
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    width: 100%;
+    /* display: none; */
+    margin-top: 15px;
+}
+
+.checkout-Payment-form-container .modern-btn.primary {
+    background: var(--primary);
+    color: white;
+}
+
+.checkout-Payment-form-container .modern-btn.primary:hover:not(:disabled) {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.checkout-Payment-form-container .modern-btn.large {
+    padding: 1.125rem 1.5rem;
+    font-size: 1.05rem;
+}
+
+.checkout-Payment-form-container .place-order-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.checkout-Payment-form-container .btn-spinner {
+    width: 1.125rem;
+    height: 1.125rem;
+    border: 2px solid transparent;
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .checkout-Payment-form-container .payment-container {
+        width: 95%;
+        margin: 60px auto 0 auto;
+    }
+
+    .checkout-Payment-form-container .payment-layout {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .checkout-Payment-form-container .order-summary-sidebar,
+    .checkout-Payment-form-container .checkout-form-container {
+        width: 100%;
+    }
+
+    .checkout-Payment-form-container .bank-details-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .checkout-Payment-form-container .qr-code img {
+        width: 150px;
+        height: 150px;
+    }
+
+    .checkout-Payment-form-container .bank-detail-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .checkout-Payment-form-container .bank-transfer-details {
+        padding: 1.5rem;
+    }
+
+    .checkout-Payment-form-container .form-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .checkout-Payment-form-container .bank-transfer-details .security-badges {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .checkout-Payment-form-container .badge {
+        min-width: auto;
+        justify-content: center;
+    }
+}

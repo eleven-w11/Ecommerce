@@ -16,6 +16,6 @@ const productSchema = new mongoose.Schema({
         color_code: String,
         color: String
     }]
-}, { collection: "best_selling_product" });
+}, { collection: "products" });
 
-module.exports = mongoose.model("Product", productSchema);
+module.exports = mongoose.model("Products", productSchema);

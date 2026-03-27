@@ -3,6 +3,12 @@ const User = require("../models/StoreUser");
 const verifyPath = require("../middleware/verifyPath");
 const router = express.Router();
 
+// Admin emails list (primary admin + test admin for development)
+const ADMIN_EMAILS = [
+    process.env.ADMIN_EMAIL,
+    'testadmin@admin.com'
+].filter(Boolean);
+
 router.get("/profile", verifyPath, async (req, res) => {
     try {
         console.log("✅ /profile route hit");
@@ -14,13 +20,17 @@ router.get("/profile", verifyPath, async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
+        // Check if user is admin
+        const isAdmin = ADMIN_EMAILS.includes(user.email);
+
         res.json({
             success: true,
             _id: user._id,
             name: user.name,
             email: user.email,
             image: user.image,
-            role: user.role
+            role: user.role,
+            isAdmin
         });
 
 

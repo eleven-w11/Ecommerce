@@ -15,12 +15,13 @@ const server = http.createServer(app);
 const Message = require("./models/Message");
 const Chat = require("./models/Chat");
 const User = require("./models/StoreUser");
+const VisitorStats = require("./models/VisitorStats");
 
 // ✅ Allowed origins
 const allowedOrigins = [
     "https://ecommerce-vu3m.onrender.com",
     "http://localhost:3000",
-    "https://aaa48806-5355-4f41-a0f0-54d03ee1a5a4.preview.emergentagent.com",
+    "https://panel-revamp-1.preview.emergentagent.com",
     process.env.APP_URL
 ].filter(Boolean);
 
@@ -68,7 +69,95 @@ const onlineUsers = new Map(); // Map<userId, Set<socketId>>
 const socketToUser = new Map(); // Map<socketId, userId>
 
 // Active site visitors tracking (all visitors, not just logged in)
-let activeVisitors = new Set(); // Set of all connected socket IDs
+let activeVisitors = new Set(); // Set of socket IDs where page is VISIBLE
+let connectedSockets = new Set(); // Set of all connected socket IDs
+
+// Heartbeat tracking - to detect browser close without proper disconnect
+const lastHeartbeat = new Map(); // Map<socketId, timestamp>
+const HEARTBEAT_TIMEOUT = 10000; // 10 seconds - if no heartbeat, consider inactive
+
+// Helper function to get today's date
+const getTodayDate = () => {
+    const now = new Date();
+    return now.toISOString().split('T')[0];
+};
+
+// Helper function to record visitor stat
+const recordVisitorStat = async (socketId) => {
+    try {
+        const today = getTodayDate();
+        const currentHour = new Date().getHours();
+
+        let stats = await VisitorStats.findOne({ date: today });
+
+        if (!stats) {
+            stats = new VisitorStats({
+                date: today,
+                totalVisitors: 0,
+                uniqueVisitors: [],
+                ordersReceived: 0,
+                peakVisitors: 0,
+                hourlyStats: Array.from({ length: 24 }, (_, i) => ({
+                    hour: i,
+                    visitors: 0,
+                    orders: 0
+                }))
+            });
+        }
+
+        // Increment total visitors
+        stats.totalVisitors += 1;
+
+        // Add unique visitor
+        if (socketId && !stats.uniqueVisitors.includes(socketId)) {
+            stats.uniqueVisitors.push(socketId);
+        }
+
+        // Update hourly stats
+        const hourIndex = stats.hourlyStats.findIndex(h => h.hour === currentHour);
+        if (hourIndex !== -1) {
+            stats.hourlyStats[hourIndex].visitors += 1;
+        }
+
+        await stats.save();
+    } catch (error) {
+        console.error("Error recording visitor stat:", error);
+    }
+};
+
+// Helper function to update peak visitors
+const updatePeakVisitors = async (count) => {
+    try {
+        const today = getTodayDate();
+        await VisitorStats.findOneAndUpdate(
+            { date: today },
+            { $max: { peakVisitors: count } },
+            { upsert: true, setDefaultsOnInsert: true }
+        );
+    } catch (error) {
+        console.error("Error updating peak visitors:", error);
+    }
+};
+
+// Cleanup stale connections every 5 seconds
+setInterval(() => {
+    const now = Date.now();
+    let removed = false;
+    
+    lastHeartbeat.forEach((timestamp, socketId) => {
+        if (now - timestamp > HEARTBEAT_TIMEOUT) {
+            // No heartbeat received, remove from active visitors
+            activeVisitors.delete(socketId);
+            lastHeartbeat.delete(socketId);
+            removed = true;
+            console.log(`⏰ Heartbeat timeout for socket ${socketId}`);
+        }
+    });
+    
+    if (removed) {
+        io.emit("visitorCount", { count: activeVisitors.size });
+    }
+}, 5000);
 
 // Get admin ID
 const getAdminId = async () => {
@@ -81,11 +170,41 @@ const getAdminId = async () => {
 io.on("connection", (socket) => {
     console.log("🟢 New client connected:", socket.id);
     
-    // Track all visitors
-    activeVisitors.add(socket.id);
+    // Track connected socket (but not active yet until visibility confirmed)
+    connectedSockets.add(socket.id);
     
-    // Broadcast updated visitor count to all admins
-    io.emit("visitorCount", { count: activeVisitors.size });
+    // Initialize heartbeat
+    lastHeartbeat.set(socket.id, Date.now());
+
+    // Handle visibility change from client
+    socket.on("visibilityChange", async ({ isVisible }) => {
+        if (isVisible) {
+            activeVisitors.add(socket.id);
+            lastHeartbeat.set(socket.id, Date.now());
+            console.log(`👁️ Socket ${socket.id} is now VISIBLE`);
+            
+            // Record visitor stat
+            await recordVisitorStat(socket.id);
+            
+            // Update peak visitors
+            await updatePeakVisitors(activeVisitors.size);
+        } else {
+            activeVisitors.delete(socket.id);
+            console.log(`👁️ Socket ${socket.id} is now HIDDEN`);
+        }
+        // Broadcast updated count
+        io.emit("visitorCount", { count: activeVisitors.size });
+    });
+
+    // Heartbeat to detect browser close
+    socket.on("heartbeat", () => {
+        lastHeartbeat.set(socket.id, Date.now());
+        // If page is visible, ensure they're in active visitors
+        if (!activeVisitors.has(socket.id)) {
+            // They might have sent heartbeat before visibility event
+            // Don't add automatically - wait for explicit visibilityChange
+        }
+    });
 
     // User registers with their ID
     socket.on("register", async ({ userId, token }) => {
@@ -284,8 +403,10 @@ io.on("connection", (socket) => {
 
     // Disconnect
     socket.on("disconnect", () => {
-        // Remove from active visitors
+        // Remove from all tracking sets
         activeVisitors.delete(socket.id);
+        connectedSockets.delete(socket.id);
+        lastHeartbeat.delete(socket.id);
         
         // Broadcast updated visitor count
         io.emit("visitorCount", { count: activeVisitors.size });

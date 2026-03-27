@@ -1,87 +1,133 @@
-# E-commerce WebVerse - Product Requirements Document
+# E-Commerce Admin Panel - Product Requirements Document
 
 ## Original Problem Statement
-Build an e-commerce application with checkout authentication flow, order saving to MongoDB, and order confirmation page.
+Build a full-stack e-commerce application with comprehensive admin panel functionality including:
+- Product management with images
+- User management with login history
+- Order management
+- Chat/Messages functionality
+- Custom admin navbar
+- Route protection for admin pages
+
+## Tech Stack
+- **Backend**: Node.js, Express.js (runs on port 5000)
+- **Proxy**: FastAPI (Python) - sits between frontend and backend (port 8001)
+- **Frontend**: React (port 3000)
+- **Database**: MongoDB (Atlas)
+- **Authentication**: JWT, Google OAuth, Google One Tap
 
 ## Architecture
-- **Frontend**: React.js (Create React App)
-- **Backend**: Node.js/Express
-- **Database**: MongoDB
-- **Authentication**: JWT-based with cookies
+```
+/app/
+├── backend/        # Node.js/Express backend
+│   ├── models/     # MongoDB models
+│   ├── routes/     # API routes
+│   ├── middleware/ # Auth middleware
+│   └── server.js   # Main server file
+├── frontend/       # React frontend
+│   ├── src/
+│   │   ├── files/
+│   │   │   ├── components/
+│   │   │   ├── pages/
+│   │   │   └── styles/
+│   │   └── App.js
+│   └── .env
+├── server.py       # FastAPI proxy
+└── ...
+```
 
-## User Personas
-1. **Shopper**: Browse products, add to cart, checkout
-2. **Registered User**: Has account, can view order history
-3. **Admin**: Manage products and view all orders
+## Key Database Models
+- `StoreUser`: { name, email, password, googleId, image, isAdmin, loginHistory }
+- `Product`: { product_name, product_price, dis_product_price, images[], p_type, p_des }
+- `Order`: { userId, products, total, status }
+- `Message`: { senderId, receiverId, message, timestamp }
 
-## Core Requirements
-- Product browsing and viewing
-- Shopping cart functionality
-- User authentication (Sign In/Sign Up)
-- Checkout with authentication check
-- Order saving to MongoDB
-- Order confirmation page
-- Redirect to previous page after authentication
+## Completed Features (December 2025)
 
-## What's Been Implemented
+### Admin Panel
+- [x] Dashboard with stats (Users, Products, Orders, Pending count)
+- [x] Custom top navbar (Dashboard, Products, Orders, Users, Messages, Back to Store)
+- [x] Main store navbar hidden on admin pages
+- [x] AdminProtectedRoute for route security
+- [x] Products page with images, search, add/edit/delete
+- [x] Users page with login counts and search
+- [x] Orders page with status management
+- [x] Messages/Chat functionality
 
-### Feb 24, 2026
-1. **Sign-In Popup for Checkout** (`SignInPopup.jsx`)
-   - Shows popup when unauthenticated user visits checkout
-   - Direct sign-in from popup
-   - Links to full sign-in page or sign-up
+### Authentication
+- [x] JWT-based authentication
+- [x] Google OAuth integration
+- [x] Google One Tap login (configured)
+- [x] Admin redirect after login
+- [x] Multiple admin support (primary + test admin)
 
-2. **Order Model** (`backend/models/Order.js`)
-   - Stores items, shipping address, payment method
-   - Tracks status: pending, confirmed, processing, shipped, delivered, cancelled
+### Bug Fixes (This Session)
+- [x] Fixed CORS issue with localhost API URL
+- [x] Created test admin account (testadmin@admin.com / admin123)
+- [x] Fixed admin recognition in UserProRoutes.js
+- [x] Product images now display correctly
 
-3. **Order API Routes** (`backend/routes/orderRoutes.js`)
-   - POST /api/orders/create - Create new order
-   - GET /api/orders/my-orders - Get user's orders
-   - GET /api/orders/:orderId - Get specific order
+## Admin Credentials
+- **Primary Admin**: talha.eleven.w11@gmail.com (Google login)
+- **Test Admin**: testadmin@admin.com / admin123
 
-4. **Checkout Authentication Flow** (`Checkout.jsx`)
-   - Check auth on page load
-   - Show sign-in popup if not authenticated
-   - Hide checkout form until signed in
-   - Save order to MongoDB on payment
+## API Endpoints
+- `/api/signin` - User sign-in
+- `/api/signup` - User sign-up
+- `/api/admin/users` - Get all users
+- `/api/admin/products` - CRUD operations for products
+- `/api/admin/orders` - Get/update orders
+- `/api/admin/all-chats` - Get chat users
+- `/api/products` - Public products endpoint
 
-5. **Redirect After Auth** (`SignIn.jsx`, `SignUp.jsx`)
-   - Stores current path in localStorage
-   - Returns user to checkout after signing in
+## Pending/Future Tasks
 
-6. **Order Confirmation Page** (`OrderConfirmation.jsx`)
-   - Displays order details, items, shipping, payment
-   - Shows order status with color-coded badge
-   - Print functionality
+### P1 - Next Priority
+- [ ] Advanced user filters (new/existing users, date range, active/inactive)
+- [ ] Group users by registration date
+- [ ] Consolidate duplicate Chat tabs
 
-7. **SlideMenu Update** (`SlideMenu.jsx`)
-   - Added "My Order" link for authenticated users
-   - Only shows when user has pending order
-   - Removed Man/Woman dropdown categories
+### P2 - Backlog
+- [ ] Refactor `getImageUrl` helper into utility function
+- [ ] WebSocket CORS configuration for real-time features
+- [ ] Code cleanup and file organization
 
-8. **Removed Pages**
-   - ManTop, ManBottom, ManShoes
-   - WomanTop, WomanBottom, WomanShoes, WomanBags, WomanAccessories
+## Environment Variables
 
-## Prioritized Backlog
+### Frontend (.env)
+- REACT_APP_API_BASE_URL
+- REACT_APP_BACKEND_URL
+- REACT_APP_GOOGLE_CLIENT_ID
 
-### P0 (Critical)
-- [x] Checkout authentication check
-- [x] Order saving to MongoDB
-- [x] Order confirmation page
+### Backend (.env)
+- PORT
+- MONGO_URI
+- JWT_SECRET
+- ADMIN_EMAIL
+- GOOGLE_CLIENT_ID
+- GOOGLE_CLIENT_SECRET
 
-### P1 (Important)
-- [ ] Order history page in user profile
-- [ ] Email notifications on order
-- [ ] Admin order management
+## Testing
+- Test admin account available for development
+- Pytest test files in /app/backend/tests/
+- Test reports in /app/test_reports/
 
-### P2 (Nice to Have)
-- [ ] Order tracking
-- [ ] Invoice PDF generation
-- [ ] Multiple shipping addresses
+## Last Updated
+December 27, 2025
 
-## Next Tasks
-1. Test full checkout flow end-to-end
-2. Add order history section to UserProfile
-3. Implement admin order management
+## CSS Architecture
+All CSS files use scoped class naming to prevent conflicts:
+- `.admin-page .admin-dashboard` - Admin Dashboard
+- `.admin-page .admin-products` - Admin Products
+- `.admin-page .admin-users` - Admin Users
+- `.admin-page .admin-orders` - Admin Orders
+- `.adminchat-container` - Admin Chat
+- `.userlist-container` - User List Chat
+- `.user-chat` - User Chat
+- `.sign` - Sign In/Up pages
+- `.user-profile-container` - User Profile
+- `.cart-page` - Cart
+- `.product-view-page` - Product View
+- `.modern_checkout` - Checkout
+
+Shared admin styles are in `AdminBase.css` and imported by all admin page CSS files.
